@@ -24,16 +24,14 @@ export const allocation_data = [
                   "code": "100C002",
                   "title": "Data Structures",
                   "unit": 3,
-                  "isAllocated": true,
-                  "allocatedTo": "Dr. Smith"
+                  "isAllocated": false,
                 },
                 {
                   "id": "3",
                   "code": "100C003",
                   "title": "Computer Architecture",
                   "unit": 4,
-                  "isAllocated": true,
-                  "allocatedTo": "Dr. Wilson"
+                  "isAllocated": false,
                 },
                 {
                   "id": "4",
@@ -56,8 +54,7 @@ export const allocation_data = [
                   "code": "100C006",
                   "title": "Software Engineering",
                   "unit": 3,
-                  "isAllocated": true,
-                  "allocatedTo": "Dr. Brown"
+                  "isAllocated": false,
                 },
                 {
                   "id": "7",

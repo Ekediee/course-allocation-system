@@ -56,6 +56,15 @@ type Semester = {
     programs: Program[];
 };
 
+type AllocationStat = {
+  semesterName: string;
+  programName: string;
+  unallocatedCourses: number;
+  allocatedCourses: number;
+  allocationRate: number; // as a percentage
+  status: string;
+};
+
 
 export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -76,6 +85,37 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         classHours: "",
       },
     ]);
+
+    const computeAllocationProgress = (allocationData: Semester[]): AllocationStat[] => {
+      const stats: AllocationStat[] = [];
+
+      allocationData.forEach((semester) => {
+        semester.programs.forEach((program) => {
+          let totalCourses = 0;
+          let allocatedCourses = 0;
+
+          program.levels.forEach((level) => {
+            level.courses.forEach((course) => {
+              totalCourses += 1;
+              if (course.isAllocated) {
+                allocatedCourses += 1;
+              }
+            });
+          });
+
+          stats.push({
+            semesterName: semester.id,
+            programName: program.name,
+            unallocatedCourses: totalCourses - allocatedCourses,
+            allocatedCourses,
+            allocationRate: totalCourses > 0 ? parseFloat(((allocatedCourses / totalCourses) * 100).toFixed(1)) : 0,
+            status: (totalCourses - allocatedCourses) === 0 ? "Completed": (totalCourses - allocatedCourses) === totalCourses ? "Not Started": "In Progress"
+          });
+        });
+      });
+
+      return stats;
+    };
 
     const isLevelFullyAllocated = (
       semesterId: string,
@@ -151,7 +191,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 pageHeaderPeriod, setPageHeaderPeriod,
                 selectedCourse, setSelectedCourse,
                 updateCourse, allocateCourse, setAllocateCourse,
-                groups, setGroups, isLevelFullyAllocated
+                groups, setGroups, isLevelFullyAllocated, computeAllocationProgress
             }}
         >
             { children }
