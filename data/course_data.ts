@@ -32,21 +32,24 @@ export const allocation_data = [
                   "code": "100C003",
                   "title": "Computer Architecture",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "4",
                   "code": "100C004",
                   "title": "Algorithms",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "5",
                   "code": "100C005",
                   "title": "Operating Systems",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "6",
@@ -61,7 +64,8 @@ export const allocation_data = [
                   "code": "100C007",
                   "title": "Database Systems",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "8",
@@ -76,14 +80,16 @@ export const allocation_data = [
                   "code": "100C009",
                   "title": "Machine Learning",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "10",
                   "code": "100C010",
                   "title": "Web Development",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "11",
@@ -98,7 +104,8 @@ export const allocation_data = [
                   "code": "100C012",
                   "title": "Cloud Computing",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "13",
@@ -135,21 +142,24 @@ export const allocation_data = [
                   "code": "200C001",
                   "title": "Introduction to Programming",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "2",
                   "code": "200C002",
                   "title": "Data Structures",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "3",
                   "code": "200C003",
                   "title": "Computer Architecture",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "4",
@@ -164,7 +174,8 @@ export const allocation_data = [
                   "code": "200C005",
                   "title": "Operating Systems",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "6",
@@ -179,7 +190,8 @@ export const allocation_data = [
                   "code": "200C007",
                   "title": "Database Systems",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "8",
@@ -194,21 +206,24 @@ export const allocation_data = [
                   "code": "200C009",
                   "title": "Machine Learning",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "10",
                   "code": "200C010",
                   "title": "Web Development",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "11",
                   "code": "200C011",
                   "title": "Mobile App Development",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "12",
@@ -223,7 +238,8 @@ export const allocation_data = [
                   "code": "200C013",
                   "title": "Cybersecurity Fundamentals",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "14",
@@ -284,7 +300,8 @@ export const allocation_data = [
                   "code": "300C005",
                   "title": "Operating Systems",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "6",
@@ -315,7 +332,8 @@ export const allocation_data = [
                   "code": "300C009",
                   "title": "Machine Learning",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "10",
@@ -330,7 +348,8 @@ export const allocation_data = [
                   "code": "300C011",
                   "title": "Mobile App Development",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "12",
@@ -353,7 +372,8 @@ export const allocation_data = [
                   "code": "300C014",
                   "title": "Networks",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "15",
@@ -374,7 +394,8 @@ export const allocation_data = [
                   "code": "400C001",
                   "title": "Introduction to Programming",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "2",
@@ -389,42 +410,48 @@ export const allocation_data = [
                   "code": "400C003",
                   "title": "Computer Architecture",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "4",
                   "code": "400C004",
                   "title": "Algorithms",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "5",
                   "code": "400C005",
                   "title": "Operating Systems",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "6",
                   "code": "400C006",
                   "title": "Software Engineering",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "7",
                   "code": "400C007",
                   "title": "Database Systems",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "8",
                   "code": "400C008",
                   "title": "Artificial Intelligence",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "9",
@@ -455,7 +482,8 @@ export const allocation_data = [
                   "code": "400C012",
                   "title": "Cloud Computing",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "13",
@@ -470,14 +498,16 @@ export const allocation_data = [
                   "code": "400C014",
                   "title": "Networks",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "15",
                   "code": "400C015",
                   "title": "Human-Computer Interaction",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 }
               ]
             }
@@ -496,7 +526,8 @@ export const allocation_data = [
                   "code": "100C001",
                   "title": "Introduction to Programming",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "2",
@@ -511,28 +542,32 @@ export const allocation_data = [
                   "code": "100C003",
                   "title": "Computer Architecture",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "4",
                   "code": "100C004",
                   "title": "Algorithms",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "5",
                   "code": "100C005",
                   "title": "Operating Systems",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "6",
                   "code": "100C006",
                   "title": "Software Engineering",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "7",
@@ -555,7 +590,8 @@ export const allocation_data = [
                   "code": "100C009",
                   "title": "Machine Learning",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "10",
@@ -602,7 +638,8 @@ export const allocation_data = [
                   "code": "100C015",
                   "title": "Human-Computer Interaction",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 }
               ]
             },
@@ -647,14 +684,16 @@ export const allocation_data = [
                   "code": "200C005",
                   "title": "Operating Systems",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "6",
                   "code": "200C006",
                   "title": "Software Engineering",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "7",
@@ -677,7 +716,8 @@ export const allocation_data = [
                   "code": "200C009",
                   "title": "Machine Learning",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "10",
@@ -692,7 +732,8 @@ export const allocation_data = [
                   "code": "200C011",
                   "title": "Mobile App Development",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "12",
@@ -715,7 +756,8 @@ export const allocation_data = [
                   "code": "200C014",
                   "title": "Networks",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "15",
@@ -744,7 +786,8 @@ export const allocation_data = [
                   "code": "300C002",
                   "title": "Data Structures",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "3",
@@ -759,28 +802,32 @@ export const allocation_data = [
                   "code": "300C004",
                   "title": "Algorithms",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "5",
                   "code": "300C005",
                   "title": "Operating Systems",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "6",
                   "code": "300C006",
                   "title": "Software Engineering",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "7",
                   "code": "300C007",
                   "title": "Database Systems",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "8",
@@ -811,7 +858,8 @@ export const allocation_data = [
                   "code": "300C011",
                   "title": "Mobile App Development",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "12",
@@ -826,21 +874,24 @@ export const allocation_data = [
                   "code": "300C013",
                   "title": "Cybersecurity Fundamentals",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "14",
                   "code": "300C014",
                   "title": "Networks",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "15",
                   "code": "300C015",
                   "title": "Human-Computer Interaction",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 }
               ]
             },
@@ -877,7 +928,8 @@ export const allocation_data = [
                   "code": "400C004",
                   "title": "Algorithms",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "5",
@@ -892,7 +944,8 @@ export const allocation_data = [
                   "code": "400C006",
                   "title": "Software Engineering",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "7",
@@ -907,28 +960,32 @@ export const allocation_data = [
                   "code": "400C008",
                   "title": "Artificial Intelligence",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "9",
                   "code": "400C009",
                   "title": "Machine Learning",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "10",
                   "code": "400C010",
                   "title": "Web Development",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "11",
                   "code": "400C011",
                   "title": "Mobile App Development",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "12",
@@ -943,14 +1000,16 @@ export const allocation_data = [
                   "code": "400C013",
                   "title": "Cybersecurity Fundamentals",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "14",
                   "code": "400C014",
                   "title": "Networks",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "15",
@@ -985,49 +1044,56 @@ export const allocation_data = [
                   "code": "100C002",
                   "title": "Data Structures",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "3",
                   "code": "100C003",
                   "title": "Computer Architecture",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "4",
                   "code": "100C004",
                   "title": "Algorithms",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "5",
                   "code": "100C005",
                   "title": "Operating Systems",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "6",
                   "code": "100C006",
                   "title": "Software Engineering",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "7",
                   "code": "100C007",
                   "title": "Database Systems",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "8",
                   "code": "100C008",
                   "title": "Artificial Intelligence",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "9",
@@ -1042,21 +1108,24 @@ export const allocation_data = [
                   "code": "100C010",
                   "title": "Web Development",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "11",
                   "code": "100C011",
                   "title": "Mobile App Development",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "12",
                   "code": "100C012",
                   "title": "Cloud Computing",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "13",
@@ -1071,7 +1140,8 @@ export const allocation_data = [
                   "code": "100C014",
                   "title": "Networks",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "15",
@@ -1092,14 +1162,16 @@ export const allocation_data = [
                   "code": "200C001",
                   "title": "Introduction to Programming",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "2",
                   "code": "200C002",
                   "title": "Data Structures",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "3",
@@ -1114,7 +1186,8 @@ export const allocation_data = [
                   "code": "200C004",
                   "title": "Algorithms",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "5",
@@ -1137,14 +1210,16 @@ export const allocation_data = [
                   "code": "200C007",
                   "title": "Database Systems",
                   "unit": 4,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "8",
                   "code": "200C008",
                   "title": "Artificial Intelligence",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "9",
@@ -1167,7 +1242,8 @@ export const allocation_data = [
                   "code": "200C011",
                   "title": "Mobile App Development",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "12",
@@ -1190,7 +1266,8 @@ export const allocation_data = [
                   "code": "200C014",
                   "title": "Networks",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "15",
@@ -1227,7 +1304,8 @@ export const allocation_data = [
                   "code": "300C003",
                   "title": "Computer Architecture",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "4",
@@ -1266,35 +1344,40 @@ export const allocation_data = [
                   "code": "300C008",
                   "title": "Artificial Intelligence",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "9",
                   "code": "300C009",
                   "title": "Machine Learning",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "10",
                   "code": "300C010",
                   "title": "Web Development",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "11",
                   "code": "300C011",
                   "title": "Mobile App Development",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "12",
                   "code": "300C012",
                   "title": "Cloud Computing",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "13",
@@ -1317,7 +1400,7 @@ export const allocation_data = [
                   "code": "300C015",
                   "title": "Human-Computer Interaction",
                   "unit": 2,
-                  "isAllocated": false
+                  "isAllocated": false,
                 }
               ]
             },
@@ -1330,14 +1413,15 @@ export const allocation_data = [
                   "code": "400C001",
                   "title": "Introduction to Programming",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": false,
                 },
                 {
                   "id": "2",
                   "code": "400C002",
                   "title": "Data Structures",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "3",
@@ -1384,7 +1468,8 @@ export const allocation_data = [
                   "code": "400C008",
                   "title": "Artificial Intelligence",
                   "unit": 3,
-                  "isAllocated": false
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "9",

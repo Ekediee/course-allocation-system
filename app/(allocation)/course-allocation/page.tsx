@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 import Link from 'next/link';
 
 import { Semester } from "@/data/constants";
@@ -25,9 +25,11 @@ const fetchSemesterData = async (): Promise<Semester[]> => {
 }
 
 const CourseAllocation = () => {
-    const {setPageHeader, setPageHeaderPeriod, setSelectedCourse, allocateCourse} = useAppContext()
+    const {setPageHeader, setPageHeaderPeriod, setSelectedCourse, allocateCourse, isLevelFullyAllocated} = useAppContext()
     const [activeSemester, setActiveSemester] = useState<string>("first");
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
+
+    const semesterdata = allocation_data.find(sem => sem.id === activeSemester);
     
     const { data: semesters, isLoading, error } = useQuery({
         queryKey: ['semesters'],
@@ -59,6 +61,10 @@ const CourseAllocation = () => {
             ...prev,
             [semesterId]: programId
         }));
+    };
+
+     const handleSubmit = () => {
+        console.log("Submitting semester allocation...");
     };
 
     if (isLoading) {
@@ -170,16 +176,27 @@ const CourseAllocation = () => {
                                 <Tabs defaultValue={program.levels[0]?.id} className="w-full">
                                 <div className="md:flex justify-between bg-gray-100 md:h-10">
                                 <TabsList className="grid grid-cols-4 md:flex md:justify-start md:h-10 md:grid-cols-4 gap-2 mb-2">
-                                    {program.levels.map((level) => (
-                                    <TabsTrigger key={level.id} value={level.id} className="bg-gray-100 md:h-8 data-[state=active]:bg-white">
-                                        {level.name}
-                                    </TabsTrigger>
-                                    ))}
+                                    {program.levels.map((level) => {
+                                        const isAllocated = isLevelFullyAllocated(
+                                            semester.id,
+                                            program.id,
+                                            level.id,
+                                            allocation_data
+                                        );
+                                        return(
+                                            <TabsTrigger key={level.id} value={level.id} className="bg-gray-100 md:h-8 data-[state=active]:bg-white">
+                                                {level.name}
+                                                {isAllocated && (
+                                                    <CheckCircle className="ml-2 w-4 h-4 text-green-500" />
+                                                )}
+                                            </TabsTrigger>
+                                        )
+                                    })}
                                 </TabsList>
                                 {allocateCourse === null ? "" : (<p>{allocateCourse?.code} - {allocateCourse?.title} {allocateCourse?.unit} - {allocateCourse?.allocatedTo}</p>)}
                                 <div className="flex justify-between space-x-2 mb-4">
                                     <Button variant="outline" className="text-gray-500">Print</Button>
-                                    <AllocateLecturerModal />
+                                    {semesterdata && <AllocateLecturerModal semester={semester} onSubmit={handleSubmit} />}
                                 </div>
                                 </div>
     

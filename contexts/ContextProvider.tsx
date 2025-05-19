@@ -77,6 +77,21 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       },
     ]);
 
+    const isLevelFullyAllocated = (
+      semesterId: string,
+      programId: string,
+      levelId: string,
+      allocationData: any
+    ): boolean => {
+      const semester = allocationData.find((s:any) => s.id === semesterId);
+      const program = semester?.programs.find((p:any) => p.id === programId);
+      const level = program?.levels.find((l:any) => l.id === levelId);
+      if (!level) return false;
+
+      return level.courses.every((course:any) => course.isAllocated);
+    }
+
+
 
     const updateCourse = (
         data: Semester[],
@@ -136,7 +151,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 pageHeaderPeriod, setPageHeaderPeriod,
                 selectedCourse, setSelectedCourse,
                 updateCourse, allocateCourse, setAllocateCourse,
-                groups, setGroups
+                groups, setGroups, isLevelFullyAllocated
             }}
         >
             { children }
