@@ -65,6 +65,13 @@ type AllocationStat = {
   status: string;
 };
 
+type OverallAllocationStat = {
+  totalPrograms: number;
+  unallocatedCourses: number;
+  allocatedCourses: number;
+  allocationRate: number; // as a percentage
+};
+
 
 export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -112,6 +119,44 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
             status: (totalCourses - allocatedCourses) === 0 ? "Completed": (totalCourses - allocatedCourses) === totalCourses ? "Not Started": "In Progress"
           });
         });
+      });
+
+      return stats;
+    };
+
+    const overallAllocationProgress = (allocationData: Semester[]): OverallAllocationStat[] => {
+      const stats: OverallAllocationStat[] = [];
+
+      let totalCourses = 0;
+      let allocatedCourses = 0;
+      let totalPrograms = 0;
+
+      allocationData.forEach((semester) => {
+        if(semester.id === "first" || semester.id === "second") {
+          semester.programs.forEach((program) => {
+            if(semester.id === "first") {
+              totalPrograms += 1;
+            }
+            
+            program.levels.forEach((level) => {
+              level.courses.forEach((course) => {
+                totalCourses += 1;
+                if (course.isAllocated) {
+                  allocatedCourses += 1;
+                }
+              });
+            });
+
+            
+          });
+        }
+      });
+
+      stats.push({
+        totalPrograms,
+        unallocatedCourses: totalCourses - allocatedCourses,
+        allocatedCourses,
+        allocationRate: totalCourses > 0 ? parseFloat(((allocatedCourses / totalCourses) * 100).toFixed(1)) : 0,
       });
 
       return stats;
@@ -191,7 +236,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 pageHeaderPeriod, setPageHeaderPeriod,
                 selectedCourse, setSelectedCourse,
                 updateCourse, allocateCourse, setAllocateCourse,
-                groups, setGroups, isLevelFullyAllocated, computeAllocationProgress
+                groups, setGroups, isLevelFullyAllocated, computeAllocationProgress,
+                overallAllocationProgress
             }}
         >
             { children }
