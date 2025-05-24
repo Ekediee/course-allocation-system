@@ -13,7 +13,7 @@ export const allocation_data = [
               "courses": [
                 {
                   "id": "1",
-                  "code": "100C001",
+                  "code": "GEDS 001",
                   "title": "Introduction to Programming",
                   "unit": 4,
                   "isAllocated": true,
@@ -21,7 +21,7 @@ export const allocation_data = [
                 },
                 {
                   "id": "2",
-                  "code": "100C002",
+                  "code": "GEDS 002",
                   "title": "Data Structures",
                   "unit": 3,
                   "isAllocated": false,
