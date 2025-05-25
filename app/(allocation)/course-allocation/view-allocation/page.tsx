@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useMemo, useRef } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { allocation_data } from "@/data/course_data";
@@ -134,33 +134,35 @@ const CourseAllocation = () => {
         </Tabs>
 
         <Tabs value={selectedProgram} onValueChange={setSelectedProgram} className="w-full">
-          <TabsList className="w-full flex flex-wrap">
+          <TabsList className="grid grid-cols-2 md:flex md:justify-start bg-transparent px-4 h-20 md:h-10 gap-2 mb-3 md:mb-2">
             {programs.map((progId) => (
-              <TabsTrigger key={progId} value={progId} className="capitalize">
+              <TabsTrigger key={progId} value={progId} className="capitalize bg-white md:w-56 md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white">
                 {progId.replace(/_/g, " ")}
               </TabsTrigger>
             ))}
           </TabsList>
         </Tabs>
 
-        <Tabs value={selectedLevelId} onValueChange={setSelectedLevelId} className="w-full">
-          <TabsList className="w-full flex flex-wrap">
-            {levels.map((level) => (
-              <TabsTrigger key={level.id} value={level.id}>
-                {level.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <div className="flex justify-between items-center">
+          <Tabs value={selectedLevelId} onValueChange={setSelectedLevelId} className="w-full">
+            <TabsList className="grid grid-cols-4 md:flex md:justify-start bg-transparent px-4 md:h-10 md:grid-cols-4 gap-2">
+              {levels.map((level) => (
+                <TabsTrigger key={level.id} value={level.id} className="bg-gray-100 md:h-8 data-[state=active]:bg-white">
+                  {level.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+
+          <div className="flex justify-end gap-2 px-4">
+            {/* <Button onClick={handlePrint}>Print</Button> */}
+            <Button onClick={handleDownloadPDF} className="bg-gray-900">PDF</Button>
+            <Button onClick={handleDownloadCSV} className="bg-gray-900">CSV</Button>
+          </div>
+        </div>
       </div>
 
-      <div className="flex gap-2">
-        <Button onClick={handlePrint}>Print</Button>
-        <Button onClick={handleDownloadPDF}>PDF</Button>
-        <Button onClick={handleDownloadCSV}>CSV</Button>
-      </div>
-
-      <div className="grid gap-6">
+      <div className="grid gap-6 mx-4 my-2">
         <Card>
           <CardContent className="p-4">
             <div ref={printRef}>
@@ -172,7 +174,7 @@ const CourseAllocation = () => {
 
               {general.length > 0 && (
                 <>
-                  <h2 className="text-lg font-semibold mt-4 bg-gray-200 p-2 rounded">GENERAL COURSES</h2>
+                  <h2 className="font-semibold mt-4 bg-gray-200 p-2 rounded">GENERAL COURSES</h2>
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-gray-100 p-2 rounded">
@@ -180,7 +182,7 @@ const CourseAllocation = () => {
                         <th className="text-left">Code</th>
                         <th className="text-left">Title</th>
                         <th className="text-left">Unit</th>
-                        <th className="text-left">Allocated To</th>
+                        <th className="text-left">Lecturer</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -200,7 +202,7 @@ const CourseAllocation = () => {
 
               {core.length > 0 && (
                 <>
-                  <h2 className="text-lg font-semibold mt-4 bg-gray-200 p-2 rounded">CORE COURSES</h2>
+                  <h2 className="font-semibold mt-4 bg-gray-200 p-2 rounded">CORE COURSES</h2>
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-gray-100 p-2 rounded">
@@ -208,7 +210,7 @@ const CourseAllocation = () => {
                         <th className="text-left">Code</th>
                         <th className="text-left">Title</th>
                         <th className="text-left">Unit</th>
-                        <th className="text-left">Allocated To</th>
+                        <th className="text-left">Lecturer</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -226,8 +228,9 @@ const CourseAllocation = () => {
                 </>
               )}
 
-              <div className="mt-4 text-center font-semibold text-lg bg-black text-white p-2 rounded">
-                Total: {totalUnits}
+              <div className="flex mt-4 justify-between font-semibold text-lg bg-gray-900 text-white p-2 rounded">
+                <div className="w-full ml-[245px]">Total</div>
+                 <div className="w-full ml-[300px]">{totalUnits}</div>
               </div>
             </div>
           </CardContent>

@@ -24,18 +24,20 @@ export const allocation_data = [
                   "code": "GEDS 002",
                   "title": "Data Structures",
                   "unit": 3,
-                  "isAllocated": false,
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "3",
-                  "code": "100C003",
+                  "code": "GEDS 003",
                   "title": "Computer Architecture",
                   "unit": 4,
-                  "isAllocated": false,
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "4",
-                  "code": "100C004",
+                  "code": "GEDS 004",
                   "title": "Algorithms",
                   "unit": 3,
                   "isAllocated": true,
@@ -54,7 +56,8 @@ export const allocation_data = [
                   "code": "100C006",
                   "title": "Software Engineering",
                   "unit": 3,
-                  "isAllocated": false,
+                  "isAllocated": true,
+                  "allocatedTo": "Dr. Wilson"
                 },
                 {
                   "id": "7",
