@@ -229,8 +229,8 @@ const CourseAllocation = () => {
               )}
 
               <div className="flex mt-4 justify-between font-semibold text-lg bg-gray-900 text-white p-2 rounded">
-                <div className="w-full ml-[245px]">Total</div>
-                 <div className="w-full ml-[300px]">{totalUnits}</div>
+                <div className="w-full text-center pr-[70px]">Total</div>
+                 <div className="w-full text-center pr-[40px]">{totalUnits}</div>
               </div>
             </div>
           </CardContent>
