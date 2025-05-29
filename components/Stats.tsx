@@ -7,12 +7,21 @@ import {
     FileText
   } from "lucide-react";
 import { useAppContext } from '@/contexts/ContextProvider';
-import { allocation_data } from '@/data/course_data';
+// import { allocation_data } from '@/data/course_data';
+import { useQuery } from "@tanstack/react-query";
+import { Semester } from "@/data/constants";
 
 const Stats = () => {
     const [departmentalLecturers, setDepartmentalLecturers] = useState(43);
 
-    const {overallAllocationProgress} = useAppContext()
+    const {overallAllocationProgress, fetchSemesterData} = useAppContext()
+
+    const queryResult = useQuery<Semester[]>({
+            queryKey: ['semesters'],
+            queryFn: fetchSemesterData
+        });
+    
+    const { data: allocation_data, isLoading, error } = queryResult;
       
     const allocationProgress = overallAllocationProgress(allocation_data)
     const allocatedCourses = allocationProgress[0].allocatedCourses

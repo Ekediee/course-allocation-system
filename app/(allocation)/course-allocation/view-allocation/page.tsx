@@ -1,31 +1,83 @@
 "use client";
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { allocation_data } from "@/data/course_data";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+// import { allocation_data } from "@/data/course_data";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { saveAs } from "file-saver";
+import { usePathname } from 'next/navigation';
+import { useAppContext } from "@/contexts/ContextProvider";
+import { useQuery } from "@tanstack/react-query";
+import { Semester } from "@/data/constants";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CourseAllocation = () => {
-  const semesters = useMemo(() => allocation_data.map((sem) => sem.id), []);
-  const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
+  const {fetchSemesterData, prevPath, fetchSemesterDataDE} = useAppContext()
+  
+  
+  console.log("Previous Path:", prevPath);
+  // const { data: allocation_data, isLoading, error } = useQuery<Semester[]>({
+  //     queryKey: ['semesters'],
+  //     queryFn: fetchSemesterData
+  // });
 
+  const queryResult = prevPath === "/course-allocation"
+    ? useQuery<Semester[]>({
+        queryKey: ['semesters'],
+        queryFn: fetchSemesterData
+    })
+    : useQuery<Semester[]>({
+        queryKey: ['semesters'],
+        queryFn: fetchSemesterDataDE
+    });
+
+  const { data: allocation_data, isLoading, error } = queryResult;
+
+  // const allocat = fetchSemesterData()
+
+  // console.log("Allocation Data:", allocat);
+
+  // const semesters = useMemo(() => allocation_data?.map((sem) => sem.id), []);
+  // const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
+
+  const semesters = useMemo(() => allocation_data?.map((sem) => sem.id) ?? [], [allocation_data]);
+  const [selectedSemester, setSelectedSemester] = useState<string | undefined>("");
+
+  // Set selectedSemester when semesters are loaded
+  useEffect(() => {
+    if (semesters.length > 0 && !selectedSemester) {
+      setSelectedSemester(semesters[0]);
+    }
+  }, [semesters, selectedSemester]);
+  
   const programs = useMemo(() => {
-    const semester = allocation_data.find((sem) => sem.id === selectedSemester);
+    const semester = allocation_data?.find((sem) => sem.id === selectedSemester);
     return semester ? semester.programs.map((p) => p.id) : [];
   }, [selectedSemester]);
 
   const [selectedProgram, setSelectedProgram] = useState(programs[0]);
 
+  useEffect(() => {
+    if (programs.length > 0 && !selectedProgram) {
+      setSelectedProgram(programs[0]);
+    }
+  }, [programs, selectedProgram]);
+
   const selectedData = useMemo(() => {
-    const semester = allocation_data.find((sem) => sem.id === selectedSemester);
+    const semester = allocation_data?.find((sem) => sem.id === selectedSemester);
     return semester?.programs.find((p) => p.id === selectedProgram);
   }, [selectedSemester, selectedProgram]);
 
   const levels = selectedData?.levels || [];
   const [selectedLevelId, setSelectedLevelId] = useState(levels[0]?.id);
+
+  useEffect(() => {
+    if (levels.length > 0 && !selectedLevelId) {
+      setSelectedLevelId(levels[0].id);
+    }
+  }, [levels, selectedLevelId]);
 
   const currentLevel = levels.find((l) => l.id === selectedLevelId);
   const printRef = useRef<HTMLDivElement>(null);
@@ -50,7 +102,7 @@ const CourseAllocation = () => {
     const doc = new jsPDF();
     doc.setFontSize(12);
 
-    const headerText = `${selectedProgram.replace(/_/g, " ").toUpperCase()}\n${selectedSemester.toUpperCase()} SEMESTER COURSE ALLOCATION\n${currentLevel?.name.toUpperCase()} COURSES`;
+    const headerText = `${selectedProgram.replace(/_/g, " ").toUpperCase()}\n${selectedSemester?.toUpperCase()} SEMESTER COURSE ALLOCATION\n${currentLevel?.name.toUpperCase()} COURSES`;
     const lines = doc.splitTextToSize(headerText, 180);
     const pageWidth = doc.internal.pageSize.getWidth();
     const textHeight = 7;
@@ -106,7 +158,7 @@ const CourseAllocation = () => {
   };
 
   const handleDownloadCSV = () => {
-      const headerText = `${selectedProgram.replace(/_/g, " ").toUpperCase()}\n${selectedSemester.toUpperCase()} SEMESTER COURSE ALLOCATION\n${currentLevel?.name.toUpperCase()} COURSES\n\n`;
+      const headerText = `${selectedProgram.replace(/_/g, " ").toUpperCase()}\n${selectedSemester?.toUpperCase()} SEMESTER COURSE ALLOCATION\n${currentLevel?.name.toUpperCase()} COURSES\n\n`;
       const header = "Code,Title,Unit,Allocated To\n";
       const rows = [...general, ...core]
         .map((c) => `${c.code},${c.title},${c.unit},${c.allocatedTo}`)
@@ -118,6 +170,57 @@ const CourseAllocation = () => {
       saveAs(blob, "course_allocation.csv");
   };
 
+  if (isLoading) {
+        return (
+            <div className="p-8">
+                <div className="flex items-center justify-start mb-2 gap-4">
+                    <Skeleton className="h-12 w-[200px] mb-1" />
+                    <Skeleton className="h-12 w-[200px] mb-1" />
+                    <Skeleton className="h-12 w-[200px] mb-1" />
+                </div>
+                <div className="flex items-center justify-start mb-2 gap-4">
+                    <Skeleton className="h-10 w-[300px] mb-1" />
+                    <Skeleton className="h-10 w-[300px] mb-1" />
+                    <Skeleton className="h-10 w-[300px] mb-1" />
+                </div>
+                <div className="flex items-center justify-start mb-2 gap-4">
+                    <Skeleton className="h-10 w-[100px] mb-6" />
+                    <Skeleton className="h-10 w-[100px] mb-6" />
+                    <Skeleton className="h-10 w-[100px] mb-6" />
+                </div>
+                <Card className="p-4 md:p-6 max-w-full">
+                    <CardContent>
+                        <div className="space-y-4">
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+  if (error) {
+      return (
+          <Card className="max-w-3xl mx-auto mt-8">
+          <CardHeader>
+              <CardTitle className="text-destructive">Error</CardTitle>
+              <CardDescription>Failed to load course allocation data</CardDescription>
+          </CardHeader>
+          <CardContent>
+              <p>Please try again later or contact support.</p>
+          </CardContent>
+          </Card>
+      );
+  }
+
   return (
     <>
       {/* <h1 className="text-2xl font-bold">Course Allocation</h1> */}
@@ -125,7 +228,7 @@ const CourseAllocation = () => {
       <div className="space-y-2">
         <Tabs value={selectedSemester} onValueChange={setSelectedSemester} className="w-full">
           <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-8 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-100">
-            {allocation_data.map((sem) => (
+            {allocation_data?.map((sem) => (
               <TabsTrigger key={sem.id} value={sem.id} className="capitalize rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6">
                 {sem.name}
               </TabsTrigger>
@@ -167,8 +270,8 @@ const CourseAllocation = () => {
           <CardContent className="p-4">
             <div ref={printRef}>
               <div className="text-center mb-4">
-                <p className="font-semibold">B.Sc (Hons.) {selectedProgram.replace(/_/g, " ").toUpperCase()}</p>
-                <p className="font-semibold">{selectedSemester.toUpperCase()} SEMESTER COURSE ALLOCATION</p>
+                <p className="font-semibold">B.Sc (Hons.) {selectedProgram?.replace(/_/g, " ").toUpperCase()}</p>
+                <p className="font-semibold">{selectedSemester?.toUpperCase()} SEMESTER COURSE ALLOCATION</p>
                 <p className="font-semibold">{currentLevel?.name.toUpperCase()} COURSES</p>
               </div>
 

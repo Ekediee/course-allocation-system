@@ -81,6 +81,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [totalCourses, setTotalCourses] = useState(56);
     const [pageHeader, setPageHeader] = useState<string>("Dashboard");
     const [pageHeaderPeriod, setPageHeaderPeriod] = useState<string>("Summer 24/25.3");
+    const [prevPath, setPrevPath] = useState<string>("/course-allocation");
     const [selectedCourse, setSelectedCourse] = useState<CourseSelect | null>(null);
     const [allocateCourse, setAllocateCourse] = useState<AllocatedCourse | null>(null);
     const [groups, setGroups] = useState([
@@ -96,7 +97,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const computeAllocationProgress = (allocationData: Semester[]): AllocationStat[] => {
       const stats: AllocationStat[] = [];
 
-      allocationData.forEach((semester) => {
+      allocationData?.forEach((semester) => {
         semester.programs.forEach((program) => {
           let totalCourses = 0;
           let allocatedCourses = 0;
@@ -131,7 +132,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       let allocatedCourses = 0;
       let totalPrograms = 0;
 
-      allocationData.forEach((semester) => {
+      allocationData?.forEach((semester) => {
         if(semester.id === "first" || semester.id === "second") {
           semester.programs.forEach((program) => {
             if(semester.id === "first") {
@@ -227,6 +228,18 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         setSidebarOpen(!sidebarOpen);
       };
 
+    const fetchSemesterData = async () => {
+      const res = await fetch('https://mocki.io/v1/3e18188b-b1e1-403e-8e63-b2a5132cab79');
+      if (!res.ok) throw new Error('Network error');
+      return res.json();
+    };
+
+    const fetchSemesterDataDE = async () => {
+      const res = await fetch('https://mocki.io/v1/0ccbb67f-a0fd-456d-bb69-d3b67b882bc6');
+      if (!res.ok) throw new Error('Network error');
+      return await res.json();
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -237,7 +250,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 selectedCourse, setSelectedCourse,
                 updateCourse, allocateCourse, setAllocateCourse,
                 groups, setGroups, isLevelFullyAllocated, computeAllocationProgress,
-                overallAllocationProgress
+                overallAllocationProgress, fetchSemesterData, fetchSemesterDataDE,
+                prevPath, setPrevPath
             }}
         >
             { children }
