@@ -77,7 +77,6 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [allocatedCourses, setAllocatedCourses] = useState(0);
     const [departmentalLecturers, setDepartmentalLecturers] = useState(43);
-    const [programs, setPrograms] = useState(3);
     const [totalCourses, setTotalCourses] = useState(56);
     const [pageHeader, setPageHeader] = useState<string>("Dashboard");
     const [pageHeaderPeriod, setPageHeaderPeriod] = useState<string>("Summer 24/25.3");
@@ -93,6 +92,11 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         classHours: "",
       },
     ]);
+    const [selectedBulletin, setSelectedBulletin] = useState<string>('');
+    const [semesters, setSemesters] = useState<string[]>([]);
+    const [programs, setPrograms] = useState<string[]>([]);
+    const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
+    const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
 
     const computeAllocationProgress = (allocationData: Semester[]): AllocationStat[] => {
       const stats: AllocationStat[] = [];
@@ -240,6 +244,12 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       return await res.json();
     };
 
+    const fetchProgramSA = async () => {
+      const res = await fetch('https://mocki.io/v1/978433f4-ff36-4321-b79f-560f10b5ab81');
+      if (!res.ok) throw new Error('Network error');
+      return await res.json();
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -251,7 +261,9 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 updateCourse, allocateCourse, setAllocateCourse,
                 groups, setGroups, isLevelFullyAllocated, computeAllocationProgress,
                 overallAllocationProgress, fetchSemesterData, fetchSemesterDataDE,
-                prevPath, setPrevPath
+                prevPath, setPrevPath, selectedBulletin, setSelectedBulletin,
+                programs, setPrograms, selectedProgram, setSelectedProgram, fetchProgramSA,
+                semesters, setSemesters, selectedSemester, setSelectedSemester
             }}
         >
             { children }

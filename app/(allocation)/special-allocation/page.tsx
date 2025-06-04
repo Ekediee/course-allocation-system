@@ -25,7 +25,7 @@ const SpecialAllocation = () => {
             </div>
 
             <Link
-              href={{ pathname: "/special-allocation/allocate" }}
+              href={{ pathname: "/special-allocation/bulletin" }}
             >
               <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2 self-start sm:self-center">
                 <Plus className="h-4 w-4" />
@@ -58,7 +58,7 @@ const SpecialAllocation = () => {
         </p>
         
         <Link
-          href={{ pathname: "/special-allocation/allocate" }}
+          href={{ pathname: "/special-allocation/bulletin" }}
         >
           <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
             <Plus className="h-4 w-4" />

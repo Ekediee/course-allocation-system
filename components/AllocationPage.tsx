@@ -156,7 +156,7 @@ const AllocationPage = ({allocationPage}: any) => {
                     </CardHeader>
                     <CardContent>
                     {/* No programs message */}
-                    {semester.programs.length === 0 ? (
+                    {semester.programs?.length === 0 ? (
                         <div className="p-4 text-center text-muted-foreground">
                         No programs available for this semester
                         </div>
