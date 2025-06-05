@@ -28,14 +28,14 @@ const CourseAllocation = () => {
     const {setPrevPath, 
     } = useAppContext()
 
-    setPrevPath("/de-allocation");
+    // setPrevPath("/de-allocation");
     
     const allocationPage = "DE Allocation";
 
 
   return (
     <>
-        <AllocationPage allocationPage={allocationPage} />
+        <AllocationPage allocationPage={allocationPage} url="de-allocation" />
     </>
   )
 }

@@ -107,7 +107,10 @@ const Allocate = () => {
                                         <Badge variant="outline" >
                                             <Link 
                                                 href={{
-                                                    pathname:"/course-allocation/allocate"
+                                                    pathname:"/course-allocation/allocate",
+                                                    query: {
+                                                        from: "special-allocation/bulletin/allocate",
+                                                    },
                                                 }} 
                                                 className="text-blue-500 hover:text-blue-700"
                                                 onClick={() => setSelectedCourse({

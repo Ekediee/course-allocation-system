@@ -6,7 +6,7 @@ import { ArrowLeft, Plus } from "lucide-react";
 
 import { useAppContext } from '@/contexts/ContextProvider'
 import Link from "next/link";
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { allocation_data } from "@/data/course_data";
 import AllocateLecturerModal from "@/components/AllocateLecturerModal";
@@ -16,6 +16,7 @@ import VerifyAllocation from "@/components/verifyAllocation";
 const Allocate = () => {
   const { toast } = useToast()
   const router = useRouter()
+  const searchParams = useSearchParams();
   const { 
     selectedCourse, 
     updateCourse, 
@@ -53,6 +54,8 @@ const Allocate = () => {
     );
   };
 
+  const from = searchParams.get('from') || 'course-allocation';
+
   const handleConfirmAllocation = () => {
     // console.log("Allocated for: ", 
     //   selectedCourse.courseCode, 
@@ -86,7 +89,7 @@ const Allocate = () => {
           description: selectedCourse.courseCode + " - " + selectedCourse.courseTitle + " has been allocated to " + group.lecturer,
         })
 
-        router.push("/course-allocation") 
+        router.push(`/${from}`); 
       }
     });
 

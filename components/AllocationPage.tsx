@@ -17,7 +17,7 @@ import AllocateLecturerModal from "@/components/AllocateLecturerModal";
 import PrintLink from "./PrintLink";
 
 
-const AllocationPage = ({allocationPage}: any) => {
+const AllocationPage = ({allocationPage, url}: any) => {
     const {setPageHeader, 
         setPageHeaderPeriod, 
         setSelectedCourse, 
@@ -252,7 +252,10 @@ const AllocationPage = ({allocationPage}: any) => {
                                                     <Badge variant="outline" >
                                                         <Link 
                                                             href={{
-                                                                pathname:"/course-allocation/allocate"
+                                                                pathname:"/course-allocation/allocate",
+                                                                query: {
+                                                                    from: url,
+                                                                },
                                                             }} 
                                                             className="text-blue-500 hover:text-blue-700"
                                                             onClick={() => setSelectedCourse({

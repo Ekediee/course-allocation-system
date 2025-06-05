@@ -102,7 +102,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       const stats: AllocationStat[] = [];
 
       allocationData?.forEach((semester) => {
-        semester.programs.forEach((program) => {
+        semester.programs?.forEach((program) => {
           let totalCourses = 0;
           let allocatedCourses = 0;
 
@@ -233,19 +233,25 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       };
 
     const fetchSemesterData = async () => {
-      const res = await fetch('https://mocki.io/v1/3e18188b-b1e1-403e-8e63-b2a5132cab79');
+      const apiUrl = process.env.NEXT_PUBLIC_ALLOCATION_API;
+      if (!apiUrl) throw new Error('NEXT_PUBLIC_ALLOCATION_API is not set');
+      const res = await fetch(apiUrl);
       if (!res.ok) throw new Error('Network error');
       return res.json();
     };
 
     const fetchSemesterDataDE = async () => {
-      const res = await fetch('https://mocki.io/v1/0ccbb67f-a0fd-456d-bb69-d3b67b882bc6');
+      const apiUrl = process.env.NEXT_PUBLIC_DE_ALLOCATION_API;
+      if (!apiUrl) throw new Error('NEXT_PUBLIC_DE_ALLOCATION_API is not set');
+      const res = await fetch(apiUrl);
       if (!res.ok) throw new Error('Network error');
       return await res.json();
     };
 
     const fetchProgramSA = async () => {
-      const res = await fetch('https://mocki.io/v1/978433f4-ff36-4321-b79f-560f10b5ab81');
+      const apiUrl = process.env.NEXT_PUBLIC_SA_COURSES_API;
+      if (!apiUrl) throw new Error('NEXT_PUBLIC_PROGRAM_SA_API is not set');
+      const res = await fetch(apiUrl);
       if (!res.ok) throw new Error('Network error');
       return await res.json();
     };

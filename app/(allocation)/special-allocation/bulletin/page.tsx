@@ -45,7 +45,10 @@ const StepperPage = () => {
     setLoading(true);
     try {
       // Simulate API call based on selected bulletin
-      const response = await fetch('https://mocki.io/v1/e75d0873-d9ca-4fac-90f7-0a95661c51b0');
+      
+      const apiUrl = process.env.NEXT_PUBLIC_SA_PROGRAM_API;
+      if (!apiUrl) throw new Error('NEXT_PUBLIC_SA_PROGRAM_API is not set');
+      const response = await fetch(apiUrl);
       const data = await response.json();
       return data
       // console.log('Fetched programs:', data);
@@ -61,7 +64,9 @@ const StepperPage = () => {
     setLoading(true);
     try {
       // Simulate API call based on selected bulletin
-      const response = await fetch('https://mocki.io/v1/d42a6792-b904-4c38-9429-b505bfe05d71');
+      const apiUrl = process.env.NEXT_PUBLIC_SEMESTER_API;
+      if (!apiUrl) throw new Error('NEXT_PUBLIC_SEMESTER_API is not set');
+      const response = await fetch(apiUrl);
       const data = await response.json();
       // console.log('Fetched semesters:', data);
       return data
