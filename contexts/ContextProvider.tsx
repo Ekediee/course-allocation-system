@@ -97,6 +97,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [programs, setPrograms] = useState<string[]>([]);
     const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
     const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
     const computeAllocationProgress = (allocationData: Semester[]): AllocationStat[] => {
       const stats: AllocationStat[] = [];
@@ -235,7 +237,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const fetchSemesterData = async () => {
       const apiUrl = process.env.NEXT_PUBLIC_ALLOCATION_API;
       if (!apiUrl) throw new Error('NEXT_PUBLIC_ALLOCATION_API is not set');
-      const res = await fetch(apiUrl);
+      // const res = await fetch(apiUrl);
+      const res = await fetch('/api/allocation');
       if (!res.ok) throw new Error('Network error');
       return res.json();
     };
@@ -269,7 +272,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 overallAllocationProgress, fetchSemesterData, fetchSemesterDataDE,
                 prevPath, setPrevPath, selectedBulletin, setSelectedBulletin,
                 programs, setPrograms, selectedProgram, setSelectedProgram, fetchProgramSA,
-                semesters, setSemesters, selectedSemester, setSelectedSemester
+                semesters, setSemesters, selectedSemester, setSelectedSemester,
+                username, setUsername, password, setPassword,
             }}
         >
             { children }

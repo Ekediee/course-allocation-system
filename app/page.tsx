@@ -6,17 +6,58 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation"
+import { useAppContext } from '@/contexts/ContextProvider';
 
 const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const {
+    username,
+    setUsername,
+    password,
+    setPassword,
+  } = useAppContext()
 
   const router = useRouter();
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     // Handle login logic here
-    console.log("Login button clicked");
-    router.push("/dashboard")
+    try {
+      const res = await fetch('http://127.0.0.1:5000/api/v1/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "email": username,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('role', data.user.role);
+        localStorage.setItem('email', data.user.email);
+        localStorage.setItem('name', data.user.name);
+
+        // Redirect based on role
+        switch (data.role) {
+          case 'hod':
+            router.push('/dashboard');
+            break;
+          default:
+            router.push('/dashboard');
+        }
+      } else {
+        alert(data.msg || 'Login failed');
+      }
+      
+    } catch (err) {
+      // setError('Login failed: ' + (err as Error).message);
+    }
+    // router.push("/dashboard")
   };
 
   return (
@@ -76,10 +117,12 @@ const Login = () => {
                 Email Address<span className="text-blue-500 ml-1">*</span>
               </Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="johnd@babcock.edu.ng"
+                id="username"
+                type="text"
+                placeholder="enter your username"
                 className="h-12"
+                value={username} 
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
@@ -94,6 +137,8 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••••"
                   className="h-12 pr-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <button 
