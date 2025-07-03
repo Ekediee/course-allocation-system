@@ -26,7 +26,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
         fetchSemesterDataDE,
         fetchSemesterData
     } = useAppContext()
-    const [activeSemester, setActiveSemester] = useState<string>("first");
+    const [activeSemester, setActiveSemester] = useState<string>('');
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
 
 
@@ -42,11 +42,17 @@ const AllocationPage = ({allocationPage, url}: any) => {
         });
 
     const { data: semesters, isLoading, error } = queryResult;
+
+    // useEffect(() => {
+    //     if (semesters && semesters.length > 0) {
+    //         setActiveSemester(semesters[0].id);
+    //     }
+    // }, [semesters]);
     
     const semesterdata: Semester | undefined = semesters?.find(
-        (sem: Semester) => sem.id === activeSemester
+        (sem: Semester) => sem.id === semesters[0].id
     );
-
+    // console.log("check active semester: ", activeSemester);
     // Set default active program for each semester when data is loaded
     useEffect(() => {
         if (semesters) {
@@ -60,13 +66,13 @@ const AllocationPage = ({allocationPage, url}: any) => {
         }
 
         setPageHeader(allocationPage)
-        setPageHeaderPeriod("First 24/25.3");
+        // setPageHeaderPeriod("First 24/25.3");
     }, [semesters]);
 
     const handleSemesterChange = (semesterId: string) => {
-        setActiveSemester(semesterId);
-        let sem = semesterId.toUpperCase() + " Semester";
-        setPageHeaderPeriod(sem)
+        setActiveSemester(semesters && semesters.length > 0 ? semesters[0].id : "");
+        // let sem = semesterId.toUpperCase() + " Semester";
+        // setPageHeaderPeriod(semesterId)
     };
 
     const handleProgramChange = (semesterId: string, programId: string) => {
@@ -134,10 +140,10 @@ const AllocationPage = ({allocationPage, url}: any) => {
   return (
     <>
         {/* First layer: Semester Tabs */}
-        <Tabs defaultValue={activeSemester} onValueChange={handleSemesterChange} className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-8 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-100">
+        <Tabs defaultValue={semesters && semesters.length > 0 ? semesters[0].id : ""} onValueChange={handleSemesterChange} className="w-full">
+            <TabsList className="w-full justify-start rounded-none border-b h-8 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-20">
                 {semesters?.map((semester: Semester) => (
-                <TabsTrigger key={semester.id} value={semester.id} className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6">
+                <TabsTrigger key={semester.id} value={semester.id} className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20">
                     {semester.name}
                 </TabsTrigger>
                 ))}
@@ -227,7 +233,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                         <Table>
                                         <TableHeader>
                                             <TableRow>
-                                            <TableHead>SN</TableHead>
+                                            {/* <TableHead>SN</TableHead> */}
                                             <TableHead>Course Code</TableHead>
                                             <TableHead>Course Title</TableHead>
                                             <TableHead>Unit</TableHead>
@@ -238,7 +244,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                         <TableBody>
                                             {level.courses.map((course: Course) => (
                                             <TableRow key={course.id}>
-                                                <TableCell className="font-medium">{course.id}</TableCell>
+                                                {/* <TableCell className="font-medium">{course.id}</TableCell> */}
                                                 <TableCell >{course.code}</TableCell>
                                                 <TableCell>{course.title}</TableCell>
                                                 <TableCell>{course.unit}</TableCell>

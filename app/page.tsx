@@ -15,6 +15,7 @@ const Login = () => {
     setUsername,
     password,
     setPassword,
+    login
   } = useAppContext()
 
   const router = useRouter();
@@ -37,13 +38,10 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('role', data.user.role);
-        localStorage.setItem('email', data.user.email);
-        localStorage.setItem('name', data.user.name);
+        login(data.access_token, data.user.role, data.user.name);
 
         // Redirect based on role
-        switch (data.role) {
+        switch (data.user.role) {
           case 'hod':
             router.push('/dashboard');
             break;

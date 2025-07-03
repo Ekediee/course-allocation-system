@@ -54,7 +54,7 @@ const AllocateLecturerModal = ({ semester, onSubmit }: Props) => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="secondary" 
-          className={allAllocated ? "bg-blue-700 hover:bg-blue-400 text-white": "text-gray-500"} 
+          className={allAllocated ? "bg-blue-700 hover:bg-blue-400 text-white": "text-gray-500 "} 
           disabled={!allAllocated}
         >Submit Allocation</Button>
       </DialogTrigger>
