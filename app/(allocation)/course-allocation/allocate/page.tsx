@@ -21,7 +21,8 @@ const Allocate = () => {
     selectedCourse, 
     updateCourse, 
     setAllocateCourse,
-    groups, setGroups 
+    groups, setGroups,
+    token 
   } = useAppContext()
   
 
@@ -56,24 +57,12 @@ const Allocate = () => {
 
   const from = searchParams.get('from') || 'course-allocation';
 
-  const handleConfirmAllocation = () => {
-    // console.log("Allocated for: ", 
-    //   selectedCourse.courseCode, 
-    //   selectedCourse.courseTitle, 
-    //   selectedCourse.programName,
-    //   group.group.lecturer,
-    //   group.classHours,
-    //   true
-    // ); 
+  const handleConfirmAllocation = async () => {
 
-    groups.forEach((group:any) => {
-    //   setAllocateCourse({ 
-    //     code: selectedCourse.courseCode, 
-    //     title: selectedCourse.courseTitle, 
-    //     unit: group.classHours,
-    //     isAllocated: true,
-    //     allocatedTo: group.lecturer,
-    //  });
+    const data: any[] = [];
+
+    groups.forEach((group:any) => {      
+      
       if (group.lecturer === "" || group.classHours === "" || group.classSize === "") {
         toast({
           variant: "destructive",
@@ -82,30 +71,36 @@ const Allocate = () => {
         });
         return;
       }else {
-
-        toast({
-          variant: "success",
-          title: "Lecturer Allocated",
-          description: selectedCourse.courseCode + " - " + selectedCourse.courseTitle + " has been allocated to " + group.lecturer,
-        })
-
-        router.push(`/${from}`); 
+        data.push({
+          code: selectedCourse.courseCode,
+          title: selectedCourse.courseTitle,
+          unit: group.classHours,
+          isAllocated: true,
+          allocatedTo: group.lecturer
+        });
       }
+      
     });
 
-    // groups.forEach((group) => {
-    //   updateCourse(allocation_data, {
-    //     semesterId: selectedCourse.semesterId,
-    //     programId: selectedCourse.programId,
-    //     levelId: selectedCourse.levelId,
-    //     courseId: selectedCourse.courseId,
-    //     updates: {
-    //       unit: group.classHours,
-    //       isAllocated: true,
-    //       allocatedTo: group.lecturer
-    //     }
-    //   });
-    // });
+    const allocatedCourse = JSON.stringify(data)
+
+    const res = await fetch(`/api/allocation?token=${token}`,{
+      method: 'POST',
+      body: allocatedCourse
+    });
+
+    const resdata = await res.json();
+
+    resdata.forEach((data: any) =>{
+      toast({
+        variant: "success",
+        title: "Lecturer Allocated for:",
+        description: data.code + " - " + data.title
+      })
+    })
+
+
+    router.push(`/${from}`);
   };
 
   return (
