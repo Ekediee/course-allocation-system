@@ -10,6 +10,10 @@ import {
 } from "@/components/ui/select";
 import { Trash } from "lucide-react";
 import { Button } from "./ui/button";
+import { Combobox } from "./ComboBox";
+import { useQuery } from '@tanstack/react-query';
+import { Lecturer } from "@/data/constants";
+import { useAppContext } from '@/contexts/ContextProvider'
 
 interface GroupCardProps {
   group: {
@@ -24,16 +28,18 @@ interface GroupCardProps {
   showDelete?: boolean;
 }
 
-const lecturers = [
-  "Ernest Onuiri",
-  "Eze Monday",
-  "John Smith",
-  "Jane Doe",
-  "Paul Tanaka",
-  "Sarah Williams",
-];
-
 const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardProps) => {
+    const {setPageHeader, 
+        fetchLecturers
+    } = useAppContext();
+
+    const queryResult = useQuery<Lecturer[]>({
+        queryKey: ['lecturers'],
+        queryFn: fetchLecturers
+    });
+
+    const { data: lecturers, isLoading, error } = queryResult;
+    
     return (
         <Card className="mb-6 relative group">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between border-b">
@@ -52,28 +58,36 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
           </CardHeader>
           <CardContent className="p-4 ">
             <div className="space-y-4">
-              <div>
-                <label htmlFor={`lecturer-${group.id}`} className="text-sm font-medium block mb-1.5">
-                  Lecturer's Name
-                </label>
-                <Select 
-                  value={group.lecturer}
-                  onValueChange={(value: any) => onUpdate(group.id, "lecturer", value)}
-                >
-                  <SelectTrigger id={`lecturer-${group.id}`} className="w-full">
-                    <SelectValue placeholder="Select a lecturer" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {lecturers.map((lecturer) => (
-                      <SelectItem key={lecturer} value={lecturer}>
-                        {lecturer}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  {/* <label htmlFor={`lecturer-${group.id}`} className="text-sm font-medium block mb-1.5">
+                    Lecturer's Name
+                  </label> */}
+                  <Combobox
+                    value={group.lecturer}
+                    onChange={(val) => onUpdate(group.id, 'lecturer', val)}
+                    data={lecturers ?? []}
+                    placeholder='Select a lecturer'
+                    label="Lecturer's Name"
+                  />
+                  {/* <Select 
+                    value={group.lecturer}
+                    onValueChange={(value: any) => onUpdate(group.id, "lecturer", value)}
+                  >
+                    <SelectTrigger id={`lecturer-${group.id}`} className="w-full">
+                      <SelectValue placeholder="Select a lecturer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {lecturers.map((lecturer) => (
+                        <SelectItem key={lecturer} value={lecturer}>
+                          {lecturer}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select> */}
+                </div>
+              
+              
                 <div>
                   <label htmlFor={`class-size-${group.id}`} className="text-sm font-medium block mb-1.5">
                     Class size
@@ -87,7 +101,7 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
                   />
                 </div>
                 
-                <div>
+                {/* <div>
                   <label htmlFor={`class-hours-${group.id}`} className="text-sm font-medium block mb-1.5">
                     Class hours
                   </label>
@@ -97,7 +111,7 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
                     value={group.classHours}
                     onChange={(e) => onUpdate(group.id, "classHours", e.target.value)}
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           </CardContent>

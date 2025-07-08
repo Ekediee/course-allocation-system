@@ -12,13 +12,13 @@ export type roleT = {
 }
 
 type CourseSelect = {
-    courseId: string;
+    courseId: number;
     courseCode: string;
     courseTitle: string;
-    semesterId: string;
-    programId: string;
+    semesterId: number;
+    programId: number;
     programeName: string;
-    levelId: string;
+    levelId: number;
 };
 
 type Course = {
@@ -89,7 +89,6 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         name: "Group A",
         lecturer: "",
         classSize: "",
-        classHours: "",
       },
     ]);
     const [selectedBulletin, setSelectedBulletin] = useState<string>('');
@@ -225,6 +224,12 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       return res.json();
     };
 
+    const fetchLecturers = async () => {
+      const res = await fetch(`/api/lecturers?token=${token}`);
+      if (!res.ok) throw new Error('Network error');
+      return res.json();
+    };
+
     const fetchSemesterDataDE = async () => {
       const apiUrl = process.env.NEXT_PUBLIC_DE_ALLOCATION_API;
       if (!apiUrl) throw new Error('NEXT_PUBLIC_DE_ALLOCATION_API is not set');
@@ -256,7 +261,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 programs, setPrograms, selectedProgram, setSelectedProgram, fetchProgramSA,
                 semesters, setSemesters, selectedSemester, setSelectedSemester,
                 username, setUsername, password, setPassword,
-                token, role, login, logout
+                token, role, login, logout, fetchLecturers
             }}
         >
             { children }

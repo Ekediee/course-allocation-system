@@ -18,7 +18,8 @@ const Allocate = () => {
   const router = useRouter()
   const searchParams = useSearchParams();
   const { 
-    selectedCourse, 
+    selectedCourse,
+    setSelectedCourse, 
     updateCourse, 
     setAllocateCourse,
     groups, setGroups,
@@ -63,7 +64,7 @@ const Allocate = () => {
 
     groups.forEach((group:any) => {      
       
-      if (group.lecturer === "" || group.classHours === "" || group.classSize === "") {
+      if (group.lecturer === "" || group.classSize === "") {
         toast({
           variant: "destructive",
           title: "Allocation Failed",
@@ -72,11 +73,14 @@ const Allocate = () => {
         return;
       }else {
         data.push({
-          code: selectedCourse.courseCode,
-          title: selectedCourse.courseTitle,
-          unit: group.classHours,
+          semesterId: selectedCourse?.semesterId,
+          programId: selectedCourse?.programId,
+          levelId: selectedCourse?.levelId,
+          courseId: selectedCourse?.courseId,
+          classSize: group.classSize,
           isAllocated: true,
-          allocatedTo: group.lecturer
+          allocatedTo: group.lecturer,
+          groupName: group.name,
         });
       }
       
@@ -91,15 +95,31 @@ const Allocate = () => {
 
     const resdata = await res.json();
 
-    resdata.forEach((data: any) =>{
+    if(resdata.status == "success") {
       toast({
         variant: "success",
-        title: "Lecturer Allocated for:",
-        description: data.code + " - " + data.title
+        title: "Lecturer Allocated:",
+        description: resdata.message
       })
-    })
+    }else if(resdata.status == "error") {
+      toast({
+        variant: "destructive",
+        title: "Allocation Failed",
+        description: resdata.message
+      })
+    } 
 
+    // resdata.forEach((data: any) =>{
+    //   toast({
+    //     variant: "success",
+    //     title: "Lecturer Allocated for:",
+    //     description: data.code + " - " + data.title
+    //   })
+    // })
 
+    // Unset course selection
+    setSelectedCourse(null);
+    
     router.push(`/${from}`);
   };
 
@@ -147,12 +167,12 @@ const Allocate = () => {
           
           <div className="text-blue-800">
             <h3 className="text-lg font-medium mb-2">Program:</h3>
-            <p className="text-lg">{selectedCourse.programName}</p>
+            <p className="text-lg">{selectedCourse?.programName}</p>
           </div>
           
           <div className="text-blue-800">
             <h3 className="text-lg font-medium mb-2">Course:</h3>
-            <p className="text-lg">{selectedCourse.courseCode} - {selectedCourse.courseTitle}</p>
+            <p className="text-lg">{selectedCourse?.courseCode} - {selectedCourse?.courseTitle}</p>
           </div>
         </div>
       </div>

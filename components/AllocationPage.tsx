@@ -233,7 +233,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                         <Table>
                                         <TableHeader>
                                             <TableRow>
-                                            {/* <TableHead>SN</TableHead> */}
+                                            <TableHead>SN</TableHead>
                                             <TableHead>Course Code</TableHead>
                                             <TableHead>Course Title</TableHead>
                                             <TableHead>Unit</TableHead>
@@ -244,7 +244,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                         <TableBody>
                                             {level.courses.map((course: Course) => (
                                             <TableRow key={course.id}>
-                                                {/* <TableCell className="font-medium">{course.id}</TableCell> */}
+                                                <TableCell className="font-medium">{course.id}</TableCell>
                                                 <TableCell >{course.code}</TableCell>
                                                 <TableCell>{course.title}</TableCell>
                                                 <TableCell>{course.unit}</TableCell>
@@ -271,7 +271,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                                                 semesterId: semester.id,
                                                                 programId: program.id,
                                                                 programName: program.name,
-                                                                levelId: level.id
+                                                                levelId: level.id,
                                                             })}
                                                         >
                                                             Allocate Lecturer
