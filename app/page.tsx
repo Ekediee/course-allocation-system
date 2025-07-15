@@ -7,6 +7,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { useAppContext } from '@/contexts/ContextProvider';
+import Cookies from 'js-cookie';
+
+// using zod for form validation
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const schema = z.object({
+  email: z.string().email({ message: 'Invalid email' }),
+  password: z.string().min(6, { message: 'Min 6 characters' }),
+});
+
+type FormData = z.infer<typeof schema>;
 
 const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -18,44 +31,59 @@ const Login = () => {
     login
   } = useAppContext()
 
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
+
   const router = useRouter();
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const onSubmit = async (values: FormData) => {
+    // console.log("Form Data: ", data);
     // Handle login logic here
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/v1/auth/login', {
+      const res = await fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          "email": username,
-          password,
-        }),
+        body: JSON.stringify(values),
       });
 
-      const data = await res.json();
+      if (!res.ok) {
+        alert('Login failed');
+        return;
+      }
 
       if (res.ok) {
-        login(data.access_token, data.user.role, data.user.name);
+        // Wait for cookie to be set (usually instant)
+        setTimeout(() => {
+          login(
+            Cookies.get('name') || '', 
+            Cookies.get('role') || '', 
+            Cookies.get('department') || '',
+            Cookies.get('email') || '',
+          );
+          // router.push('/dashboard');
+        }, 100);
+
 
         // Redirect based on role
-        switch (data.user.role) {
+        switch (Cookies.get('role') || '') {
           case 'hod':
+            console.log("HOD Login ", Cookies.get('role'));
             router.push('/dashboard');
             break;
           default:
             router.push('/dashboard');
         }
-      } else {
-        alert(data.msg || 'Login failed');
       }
+
+
       
     } catch (err) {
       // setError('Login failed: ' + (err as Error).message);
+      alert('Login failed '+ (err as Error).message);
     }
-    // router.push("/dashboard")
   };
 
   return (
@@ -109,20 +137,22 @@ const Login = () => {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               <Label htmlFor="email" className="flex items-center mb-2">
                 Email Address<span className="text-blue-500 ml-1">*</span>
               </Label>
               <Input
                 id="username"
-                type="text"
+                // type="text"
                 placeholder="enter your username"
                 className="h-12"
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)}
-                required
+                // value={username} 
+                // onChange={(e) => setUsername(e.target.value)}
+                // required
+                {...register('email')}
               />
+              {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
             </div>
             
             <div className="mb-4">
@@ -135,9 +165,10 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••••"
                   className="h-12 pr-10"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  // value={password}
+                  // onChange={(e) => setPassword(e.target.value)}
+                  // required
+                  {...register('password')}
                 />
                 <button 
                   type="button"
@@ -150,6 +181,7 @@ const Login = () => {
                   }
                 </button>
               </div>
+              {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
             </div>
             
             <div className="flex items-center justify-between mb-6">

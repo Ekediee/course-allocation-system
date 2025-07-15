@@ -28,7 +28,7 @@ import Link from 'next/link';
 import { activeLink, normalLink } from '@/data/constants';
 
 const Sidebar = () => {
-    const {toggleSidebar} = useAppContext()
+    const {toggleSidebar, email, name} = useAppContext()
 
     const pathname = usePathname();
 
@@ -102,13 +102,13 @@ const Sidebar = () => {
             <span className="text-xs">SE</span>
           </div>
           <div className="ml-3 flex-1 min-w-0">
-            <div className="text-sm font-medium flex items-center gap-1">
-              Seun Ebiesuwa
+            <div className="text-sm font-small flex items-center gap-1">
+              {name}
               <Badge className="bg-blue-100 text-blue-600 h-4 w-4 p-0 rounded-full flex items-center justify-center">
                 <span className="text-xs">✓</span>
               </Badge>
             </div>
-            <p className="text-xs text-gray-500 truncate">Ebiesuwas@babcock.edu.ng</p>
+            <p className="text-xs text-gray-500 truncate">{email}</p>
           </div>
           <Button variant="ghost" size="icon" className="ml-auto">
             <ChevronRight className="w-4 h-4" />

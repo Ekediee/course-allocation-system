@@ -1,7 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
-// import axios from 'axios'
+import Cookies from 'js-cookie';
 
 
 const AppContext = createContext<any>(undefined);
@@ -101,29 +101,44 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [token, setToken] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
+    const [department, setDepartment] = useState<string | null>(null);
 
     useEffect(() => {
-      setToken(localStorage.getItem('access_token'));
-      setRole(localStorage.getItem('role'));
-      setName(localStorage.getItem('name'));
+      const roleFromCookie = Cookies.get('role');
+      const nameFromCookie = Cookies.get('name');
+      const dept = Cookies.get('department') || 'Department';
+      const mail = Cookies.get('email');
+    
+      if (roleFromCookie) setRole(roleFromCookie);
+      if (nameFromCookie) setName(nameFromCookie);
+      if (dept) setDepartment(dept);
+      if (mail) setEmail(mail);
     }, []);
 
-    const login = (token: string, role: string, name: string) => {
-      localStorage.setItem('access_token', token);
-      localStorage.setItem('role', role);
-      localStorage.setItem('name', name);
-      setToken(token);
+
+    const login = (name: string, role: string, department: string, email: string) => {
+      console.log("Logging in", { name, role });
+      // localStorage.setItem('access_token', token);
+      Cookies.set('name', name, { path: '/' });
+      Cookies.set('role', role, { path: '/' });
+      Cookies.set('department', department, { path: '/' });
+      Cookies.set('email', email, { path: '/' });
       setRole(role);
       setName(name);
+      setEmail(email);
+      setDepartment(department);
     };
 
     const logout = () => {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('role');
-      localStorage.removeItem('name');
-      setToken(null);
+      Cookies.remove('name');
+      Cookies.remove('role');
+      Cookies.remove('email');
+      Cookies.remove('department');
+      setEmail(null);
       setRole(null);
       setName(null);
+      setDepartment(null);
     };
 
     const computeAllocationProgress = (allocationData: Semester[]): AllocationStat[] => {
@@ -216,16 +231,17 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       };
 
     const fetchSemesterData = async () => {
+      console.log('checking token: ', role);
       // const apiUrl = process.env.NEXT_PUBLIC_ALLOCATION_API;
       // if (!apiUrl) throw new Error('NEXT_PUBLIC_ALLOCATION_API is not set');
       // const res = await fetch(apiUrl);
-      const res = await fetch(`/api/allocation?token=${token}`);
+      const res = await fetch(`/api/allocation`);
       if (!res.ok) throw new Error('Network error');
       return res.json();
     };
 
     const fetchLecturers = async () => {
-      const res = await fetch(`/api/lecturers?token=${token}`);
+      const res = await fetch(`/api/lecturers`);
       if (!res.ok) throw new Error('Network error');
       return res.json();
     };
@@ -261,7 +277,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 programs, setPrograms, selectedProgram, setSelectedProgram, fetchProgramSA,
                 semesters, setSemesters, selectedSemester, setSelectedSemester,
                 username, setUsername, password, setPassword,
-                token, role, login, logout, fetchLecturers
+                token, role, login, logout, fetchLecturers, department, email, name
             }}
         >
             { children }

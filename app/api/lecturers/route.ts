@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
 
 export const GET = async (req: any) => {
-  const url = new URL(req.url);
-  const searchParams = new URLSearchParams(url.searchParams);
-  const token = searchParams.get('token')
+  // const url = new URL(req.url);
+  // const searchParams = new URLSearchParams(url.searchParams);
+  // const token = searchParams.get('token')
   try {
     const res = await fetch('http://127.0.0.1:5000/api/v1/allocation/allocate/lecturers', {
       cache: 'no-store', // prevent caching for fresh data
+      method: "GET",
+      credentials: "include",
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-      }
+        Cookie: req.headers.get('cookie') || '',
+      },
     });
 
     if (!res.ok) {

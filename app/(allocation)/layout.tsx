@@ -6,7 +6,7 @@ import { AppWrapper } from '../../contexts/ContextProvider'
 import PageWrapper from '../../components/PageWrapper'
 import { Providers } from "../../components/queryPrivider"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: '--font-inter'  });
 
 const metadata: Metadata = {
   title: "Course Allocation",
@@ -20,7 +20,7 @@ export default function RootLayout({
   }>) {
     return (
       <html lang="en">
-        <body className={inter.className}>
+        <body className={`${inter.variable}`}>
           <Providers>
             <AppWrapper>
               <PageWrapper>{children}</PageWrapper>

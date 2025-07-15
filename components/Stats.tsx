@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent } from "@/components/ui/card";
 import {
     Users,
@@ -9,12 +9,13 @@ import {
 import { useAppContext } from '@/contexts/ContextProvider';
 // import { allocation_data } from '@/data/course_data';
 import { useQuery } from "@tanstack/react-query";
-import { Semester } from "@/data/constants";
+import { Semester, Lecturer } from "@/data/constants";
+// import { Lecturer } from "@/data/constants";
 
 const Stats = () => {
     const [departmentalLecturers, setDepartmentalLecturers] = useState(43);
 
-    const {overallAllocationProgress, fetchSemesterData} = useAppContext()
+    const {overallAllocationProgress, fetchSemesterData, fetchLecturers, role} = useAppContext()
 
     const queryResult = useQuery<Semester[]>({
             queryKey: ['semesters'],
@@ -22,6 +23,20 @@ const Stats = () => {
         });
     
     const { data: allocation_data, isLoading, error } = queryResult;
+
+    const LectqueryResult = useQuery<Lecturer[]>({
+            queryKey: ['lecturers'],
+            queryFn: fetchLecturers
+        });
+    
+    const { data: lect_data} = LectqueryResult;
+    // setDepartmentalLecturers(lect_data ? lect_data.length : 0);
+
+    useEffect(() => {
+        if (lect_data) {
+            setDepartmentalLecturers(lect_data.length);
+        }
+    }, [lect_data]);
       
     const allocationProgress = overallAllocationProgress(allocation_data)
     const allocatedCourses = allocationProgress[0].allocatedCourses
