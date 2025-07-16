@@ -55,26 +55,28 @@ const Login = () => {
       }
 
       if (res.ok) {
-        // Wait for cookie to be set (usually instant)
-        setTimeout(() => {
-          login(
-            Cookies.get('name') || '', 
-            Cookies.get('role') || '', 
-            Cookies.get('department') || '',
-            Cookies.get('email') || '',
-          );
-          // router.push('/dashboard');
-        }, 100);
+        // Wait for cookie to be set
+        const data = await res.json();
+        console.log("Login response: ", data);
+        // setTimeout(() => {
+        //   login(
+        //     Cookies.get('name') || '', 
+        //     Cookies.get('role') || '', 
+        //     Cookies.get('department') || '',
+        //     Cookies.get('email') || '',
+        //   );
+        //   // router.push('/dashboard');
+        // }, 100);
+        login(data.user.name, data.user.role, data.user.department, data.user.email);
 
 
         // Redirect based on role
-        switch (Cookies.get('role') || '') {
+        switch (data.user.role) {
           case 'hod':
-            console.log("HOD Login ", Cookies.get('role'));
-            router.push('/dashboard');
+            router.push('/dashboard/hod');
             break;
           default:
-            router.push('/dashboard');
+            router.push('/');
         }
       }
 

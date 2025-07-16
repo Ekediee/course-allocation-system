@@ -9,6 +9,7 @@ import Sidebar from './Sidebar'
 import MobileHeader from './MobileHeader'
 import Header from './Header'
 import { Toaster } from './ui/toaster'
+import LogOutMenu from './LogOut'
 // import Navbar from './Navbar'
 // import Skeleton from 'react-loading-skeleton'
 // import 'react-loading-skeleton/dist/skeleton.css'
@@ -16,7 +17,7 @@ import { Toaster } from './ui/toaster'
 // import { useGetStaffMainDashQuery } from '../api/staffdash'
 
 const PageWrapper = ({ children }: { children: ReactNode }) => {
-    const {sidebarOpen, toggleSidebar, pageHeader, pageHeaderPeriod} = useAppContext()
+    const {sidebarOpen, toggleSidebar, pageHeader, pageHeaderPeriod, logoutMenuOpen} = useAppContext()
 
 
     return (
@@ -48,6 +49,7 @@ const PageWrapper = ({ children }: { children: ReactNode }) => {
 
                 {/* Main Content Area */}
                 {children}
+                {logoutMenuOpen && <LogOutMenu /> }
                 <Toaster />
             </div>
             

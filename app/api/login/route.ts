@@ -18,49 +18,33 @@ export const POST = async (req: any) => {
     }
 
     const data = await res.json();
+    const user = {
+      name: data.user.name,
+      role: data.user.role,
+      department: data.user.department,
+      email: data.user.email,
+    }
     // console.log("fetched allocation: ", data)
     // const resp = NextResponse.json({ message: 'Login successful' });
-    const resp = new NextResponse(
-      JSON.stringify({ message: 'Login successful' }), // plain JSON
-      { status: 200 }
-    );
-    resp.cookies.set('access_token_cookie', data.access_token, {
+    const response = NextResponse.json({
+      user,
+      message: 'Login successful' 
+    });
+
+    response.cookies.set('access_token_cookie', data.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'development',
         sameSite: 'lax',
         path: '/',
         maxAge: 60 * 60 * 24,
     });
-    resp.cookies.set('role', data.user.role, {
-        httpOnly: false, // Allow client-side access to role
-        secure: process.env.NODE_ENV === 'development',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-    });
-    resp.cookies.set('name', data.user.name, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'development',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-    });
-    resp.cookies.set('department', data.user.department, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'development',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-    });
-    resp.cookies.set('email', data.user.email, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'development',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-    });
 
-    return resp;
+    response.cookies.set('name', user.name);
+    response.cookies.set('role', user.role);
+    response.cookies.set('department', user.department);
+    response.cookies.set('email', user.email);
+
+    return response;
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }

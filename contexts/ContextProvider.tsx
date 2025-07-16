@@ -103,6 +103,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [name, setName] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
     const [department, setDepartment] = useState<string | null>(null);
+    const [logoutMenuOpen, setLogoutMenuOpen] = useState(false);
 
     useEffect(() => {
       const roleFromCookie = Cookies.get('role');
@@ -130,16 +131,16 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       setDepartment(department);
     };
 
-    const logout = () => {
-      Cookies.remove('name');
-      Cookies.remove('role');
-      Cookies.remove('email');
-      Cookies.remove('department');
-      setEmail(null);
-      setRole(null);
-      setName(null);
-      setDepartment(null);
-    };
+    // const logout = () => {
+    //   Cookies.remove('name');
+    //   Cookies.remove('role');
+    //   Cookies.remove('email');
+    //   Cookies.remove('department');
+    //   setEmail(null);
+    //   setRole(null);
+    //   setName(null);
+    //   setDepartment(null);
+    // };
 
     const computeAllocationProgress = (allocationData: Semester[]): AllocationStat[] => {
       const stats: AllocationStat[] = [];
@@ -227,14 +228,14 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     }
 
     const toggleSidebar = () => {
-        setSidebarOpen(!sidebarOpen);
-      };
+      setSidebarOpen(!sidebarOpen);
+    };
+
+    const toggleLogoutMenu = () => {
+      setLogoutMenuOpen(!logoutMenuOpen);
+    };
 
     const fetchSemesterData = async () => {
-      console.log('checking token: ', role);
-      // const apiUrl = process.env.NEXT_PUBLIC_ALLOCATION_API;
-      // if (!apiUrl) throw new Error('NEXT_PUBLIC_ALLOCATION_API is not set');
-      // const res = await fetch(apiUrl);
       const res = await fetch(`/api/allocation`);
       if (!res.ok) throw new Error('Network error');
       return res.json();
@@ -277,7 +278,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 programs, setPrograms, selectedProgram, setSelectedProgram, fetchProgramSA,
                 semesters, setSemesters, selectedSemester, setSelectedSemester,
                 username, setUsername, password, setPassword,
-                token, role, login, logout, fetchLecturers, department, email, name
+                token, role, login, fetchLecturers, department, email, name,
+                logoutMenuOpen, toggleLogoutMenu
             }}
         >
             { children }

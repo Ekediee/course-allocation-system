@@ -28,7 +28,7 @@ import Link from 'next/link';
 import { activeLink, normalLink } from '@/data/constants';
 
 const Sidebar = () => {
-    const {toggleSidebar, email, name} = useAppContext()
+    const {toggleSidebar, email, name, toggleLogoutMenu} = useAppContext()
 
     const pathname = usePathname();
 
@@ -56,7 +56,7 @@ const Sidebar = () => {
         
         <div className="py-4 space-y-1 px-3">
           {/* <p className="px-4 text-xs font-medium text-gray-500 mb-2">NAV</p> */}
-          <Link href="/dashboard" className={` ${pathname.includes('dashboard') ?  activeLink : normalLink }`}>
+          <Link href="/dashboard/hod" className={` ${pathname.includes('dashboard') ?  activeLink : normalLink }`}>
             <Blocks className="h-5 w-5 mr-3" />
             <span>Dashboard</span>
           </Link>
@@ -110,7 +110,7 @@ const Sidebar = () => {
             </div>
             <p className="text-xs text-gray-500 truncate">{email}</p>
           </div>
-          <Button variant="ghost" size="icon" className="ml-auto">
+          <Button variant="ghost" size="icon" className="ml-auto" onClick={toggleLogoutMenu}>
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
