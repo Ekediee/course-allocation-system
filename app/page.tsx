@@ -57,16 +57,7 @@ const Login = () => {
       if (res.ok) {
         // Wait for cookie to be set
         const data = await res.json();
-        console.log("Login response: ", data);
-        // setTimeout(() => {
-        //   login(
-        //     Cookies.get('name') || '', 
-        //     Cookies.get('role') || '', 
-        //     Cookies.get('department') || '',
-        //     Cookies.get('email') || '',
-        //   );
-        //   // router.push('/dashboard');
-        // }, 100);
+
         login(data.user.name, data.user.role, data.user.department, data.user.email);
 
 
@@ -74,6 +65,9 @@ const Login = () => {
         switch (data.user.role) {
           case 'hod':
             router.push('/dashboard/hod');
+            break;
+          case 'vetter':
+            router.push('/vetter/manage-uploads');
             break;
           default:
             router.push('/');
@@ -113,7 +107,7 @@ const Login = () => {
           </div>
 
           {/* Google Sign In */}
-          <Button 
+          {/* <Button 
             variant="outline" 
             className="w-full h-12 mb-6 border border-gray-300 flex items-center justify-center gap-2"
           >
@@ -129,14 +123,14 @@ const Login = () => {
               <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
             </svg>
             <span>Continue with Google</span>
-          </Button>
+          </Button>*/}
 
           {/* Divider */}
-          <div className="flex items-center mb-6">
+          {/* <div className="flex items-center mb-6">
             <div className="flex-grow h-px bg-gray-300"></div>
             <span className="px-4 text-gray-500 text-sm">OR</span>
             <div className="flex-grow h-px bg-gray-300"></div>
-          </div>
+          </div>  */}
 
           {/* Login Form */}
           <form onSubmit={handleSubmit(onSubmit)}>

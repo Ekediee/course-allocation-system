@@ -13,8 +13,8 @@ import { allocation_data } from "@/data/course_data";
 import { useAppContext } from '@/contexts/ContextProvider'
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import AllocateLecturerModal from "@/components/AllocateLecturerModal";
-import AllocationPage from "@/components/AllocationPage";
+import AllocateLecturerModal from "@/components/Allocations/AllocateLecturerModal";
+import AllocationPage from "@/components/Allocations/AllocationPage";
 
 // const fetchSemesterData = async (): Promise<Semester[]> => {
 //     // Simulate API delay

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, CardContent } from "@/components/ui/card";
-import DonutChart from './DonutChart';
+import DonutChart from '../DonutChart';
 import { useAppContext } from '@/contexts/ContextProvider';
 // import { allocation_data } from '@/data/course_data';
 import { useQuery } from "@tanstack/react-query";

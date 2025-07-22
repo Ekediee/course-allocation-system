@@ -5,7 +5,7 @@ import React, { ReactNode } from 'react'
 import { useAppContext } from '../contexts/ContextProvider'
 
 // import Breadcrumb from '../components/BreadCrumbs'
-import Sidebar from './Sidebar'
+import Sidebar from './Sidebars/Sidebar'
 import MobileHeader from './MobileHeader'
 import Header from './Header'
 import { Toaster } from './ui/toaster'

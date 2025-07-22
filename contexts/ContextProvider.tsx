@@ -72,6 +72,12 @@ type OverallAllocationStat = {
   allocationRate: number; // as a percentage
 };
 
+type Academic_Session = {
+  id: number;
+  name: string;
+  is_active: boolean;
+};
+
 
 export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -104,6 +110,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [email, setEmail] = useState<string | null>(null);
     const [department, setDepartment] = useState<string | null>(null);
     const [logoutMenuOpen, setLogoutMenuOpen] = useState(false);
+    const [sessionData, setSessionData] = useState<Academic_Session | null>(null);
+    
 
     useEffect(() => {
       const roleFromCookie = Cookies.get('role');
@@ -279,7 +287,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 semesters, setSemesters, selectedSemester, setSelectedSemester,
                 username, setUsername, password, setPassword,
                 token, role, login, fetchLecturers, department, email, name,
-                logoutMenuOpen, toggleLogoutMenu
+                logoutMenuOpen, toggleLogoutMenu, sessionData, setSessionData
             }}
         >
             { children }

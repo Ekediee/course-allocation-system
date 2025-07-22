@@ -21,16 +21,18 @@ import {
     Menu,
     X
   } from "lucide-react";
-import { usePathname } from 'next/navigation';
 
-import { useAppContext } from '../contexts/ContextProvider'
-import Link from 'next/link';
-import { activeLink, normalLink } from '@/data/constants';
+import { useAppContext } from '../../contexts/ContextProvider'
+import HODSideBar from './HODSideBar';
+import VetterSideBar from './VetterSideBar';
 
 const Sidebar = () => {
-    const {toggleSidebar, email, name, toggleLogoutMenu} = useAppContext()
-
-    const pathname = usePathname();
+    const {
+      toggleSidebar, 
+      email, name, 
+      toggleLogoutMenu,
+      role
+    } = useAppContext()
 
   return (
     <>
@@ -54,35 +56,8 @@ const Sidebar = () => {
           </Button>
         </div>
         
-        <div className="py-4 space-y-1 px-3">
-          {/* <p className="px-4 text-xs font-medium text-gray-500 mb-2">NAV</p> */}
-          <Link href="/dashboard/hod" className={` ${pathname.includes('dashboard') ?  activeLink : normalLink }`}>
-            <Blocks className="h-5 w-5 mr-3" />
-            <span>Dashboard</span>
-          </Link>
-          <Link href="/course-allocation" className={` ${pathname.includes('course-allocation') ?  activeLink : normalLink }`}>
-            <BookOpen className="h-5 w-5 mr-3" />
-            <span>Course Allocation</span>
-          </Link>
-          <Link href="/de-allocation" className={` ${pathname.includes('de-allocation') ?  activeLink : normalLink }`}>
-            <User className="h-5 w-5 mr-3" />
-            <span>DE Allocation</span>
-          </Link>
-          <Link href="/special-allocation" className={` ${pathname.includes('special-allocation') ?  activeLink : normalLink }`}>
-            <Users className="h-5 w-5 mr-3" />
-            <span>Special Allocation</span>
-          </Link>
-          <Link href="/support-request" className={` ${pathname.includes('support-request') ?  activeLink : normalLink }`}>
-            <MessageSquare className="h-5 w-5 mr-3" />
-            <span>Support and Requests</span>
-          </Link>
-          
-          <p className="px-4 text-xs font-medium text-gray-500 mt-4 mb-2">OTHER</p>
-          <Link href="/lecturers" className={` ${pathname.includes('lecturers') ?  activeLink : normalLink }`}>
-            <Users className="h-5 w-5 mr-3" />
-            <span>Lecturers</span>
-          </Link>
-        </div>
+        {role == "hod" && <HODSideBar />}
+        {role == "vetter" && <VetterSideBar />}
         
         <div className="mt-auto p-4 border-t border-gray-200">
           <div className="flex items-center">

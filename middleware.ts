@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
 
   if (!token) {
-    url.pathname = '/login';
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 
@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (url.pathname.startsWith('/dashboard/vetter') && role !== 'vetter') {
+  if (url.pathname.startsWith('/vetter/manage-uploads') && role !== 'vetter') {
     url.pathname = '/unauthorized';
     return NextResponse.redirect(url);
   }
@@ -33,6 +33,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: ['/dashboard/:path*',
-    '/course-allocation/:path*'
+    '/course-allocation/:path*',
+    '/vetter/manage-uploads'
   ],
 };

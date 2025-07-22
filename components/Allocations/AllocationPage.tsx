@@ -13,8 +13,8 @@ import { Semester, Program, Course, Level } from "@/data/constants";
 import { useAppContext } from '@/contexts/ContextProvider'
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import AllocateLecturerModal from "@/components/AllocateLecturerModal";
-import PrintLink from "./PrintLink";
+import AllocateLecturerModal from "@/components/Allocations/AllocateLecturerModal";
+import PrintLink from "../PrintLink";
 
 
 const AllocationPage = ({allocationPage, url}: any) => {

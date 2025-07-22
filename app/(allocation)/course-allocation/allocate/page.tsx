@@ -9,9 +9,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation"
 
 import { allocation_data } from "@/data/course_data";
-import AllocateLecturerModal from "@/components/AllocateLecturerModal";
+import AllocateLecturerModal from "@/components/Allocations/AllocateLecturerModal";
 import { useToast } from "@/hooks/use-toast"
-import VerifyAllocation from "@/components/verifyAllocation";
+import VerifyAllocation from "@/components/Allocations/verifyAllocation";
 
 const Allocate = () => {
   const { toast } = useToast()

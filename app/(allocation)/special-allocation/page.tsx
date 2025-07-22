@@ -38,16 +38,7 @@ const SpecialAllocation = () => {
 
       {/* Empty State */}
       <div className="flex flex-col items-center justify-center text-center py-16 px-4 bg-blue-100 h-[505px] rounded-3xl">
-        {/* <div className="mb-6">
-          <div className="relative">
-            <div className="w-24 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-2 mx-auto">
-              <div className="w-16 h-12 bg-blue-200 rounded"></div>
-            </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-              0
-            </div>
-          </div>
-        </div> */}
+        
         <EmptyFolderIcon />
         
         <h3 className="text-xl font-semibold text-gray-900 mb-2">

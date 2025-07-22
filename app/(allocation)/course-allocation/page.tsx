@@ -1,5 +1,5 @@
 'use client'
-import AllocationPage from "@/components/AllocationPage";
+import AllocationPage from "@/components/Allocations/AllocationPage";
 import { useAppContext } from '@/contexts/ContextProvider'
 
 

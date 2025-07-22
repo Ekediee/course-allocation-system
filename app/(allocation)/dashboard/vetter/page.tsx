@@ -8,18 +8,18 @@ import React from 'react'
 const Dashboard = () => {
   return (
     <div className="p-4 md:p-6 overflow-y-auto">
-        <Welcome />
+        {/* <Welcome /> */}
 
         {/* Stats Cards */}
-        <Stats />
+        {/* <Stats /> */}
 
         {/* Allocation Status */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-            <AllocationStatus />
+        {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+            <AllocationStatus />*/}
 
             {/* Request View */}
-            <RequestView />
-        </div>
+            {/* <RequestView />
+        </div>  */}
     </div>
   )
 }
