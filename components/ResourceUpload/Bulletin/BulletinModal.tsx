@@ -20,12 +20,12 @@ import { useAppContext } from '@/contexts/ContextProvider'
 type fromYear = string;
 type toYear = string;
 
-type SessionModalProps = {
+type BulletinModalProps = {
   btnName: string;
-  onSessionAdded?: () => void;
+  onAddBulletin?: () => void;
 };
 
-const SessionModal: React.FC<SessionModalProps> = ({btnName, onSessionAdded}) => {
+const BulletinModal: React.FC<BulletinModalProps> = ({btnName, onAddBulletin}) => {
   // const {
   //   setSessionData
   // } = useAppContext()
@@ -34,34 +34,38 @@ const SessionModal: React.FC<SessionModalProps> = ({btnName, onSessionAdded}) =>
   // const [open, setOpen] = useState(false)
    const { toast } = useToast()
 
-  const handleCreateSession = async () => {
+  const handleCreateBulletin = async () => {
     if(fromYear == "" || toYear == "") {
       toast({
         variant: "destructive",
-        title: "Session Created Failed",
+        title: "Bulletin Creation Failed",
         description: "Please fill in all fields"
       })
       return;
     }else if(fromYear?.trim() === toYear?.trim()) {
       toast({
         variant: "destructive",
-        title: "Session Created Failed",
+        title: "Bulletin Creation Failed",
         description: "Your from year and to year cannot be the same"
       })
       return;
     }
 
-    const session_data = {
-      name: `${fromYear?.trim()}/${toYear?.trim()}`,
+    const bulletin_data = {
+      name: `${fromYear?.trim()} - ${toYear?.trim()}`,
+      start_year: fromYear,
+      end_year: toYear
     };
+
+    console.log("Bulletin Data: ", bulletin_data);
     
     try {
-      const res = await fetch('/api/manage-uploads/session', {
+      const res = await fetch('/api/manage-uploads/bulletin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(session_data),
+        body: JSON.stringify(bulletin_data),
       });
 
       if (res.status.toString().startsWith("40")) {
@@ -79,10 +83,10 @@ const SessionModal: React.FC<SessionModalProps> = ({btnName, onSessionAdded}) =>
         const data = await res.json();
         
         // Fetch session data
-        if (onSessionAdded) onSessionAdded();
+        if (onAddBulletin) onAddBulletin();
         toast({
           variant: "success",
-          title: "Session Upload Success",
+          title: "Bulletin Upload Success",
           description: data.msg,
         });
 
@@ -93,7 +97,7 @@ const SessionModal: React.FC<SessionModalProps> = ({btnName, onSessionAdded}) =>
     } catch (err) {
       toast({
           variant: "destructive",
-          title: "Session Upload Failed",
+          title: "Bulletin Upload Failed",
           description: (err as Error).message,
         });
     }
@@ -103,13 +107,6 @@ const SessionModal: React.FC<SessionModalProps> = ({btnName, onSessionAdded}) =>
 
   return (
     <>
-      {/* <Button
-        className="bg-blue-700 hover:bg-blue-400 text-white"
-        onClick={() => setOpen(true)}
-      >
-        <Plus className="h-4 w-4" />
-        {btnName}
-      </Button> */}
       <Dialog>
         <DialogTrigger asChild>
           <Button className="bg-blue-700 hover:bg-blue-400 text-white">
@@ -120,17 +117,10 @@ const SessionModal: React.FC<SessionModalProps> = ({btnName, onSessionAdded}) =>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="flex items-center justify-center gap-2">
-              {/* <img 
-                src="/images/info-icon.png" 
-                alt="Info Icon" 
-                className="rounded-lg"
-                onError={(e) => {
-                  e.currentTarget.src = "https://placehold.co/600x400?text=Dashboard+Preview";
-                }}
-              /> */}
+              
               <Plus className="h-5 w-5 " />
             
-            <DialogTitle className="">Create a New Session Period</DialogTitle>
+            <DialogTitle className="">Create a New Bulletin Period</DialogTitle>
             </div>
             <DialogDescription className="text-center">
               Specify the start and end year
@@ -166,7 +156,7 @@ const SessionModal: React.FC<SessionModalProps> = ({btnName, onSessionAdded}) =>
               <DialogClose  
                 className="w-full"
               asChild>
-              <Button className="w-full bg-blue-700 hover:bg-blue-400" onClick={handleCreateSession}>Create Session</Button>
+              <Button className="w-full bg-blue-700 hover:bg-blue-400" onClick={handleCreateBulletin}>Create Bulletin</Button>
               </DialogClose>
             </div>
           </div>
@@ -176,4 +166,4 @@ const SessionModal: React.FC<SessionModalProps> = ({btnName, onSessionAdded}) =>
   )
 }
 
-export default SessionModal
+export default BulletinModal

@@ -72,10 +72,28 @@ type OverallAllocationStat = {
   allocationRate: number; // as a percentage
 };
 
-type Academic_Session = {
+export type Academic_Session = {
   id: number;
   name: string;
   is_active: boolean;
+};
+
+export type Bulletin = {
+  id: number;
+  name: string;
+  start_year: number;
+  end_year: number;
+};
+
+export type SemesterType = {
+  id: number;
+  name: string;
+};
+
+export type SchoolType = {
+  id: number;
+  name: string;
+  acronym: string;
 };
 
 
@@ -111,10 +129,13 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [department, setDepartment] = useState<string | null>(null);
     const [logoutMenuOpen, setLogoutMenuOpen] = useState(false);
     const [sessionData, setSessionData] = useState<Academic_Session | null>(null);
+    const [semesterData, setSemesterData] = useState<SemesterType | null>(null);
+    const [schoolData, setSchoolData] = useState<SchoolType | null>(null);
+    const [bulletinData, setBulletinData] = useState<Bulletin | null>(null);
     
 
     useEffect(() => {
-      const roleFromCookie = Cookies.get('role');
+      const roleFromCookie = Cookies.get('role')?.toLowerCase();
       const nameFromCookie = Cookies.get('name');
       const dept = Cookies.get('department') || 'Department';
       const mail = Cookies.get('email');
@@ -129,10 +150,10 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const login = (name: string, role: string, department: string, email: string) => {
       console.log("Logging in", { name, role });
       // localStorage.setItem('access_token', token);
-      Cookies.set('name', name, { path: '/' });
-      Cookies.set('role', role, { path: '/' });
-      Cookies.set('department', department, { path: '/' });
-      Cookies.set('email', email, { path: '/' });
+      // Cookies.set('name', name, { path: '/' });
+      // Cookies.set('role', role, { path: '/' });
+      // Cookies.set('department', department, { path: '/' });
+      // Cookies.set('email', email, { path: '/' });
       setRole(role);
       setName(name);
       setEmail(email);
@@ -271,6 +292,30 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       return await res.json();
     };
 
+    const fetchSemesters = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/semester');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          setSemesterData(data); // Update state with fetched data
+          return data
+      } catch (error) {
+          console.error('Failed to fetch semesters:', error);
+      }
+    };
+
+    const fetchSchools = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/school');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          setSchoolData(data.schools); // Update state with fetched data
+          return data
+      } catch (error) {
+          console.error('Failed to fetch semesters:', error);
+      }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -287,7 +332,9 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 semesters, setSemesters, selectedSemester, setSelectedSemester,
                 username, setUsername, password, setPassword,
                 token, role, login, fetchLecturers, department, email, name,
-                logoutMenuOpen, toggleLogoutMenu, sessionData, setSessionData
+                logoutMenuOpen, toggleLogoutMenu, sessionData, setSessionData,
+                semesterData, setSemesterData, fetchSemesters, bulletinData, setBulletinData,
+                fetchSchools, schoolData, setSchoolData
             }}
         >
             { children }

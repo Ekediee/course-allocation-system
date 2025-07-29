@@ -4,44 +4,44 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from '../../ui/button';
 import { ArrowDownWideNarrow, ChevronDown, Plus } from 'lucide-react';
 import { EmptyFolderIcon } from '../../EmptyFolder';
-import EmptyPage from './EmptyPage';
-import SemesterModal from './SemesterModal';
 import { useAppContext } from '@/contexts/ContextProvider'
-import { useQuery } from '@tanstack/react-query';
-import { Skeleton } from '@/components/ui/skeleton';
-import { SemesterType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Academic_Session, Bulletin } from '@/contexts/ContextProvider';
+import { useQuery } from '@tanstack/react-query';
+import { Skeleton } from '@/components/ui/skeleton';
+import BulletinModal from './BulletinModal';
+import EmptyPage from './EmptyPage';
 
-const SemesterContent = () => {
+const BulletinContent = () => {
     const {
-        semesterData, 
-        fetchSemesters
+        bulletinData,
+        setBulletinData
     } = useAppContext()
 
-    // const fetchSemesters = async () => {
-    //     try {
-    //         const res = await fetch('/api/manage-uploads/semester');
-    //         if (!res.ok) throw new Error('Network error');
-    //         const data = await res.json();
-    //         setSemesterData(data); // Update state with fetched data
-    //         return data
-    //     } catch (error) {
-    //         console.error('Failed to fetch semesters:', error);
-    //     }
-    // };
+    const fetchBulletins = async () => {
+        try {
+            const res = await fetch('/api/manage-uploads/bulletin');
+            if (!res.ok) throw new Error('Network error');
+            const data = await res.json();
+            setBulletinData(data?.bulletins); // Update state with fetched data
+            return data
+        } catch (error) {
+            console.error('Failed to fetch bulletins:', error);
+        }
+    };
 
     useEffect(() => {
-        fetchSemesters(); // Call the async function
+        fetchBulletins(); // Call the async function
     }, []);
 
-    const queryResult = useQuery<SemesterType>({
-        queryKey: ['session'],
-        queryFn: fetchSemesters
+  const queryResult = useQuery<Bulletin>({
+        queryKey: ['bulletin'],
+        queryFn: fetchBulletins
     })
 
     const { isLoading, error } = queryResult;
-
+    console.log("Bulletin Data: ", bulletinData);
     if (isLoading) {
         return (
             <div className="p-8">
@@ -78,40 +78,48 @@ const SemesterContent = () => {
             </div>
         );
     }
-
+    
   return (
     <>
-        <TabsContent value="semester">
-            <Card>
-                <CardContent>
+        <TabsContent value="bulletin" >
+            <Card className="">
+                <CardContent className="">
                     <div className="flex justify-between items-center p-2 pt-4">
                         <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            Semesters
+                            Active Bulletin
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
                             </div>
-                            <SemesterModal btnName="Add Semester" onAddSemester={fetchSemesters}/>
+                            <BulletinModal btnName="Active Bulletin" onAddBulletin={fetchBulletins} />
                         </div>
                     </div>
-                    {semesterData?.length > 0 ? (
+                    {bulletinData?.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
                             <TableHeader>
                                 <TableRow>
-                                <TableHead>Semester Name</TableHead>
+                                <TableHead>Bulletin Name</TableHead>
+                                <TableHead className="text-center">Start Year</TableHead>
+                                <TableHead className="text-center">End Year</TableHead>
                                 <TableHead className="text-center">Status</TableHead>
-                                <TableHead className="text-center">Action</TableHead>
+                                {/* <TableHead className="text-center">Action</TableHead> */}
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                            {semesterData.map((semester:any) => (
-                                <TableRow key={semester.id}>
-                                    <TableCell >{semester.name}</TableCell>
+                            {bulletinData.map((bulletin:any) => (
+                                <TableRow key={bulletin.id}>
+                                    <TableCell >{bulletin.name}</TableCell>
                                     <TableCell className="text-center">
-                                        {semester.id && <Badge variant="outline" className="text-green-500 bg-green-100">
-                                            Active
+                                        {bulletin.start_year}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        {bulletin.end_year}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        {bulletin.is_active && <Badge variant="outline" className="text-green-500 bg-green-100">
+                                            {bulletin.is_active ? "Active" : "Inactive"}
                                         </Badge>}
                                     </TableCell>
                                     <TableCell className="text-center"></TableCell>
@@ -122,12 +130,13 @@ const SemesterContent = () => {
                         </div>
                     ) : (
                         <EmptyPage 
-                            title="No Semesters Available" 
-                            desc="Create a new semester to see details" 
-                            btnName="Add Semester" 
-                            onAddSemester={fetchSemesters}
+                            title="No Bulletin Available" 
+                            desc="Create a new bulletin to see details" 
+                            btnName="Active Bulletin" 
+                            onAddBulletin={fetchBulletins} // Call fetchSessions when a new session is added
                         />
                     )}
+                    
                     
                 </CardContent>
             </Card>
@@ -136,4 +145,4 @@ const SemesterContent = () => {
   )
 }
 
-export default SemesterContent
+export default BulletinContent

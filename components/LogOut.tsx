@@ -8,12 +8,18 @@ import React from 'react'
 const LogOutMenu = () => {
   const router = useRouter()
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Clear relevant cookies/localStorage if needed
-    document.cookie = 'role=; Max-Age=0; path=/;'
-    document.cookie = 'name=; Max-Age=0; path=/;'
-    document.cookie = 'access_token_cookie=; Max-Age=0; path=/;'
-    router.push('/')
+    // document.cookie = 'role=; Max-Age=0; path=/;'
+    // document.cookie = 'name=; Max-Age=0; path=/;'
+    // document.cookie = 'access_token_cookie=; Max-Age=0; path=/;'
+    // router.push('/')
+    try {
+      await fetch('/api/logout')
+      router.replace("/")
+    }catch (error){
+      console.log("Error: ", error)
+    }
   }
 
   const handleChangePassword = () => {

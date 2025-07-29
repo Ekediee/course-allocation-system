@@ -1,16 +1,15 @@
 import React from 'react'
 import { EmptyFolderIcon } from '../../EmptyFolder'
-import { Plus } from 'lucide-react'
-import SemesterModal from './SemesterModal';
+import BulletinModal from './BulletinModal';
 
 type EmptyPageProps = {
   title: string;
   desc: string;
   btnName: string;
-  onAddSemester?: () => void;
+  onAddBulletin?: () => void;
 };
 
-const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddSemester}) => {
+const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddBulletin}) => {
     
   return (
     <>
@@ -29,8 +28,8 @@ const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddSemeste
                 <Plus className="h-4 w-4" />
                 {btnName}
             </Button> */}
-            {/* <SessionModal btnName={btnName} /> */}
-            <SemesterModal btnName={btnName} onAddSemester={onAddSemester} />
+            <BulletinModal btnName={btnName} onAddBulletin={onAddBulletin} />
+            {/* <SemesterModal btnName={btnName} /> */}
         </div>
     </>
   )

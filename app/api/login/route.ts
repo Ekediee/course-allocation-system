@@ -33,16 +33,28 @@ export const POST = async (req: any) => {
 
     response.cookies.set('access_token_cookie', data.access_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'development',
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
         maxAge: 60 * 60 * 24,
     });
 
-    response.cookies.set('name', user.name);
-    response.cookies.set('role', user.role);
-    response.cookies.set('department', user.department);
-    response.cookies.set('email', user.email);
+    response.cookies.set('name', user.name, {
+      path: '/',
+      sameSite: 'lax',
+    });
+    response.cookies.set('role', user.role, {
+      path: '/',
+      sameSite: 'lax',
+    });
+    response.cookies.set('department', user.department, {
+      path: '/',
+      sameSite: 'lax',
+    });
+    response.cookies.set('email', user.email, {
+      path: '/',
+      sameSite: 'lax',
+    });
 
     return response;
   } catch (error) {

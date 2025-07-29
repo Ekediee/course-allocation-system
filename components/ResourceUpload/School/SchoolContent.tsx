@@ -5,7 +5,7 @@ import { Button } from '../../ui/button';
 import { ArrowDownWideNarrow, ChevronDown, Plus } from 'lucide-react';
 import { EmptyFolderIcon } from '../../EmptyFolder';
 import EmptyPage from './EmptyPage';
-import SemesterModal from './SemesterModal';
+import SchoolModal from './SchoolModal';
 import { useAppContext } from '@/contexts/ContextProvider'
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,32 +13,22 @@ import { SemesterType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 
-const SemesterContent = () => {
+const SchoolContent = () => {
     const {
-        semesterData, 
-        fetchSemesters
+        schoolData, 
+        fetchSchools
     } = useAppContext()
 
-    // const fetchSemesters = async () => {
-    //     try {
-    //         const res = await fetch('/api/manage-uploads/semester');
-    //         if (!res.ok) throw new Error('Network error');
-    //         const data = await res.json();
-    //         setSemesterData(data); // Update state with fetched data
-    //         return data
-    //     } catch (error) {
-    //         console.error('Failed to fetch semesters:', error);
-    //     }
-    // };
-
     useEffect(() => {
-        fetchSemesters(); // Call the async function
+        fetchSchools(); // Call the async function
     }, []);
 
     const queryResult = useQuery<SemesterType>({
-        queryKey: ['session'],
-        queryFn: fetchSemesters
+        queryKey: ['schools'],
+        queryFn: fetchSchools
     })
+
+    console.log("School Data: ", schoolData);
 
     const { isLoading, error } = queryResult;
 
@@ -78,41 +68,38 @@ const SemesterContent = () => {
             </div>
         );
     }
-
   return (
     <>
-        <TabsContent value="semester">
+        <TabsContent value="school">
             <Card>
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
                         <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            Semesters
+                            Schools
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
                             </div>
-                            <SemesterModal btnName="Add Semester" onAddSemester={fetchSemesters}/>
+                            <SchoolModal btnName="Add School" onAddSchool={fetchSchools}/>
                         </div>
                     </div>
-                    {semesterData?.length > 0 ? (
+                    {schoolData?.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
                             <TableHeader>
                                 <TableRow>
-                                <TableHead>Semester Name</TableHead>
-                                <TableHead className="text-center">Status</TableHead>
+                                <TableHead>School Name</TableHead>
+                                <TableHead className="text-center">Acronym</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                            {semesterData.map((semester:any) => (
-                                <TableRow key={semester.id}>
-                                    <TableCell >{semester.name}</TableCell>
+                            {schoolData.map((school:any) => (
+                                <TableRow key={school.id}>
+                                    <TableCell >{school.name}</TableCell>
                                     <TableCell className="text-center">
-                                        {semester.id && <Badge variant="outline" className="text-green-500 bg-green-100">
-                                            Active
-                                        </Badge>}
+                                        {school.acronym}
                                     </TableCell>
                                     <TableCell className="text-center"></TableCell>
                                 </TableRow>
@@ -122,10 +109,10 @@ const SemesterContent = () => {
                         </div>
                     ) : (
                         <EmptyPage 
-                            title="No Semesters Available" 
-                            desc="Create a new semester to see details" 
-                            btnName="Add Semester" 
-                            onAddSemester={fetchSemesters}
+                            title="No School Available" 
+                            desc="Create a new school to see details" 
+                            btnName="Add School" 
+                            onAddSchool={fetchSchools}
                         />
                     )}
                     
@@ -136,4 +123,4 @@ const SemesterContent = () => {
   )
 }
 
-export default SemesterContent
+export default SchoolContent

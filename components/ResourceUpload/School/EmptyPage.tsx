@@ -1,17 +1,16 @@
 import React from 'react'
 import { EmptyFolderIcon } from '../../EmptyFolder'
 import { Plus } from 'lucide-react'
-import SemesterModal from './SemesterModal';
+import SchoolModal from './SchoolModal';
 
 type EmptyPageProps = {
   title: string;
   desc: string;
   btnName: string;
-  onAddSemester?: () => void;
+  onAddSchool?: () => void;
 };
 
-const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddSemester}) => {
-    
+const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddSchool}) => {
   return (
     <>
         <div className="flex flex-col items-center justify-center text-center mt-4 py-16 px-4 bg-blue-100 h-[510px] rounded-3xl">
@@ -30,7 +29,7 @@ const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddSemeste
                 {btnName}
             </Button> */}
             {/* <SessionModal btnName={btnName} /> */}
-            <SemesterModal btnName={btnName} onAddSemester={onAddSemester} />
+            <SchoolModal btnName={btnName} onAddSchool={onAddSchool} />
         </div>
     </>
   )

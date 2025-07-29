@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,12 +34,13 @@ const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
-
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter();
 
   const onSubmit = async (values: FormData) => {
     // console.log("Form Data: ", data);
     // Handle login logic here
+    setIsSubmitting(true)
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
@@ -60,17 +61,17 @@ const Login = () => {
 
         login(data.user.name, data.user.role, data.user.department, data.user.email);
 
-
+        
         // Redirect based on role
         switch (data.user.role) {
           case 'hod':
-            router.push('/dashboard/hod');
+            router.replace('/dashboard/hod');
             break;
           case 'vetter':
-            router.push('/vetter/manage-uploads');
+            router.replace('/vetter/manage-uploads');
             break;
           default:
-            router.push('/');
+            router.replace('/');
         }
       }
 
@@ -195,8 +196,8 @@ const Login = () => {
               </a>
             </div>
             
-            <Button className="w-full h-12 bg-blue-800 hover:bg-blue-900">
-              Login
+            <Button disabled={isSubmitting} type="submit" className="w-full h-12 bg-blue-800 hover:bg-blue-900">
+              {isSubmitting ? 'Logging in...' : 'Login'}
             </Button>
           </form>
         </div>

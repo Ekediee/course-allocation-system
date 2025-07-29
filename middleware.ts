@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     url.pathname = '/';
     return NextResponse.redirect(url);
   }
-
+  console.log("token: ", token)
   // restrict routes
   if (url.pathname.startsWith('/dashboard/superadmin') && role !== 'superadmin') {
     url.pathname = '/unauthorized';

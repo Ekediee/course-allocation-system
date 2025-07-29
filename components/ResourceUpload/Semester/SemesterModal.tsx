@@ -13,39 +13,124 @@ import {
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppContext } from '@/contexts/ContextProvider'
+import { useToast } from "@/hooks/use-toast"
 
-type fromYear = string;
-type toYear = string;
+type semesterType = string;
+
 type SemesterModalProps = {
   btnName: string;
+  onAddSemester?: () => void;
 };
 
-const SemesterModal: React.FC<SemesterModalProps> = ({btnName}) => {
-  const [semester, setSemester] = useState<fromYear>();
-  const [open, setOpen] = useState(false)
-//   const {
-//     setToggleSemesterModal
-//   } = useAppContext()
+const SemesterModal: React.FC<SemesterModalProps> = ({btnName, onAddSemester}) => {
+  const [semester, setSemester] = useState<semesterType>();
+  const [disableBtn, setDisableBtn] = useState(false)
+  const {
+    semesterData
+  } = useAppContext()
+  const { toast } = useToast();
+
+  const capitalizeWords = (str: string): string => {
+    return str
+      .split(" ")
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  useEffect(() => {
+    if(semesterData?.length === 3){
+      setDisableBtn(true)
+    } 
+  }, [semesterData]);
+
+  
+
+  // Replace multiple spaces within a string with a single space
+  const normalizedSemester = semester?.toLowerCase().replace(/\s+/g, ' ').trim();
     
-  const handleCreateSemester = () => {
-    console.log("Creating Semester from", semester);
+  const handleCreateSemester = async () => {
+    if(semester == "") {
+      toast({
+        variant: "destructive",
+        title: "Semester Creation Failed",
+        description: "Please field cannot be blank/empty"
+      })
+      return;
+    }else if(
+      normalizedSemester !== "first semester" &&
+      normalizedSemester !== "second semester" &&
+      normalizedSemester !== "summer semester"
+    ) {
+      console.log("Raw semester: ", semester)
+      console.log(normalizedSemester)
+      toast({
+        variant: "destructive",
+        title: "Semester Creation Failed",
+        description: "The semester name you provided is incorrect"
+      })
+      return;
+    }
+
+    const semester_data = {
+      name: capitalizeWords(normalizedSemester),
+    };
+
+    try {
+      const res = await fetch('/api/manage-uploads/semester', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(semester_data),
+      });
+
+      if (res.status.toString().startsWith("40")) {
+        const data = await res.json();
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: data.error
+        });
+        return;
+      }
+
+      if (res.ok) {
+        
+        const data = await res.json();
+        
+        // Fetch semester data
+        if (onAddSemester) onAddSemester();
+        toast({
+          variant: "success",
+          title: "Semester Uploaded Successfully",
+          description: data.msg,
+        });
+
+      }
+
+
+      
+    } catch (err) {
+      toast({
+          variant: "destructive",
+          title: "Semester Upload Failed",
+          description: (err as Error).message,
+        });
+    }
+
     setSemester("");
   }
 
   return (
     <>
-    {/* <Button
-        className="bg-blue-700 hover:bg-blue-400 text-white"
-        onClick={() => setOpen(true)}
-    >
-        <Plus className="h-4 w-4" />
-        {btnName}
-    </Button> */}
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-blue-700 hover:bg-blue-400 text-white">
+        <Button 
+          className="bg-blue-700 hover:bg-blue-400 text-white"
+          disabled={disableBtn}
+        >
           <Plus className="h-4 w-4" />
           { btnName }
         </Button>
@@ -53,17 +138,9 @@ const SemesterModal: React.FC<SemesterModalProps> = ({btnName}) => {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <div className="flex items-center justify-center gap-2">
-            {/* <img 
-              src="/images/info-icon.png" 
-              alt="Info Icon" 
-              className="rounded-lg"
-              onError={(e) => {
-                e.currentTarget.src = "https://placehold.co/600x400?text=Dashboard+Preview";
-              }}
-            /> */}
             <Plus className="h-5 w-5 " />
           
-          <DialogTitle className="">Create a New Semester Period</DialogTitle>
+            <DialogTitle className="">Create a New Semester Period</DialogTitle>
           </div>
           <DialogDescription className="text-center">
             Specify the start and end year

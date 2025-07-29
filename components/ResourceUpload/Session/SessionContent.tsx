@@ -8,6 +8,10 @@ import EmptyPage from './EmptyPage';
 import SessionModal from './SessionModal';
 import { useAppContext } from '@/contexts/ContextProvider'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Academic_Session } from '@/contexts/ContextProvider';
+import { useQuery } from '@tanstack/react-query';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const SessionContent = () => {
     const {
@@ -21,6 +25,7 @@ const SessionContent = () => {
             if (!res.ok) throw new Error('Network error');
             const data = await res.json();
             setSessionData(data?.session); // Update state with fetched data
+            return data
         } catch (error) {
             console.error('Failed to fetch sessions:', error);
         }
@@ -30,7 +35,49 @@ const SessionContent = () => {
         fetchSessions(); // Call the async function
     }, []);
 
-  console.log("Session data in SessionContent:", sessionData);
+  const queryResult = useQuery<Academic_Session>({
+        queryKey: ['session'],
+        queryFn: fetchSessions
+    })
+
+    const { isLoading, error } = queryResult;
+
+    if (isLoading) {
+        return (
+            <div className="p-8">
+                <div className="flex items-center justify-start mb-2 gap-4">
+                    <Skeleton className="h-12 w-[200px] mb-1" />
+                    <Skeleton className="h-12 w-[200px] mb-1" />
+                    <Skeleton className="h-12 w-[200px] mb-1" />
+                </div>
+                <div className="flex items-center justify-start mb-2 gap-4">
+                    <Skeleton className="h-10 w-[300px] mb-1" />
+                    <Skeleton className="h-10 w-[300px] mb-1" />
+                    <Skeleton className="h-10 w-[300px] mb-1" />
+                </div>
+                <div className="flex items-center justify-start mb-2 gap-4">
+                    <Skeleton className="h-10 w-[100px] mb-6" />
+                    <Skeleton className="h-10 w-[100px] mb-6" />
+                    <Skeleton className="h-10 w-[100px] mb-6" />
+                </div>
+                <Card className="p-4 md:p-6 max-w-full">
+                    <CardContent>
+                        <div className="space-y-4">
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
     
   return (
     <>
@@ -54,7 +101,7 @@ const SessionContent = () => {
                             <TableHeader>
                                 <TableRow>
                                 <TableHead>Session Name</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead className="text-center">Status</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -62,7 +109,11 @@ const SessionContent = () => {
                             {sessionData.map((session:any) => (
                                 <TableRow key={session.id}>
                                     <TableCell >{session.name}</TableCell>
-                                    <TableCell >{session.is_active ? "Active" : "Inactive"}</TableCell>
+                                    <TableCell className="text-center">
+                                        {session.is_active && <Badge variant="outline" className="text-green-500 bg-green-100">
+                                            {session.is_active ? "Active" : "Inactive"}
+                                        </Badge>}
+                                    </TableCell>
                                     <TableCell className="text-center"></TableCell>
                                 </TableRow>
                             ))}
