@@ -12,6 +12,8 @@ import SemesterContent from '@/components/ResourceUpload/Semester/SemesterConten
 import { useAppContext } from '@/contexts/ContextProvider'
 import BulletinContent from '@/components/ResourceUpload/Bulletin/BulletinContent'
 import SchoolContent from '@/components/ResourceUpload/School/SchoolContent'
+import DepartmentContent from '@/components/ResourceUpload/department/DepartmentContent'
+import ProgramContent from '@/components/ResourceUpload/program/ProgramContent'
 
 const Tab_Items = [
     'Session', 'Semester', 'Bulletin', 'School', 'Department', 'Program', 'Course', 'Users'
@@ -42,6 +44,8 @@ const ResourceUpload = () => {
             <SemesterContent />
             <BulletinContent />
             <SchoolContent />
+            <DepartmentContent />
+            <ProgramContent />
             {/* Add other TabsContent for Semester, Bulletin, etc. */}
         </Tabs>
     </>

@@ -1,33 +1,33 @@
 import React, { useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from '../../ui/button';
 import { ArrowDownWideNarrow, ChevronDown, Loader2, Plus } from 'lucide-react';
-import { EmptyFolderIcon } from '../../EmptyFolder';
 import EmptyPage from './EmptyPage';
-import SchoolModal from './SchoolModal';
+import DepartmentModal from './DepartmentModal';
 import { useAppContext } from '@/contexts/ContextProvider'
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SchoolType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 
-const SchoolContent = () => {
+
+const departmentContent = () => {
     const {
-        schoolData, 
-        fetchSchools,
+        departmentData, 
+        fetchDepartments,
         isUploading
     } = useAppContext()
 
     useEffect(() => {
-        fetchSchools(); // Call the async function
+        fetchDepartments();
     }, []);
 
     const queryResult = useQuery<SchoolType>({
-        queryKey: ['schools'],
-        queryFn: fetchSchools
+        queryKey: ['departments'],
+        queryFn: fetchDepartments
     })
+
+    console.log("Department Data:", departmentData);
 
     const { isLoading, error } = queryResult;
 
@@ -73,40 +73,43 @@ const SchoolContent = () => {
             <Loader2 className="animate-spin w-4 h-4" />
             Uploading...
         </div>
-    }  
-
+    }
   return (
     <>
-        <TabsContent value="school">
+        <TabsContent value="department">
             <Card>
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
                         <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            Schools
+                            Department
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
                             </div>
-                            <SchoolModal btnName="Add School" onAddSchool={fetchSchools}/>
+                            <DepartmentModal btnName="Add Department" onAddDepartment={fetchDepartments}/>
                         </div>
                     </div>
-                    {schoolData?.length > 0 ? (
+                    {departmentData?.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
                             <TableHeader>
                                 <TableRow>
-                                <TableHead>School Name</TableHead>
+                                <TableHead>Department Name</TableHead>
+                                <TableHead className="">School</TableHead>
                                 <TableHead className="text-center">Acronym</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                            {schoolData.map((school:any) => (
-                                <TableRow key={school.id}>
-                                    <TableCell >{school.name}</TableCell>
+                            {departmentData.map((department:any) => (
+                                <TableRow key={department.id}>
+                                    <TableCell >{department.name}</TableCell>
+                                    <TableCell className="">
+                                        {department.school}
+                                    </TableCell>
                                     <TableCell className="text-center">
-                                        {school.acronym}
+                                        {department.acronym}
                                     </TableCell>
                                     <TableCell className="text-center"></TableCell>
                                 </TableRow>
@@ -116,10 +119,10 @@ const SchoolContent = () => {
                         </div>
                     ) : (
                         <EmptyPage 
-                            title="No School Available" 
-                            desc="Create a new school to see details" 
-                            btnName="Add School" 
-                            onAddSchool={fetchSchools}
+                            title="No Department Available" 
+                            desc="Create a new department to see details" 
+                            btnName="Add Department" 
+                            onAddDepartment={fetchDepartments}
                         />
                     )}
                     
@@ -130,4 +133,4 @@ const SchoolContent = () => {
   )
 }
 
-export default SchoolContent
+export default departmentContent

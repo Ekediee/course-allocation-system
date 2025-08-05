@@ -41,7 +41,7 @@ const BulletinContent = () => {
     })
 
     const { isLoading, error } = queryResult;
-    console.log("Bulletin Data: ", bulletinData);
+    
     if (isLoading) {
         return (
             <div className="p-8">

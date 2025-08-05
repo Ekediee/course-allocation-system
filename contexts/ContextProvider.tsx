@@ -96,6 +96,17 @@ export type SchoolType = {
   acronym: string;
 };
 
+export type SchoolTypes = {
+  id: number;
+  name: string;
+};
+
+export type DepartmentType = {
+  id: number;
+  name: string;
+  acronym: string;
+};
+
 
 export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -312,9 +323,53 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
           setSchoolData(data.schools); // Update state with fetched data
           return data
       } catch (error) {
-          console.error('Failed to fetch semesters:', error);
+          console.error('Failed to fetch schools:', error);
       }
     };
+
+    const [schoolNameData, setSchoolNameData] = useState<SchoolTypes | null>(null);
+
+    const fetchSchoolName = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/school/names');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          setSchoolNameData(data.schools); // Update state with fetched data
+          return data.schools
+      } catch (error) {
+          console.error('Failed to fetch schools:', error);
+      }
+    };
+
+    const [departmentData, setDepartmentData] = useState<DepartmentType | null>(null);
+    const [programData, setProgramData] = useState<DepartmentType | null>(null);
+
+    const fetchDepartments = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/department');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          setDepartmentData(data.departments); 
+          return data
+      } catch (error) {
+          console.error('Failed to fetch departments:', error);
+      }
+    };
+
+    const fetchPrograms = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/program');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          setProgramData(data.programs); 
+          return data
+      } catch (error) {
+          console.error('Failed to fetch programs:', error);
+      }
+    };
+
+    const [isUploading, setIsUploading] = useState(false);
+    const [selectedOption, setSelectedOption] = React.useState(null);
 
     return (
         <AppContext.Provider
@@ -334,7 +389,9 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 token, role, login, fetchLecturers, department, email, name,
                 logoutMenuOpen, toggleLogoutMenu, sessionData, setSessionData,
                 semesterData, setSemesterData, fetchSemesters, bulletinData, setBulletinData,
-                fetchSchools, schoolData, setSchoolData
+                fetchSchools, schoolData, setSchoolData, isUploading, setIsUploading,
+                departmentData, setDepartmentData, fetchDepartments, schoolNameData, fetchSchoolName,
+                selectedOption, setSelectedOption, programData, fetchPrograms
             }}
         >
             { children }
