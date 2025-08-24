@@ -16,7 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 const SessionContent = () => {
     const {
         sessionData,
-        setSessionData
+        setSessionData,
     } = useAppContext()
 
     const fetchSessions = async () => {

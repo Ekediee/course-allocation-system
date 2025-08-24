@@ -224,7 +224,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         const sem1 = allocationData && allocationData.length > 0 ? allocationData[0].id : "";
         const sem2 = allocationData && allocationData.length > 0 ? allocationData[1].id : "";
         if(semester.id === sem1 || semester.id === sem2) {
-          semester.programs.forEach((program) => {
+          semester.programs?.forEach((program) => {
             if(semester.id === sem2) {
               totalPrograms += 1;
             }
@@ -315,6 +315,18 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchLevels = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/level');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          
+          return data
+      } catch (error) {
+          console.error('Failed to fetch levels:', error);
+      }
+    };
+
     const fetchSchools = async () => {
       try {
           const res = await fetch('/api/manage-uploads/school');
@@ -329,6 +341,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const [schoolNameData, setSchoolNameData] = useState<SchoolTypes | null>(null);
 
+    // Fetch school names for the combobox
     const fetchSchoolName = async () => {
       try {
           const res = await fetch('/api/manage-uploads/school/names');
@@ -356,6 +369,44 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+
+    const [showDeptCombo, setShowDeptCombo] = useState(false);
+    const [showProgCombo, setShowProgCombo] = useState(false);
+    // Fetch department names for the combobox
+    const fetchDepartmentName = async () => {
+      try {
+      
+        const res = await fetch('/api/manage-uploads/department/names');
+        if (!res.ok) throw new Error('Network error');
+        const data = await res.json();
+        
+        return data.departments
+      } catch (error) {
+          console.error('Failed to fetch departments:', error);
+      }
+    };
+
+    const fetchDepartmentNameBySchool = async (school: string) => {
+      try {
+        const selectedSchool = {
+          school_id: school,
+        }
+        const res = await fetch('/api/manage-uploads/department/names', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(selectedSchool),
+        });
+        if (!res.ok) throw new Error('Network error');
+        const data = await res.json();
+        setShowDeptCombo(true); 
+        return data.departments
+      } catch (error) {
+          console.error('Failed to fetch departments:', error);
+      }
+    };
+
     const fetchPrograms = async () => {
       try {
           const res = await fetch('/api/manage-uploads/program');
@@ -368,7 +419,65 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchProgramName = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/program/names');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          // setProgramData(data.programs); 
+          return data.programs
+      } catch (error) {
+          console.error('Failed to fetch programs:', error);
+      }
+    };
+
+    const fetchProgramNameByDepartment = async (department: string) => {
+      try {
+        const selectedDept = {
+          department_id: department,
+        }
+        const res = await fetch('/api/manage-uploads/program/names', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(selectedDept)
+        });
+        if (!res.ok) throw new Error('Network error');
+        const data = await res.json();
+        setShowProgCombo(true); 
+        return data.programs
+      } catch (error) {
+          console.error('Failed to fetch programs:', error);
+      }
+    };
+
+    const fetchBulletinName = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/bulletin/names');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          
+          return data.bulletins
+      } catch (error) {
+          console.error('Failed to fetch bulletins:', error);
+      }
+    };
+
+    const fetchSessionName = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/session/names');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          // setProgramData(data.programs); 
+          return data.programs
+      } catch (error) {
+          console.error('Failed to fetch programs:', error);
+      }
+    };
+
     const [isUploading, setIsUploading] = useState(false);
+    
     const [selectedOption, setSelectedOption] = React.useState(null);
 
     return (
@@ -391,7 +500,9 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 semesterData, setSemesterData, fetchSemesters, bulletinData, setBulletinData,
                 fetchSchools, schoolData, setSchoolData, isUploading, setIsUploading,
                 departmentData, setDepartmentData, fetchDepartments, schoolNameData, fetchSchoolName,
-                selectedOption, setSelectedOption, programData, fetchPrograms
+                selectedOption, setSelectedOption, programData, fetchPrograms, fetchDepartmentName,
+                fetchProgramName, showDeptCombo, fetchDepartmentNameBySchool, fetchBulletinName, showProgCombo,
+                fetchProgramNameByDepartment, fetchLevels
             }}
         >
             { children }

@@ -13,6 +13,8 @@ import Cookies from 'js-cookie';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useToast } from "@/hooks/use-toast";
+import { Toaster } from '@/components/ui/toaster';
 
 const schema = z.object({
   email: z.string().email({ message: 'Invalid email' }),
@@ -30,6 +32,8 @@ const Login = () => {
     setPassword,
     login
   } = useAppContext()
+
+  const {toast} = useToast()
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -51,7 +55,13 @@ const Login = () => {
       });
 
       if (!res.ok) {
-        alert('Login failed');
+        // alert(data.error);
+        const errorData = await res.json();
+        toast({
+          variant: "destructive",
+          title: "Something is wrong",
+          description: errorData.error
+        });
         return;
       }
 
@@ -200,6 +210,7 @@ const Login = () => {
               {isSubmitting ? 'Logging in...' : 'Login'}
             </Button>
           </form>
+          <Toaster />
         </div>
 
         {/* Footer */}

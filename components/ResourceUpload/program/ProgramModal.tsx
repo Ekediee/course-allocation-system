@@ -37,7 +37,8 @@ const ProgramModal: React.FC<ProgramModalProps> = ({btnName, onAddProgram}) => {
     const [programAcronym, setProgramAcronym] = useState<programAcronym>();
     const [open, setOpen] = useState(false)
     const [file, setFile] = useState<File | null>(null);
-    const { setIsUploading, fetchDepartmentName, selectedOption } = useAppContext();
+    const { setIsUploading, fetchDepartmentName } = useAppContext();
+    const [selectedDepartment, setSelectedDepartment] = useState('')
 
     const { toast } = useToast()
     
@@ -60,7 +61,7 @@ const ProgramModal: React.FC<ProgramModalProps> = ({btnName, onAddProgram}) => {
 
         const program_data = {
             name: programName,
-            department_id: selectedOption,
+            department_id: selectedDepartment,
             acronym: programAcronym
         };
 
@@ -152,7 +153,7 @@ const ProgramModal: React.FC<ProgramModalProps> = ({btnName, onAddProgram}) => {
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('department_id', selectedOption);
+        formData.append('department_id', selectedDepartment);
 
         try {
         
@@ -194,6 +195,7 @@ const ProgramModal: React.FC<ProgramModalProps> = ({btnName, onAddProgram}) => {
         })
     
     const { data: departments, isLoading, error } = queryResult;
+
   return (
     <>
         <Dialog>
@@ -219,7 +221,7 @@ const ProgramModal: React.FC<ProgramModalProps> = ({btnName, onAddProgram}) => {
                 <div className="flex flex-col gap-2 mt-4">
                 <div className="flex flex-col gap-2 ">
                     <Label htmlFor="department">Select Department</Label>
-                    {!isLoading && <ComboboxMain data={departments} />}
+                    {!isLoading && <ComboboxMain data={departments} onSelect={setSelectedDepartment}/>}
 
                     <Label htmlFor="program" className="mt-2">Program Name</Label>
                     <input

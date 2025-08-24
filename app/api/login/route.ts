@@ -14,7 +14,8 @@ export const POST = async (req: any) => {
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: 'Login Failed' }, { status: 500 });
+      const errorData = await res.json();
+      return NextResponse.json({ error: errorData.error || 'Login Failed' }, { status: res.status });
     }
 
     const data = await res.json();

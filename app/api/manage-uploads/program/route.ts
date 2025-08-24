@@ -5,7 +5,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const reqBody = await req.json();
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/bulletins/create', {
+    const res = await fetch('http://127.0.0.1:5000/api/v1/programs/create', {
       cache: 'no-store',
       method: 'POST',
       headers: {
@@ -15,14 +15,16 @@ export const POST = async (req: NextRequest) => {
       body: JSON.stringify(reqBody),
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to activate bulletin' }, { status: res.status });
+      return NextResponse.json({ error: data.error }, { status: res.status });
     }
 
-    const data = await res.json();
+    
     return NextResponse.json(data);
   } catch (error) {
-    console.error("POST bulletin error:", error);
+    console.error("POST program error:", error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -31,7 +33,7 @@ export const POST = async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
   try {
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/bulletins/list', {
+    const res = await fetch('http://127.0.0.1:5000/api/v1/programs/list', {
       cache: 'no-store',
       method: 'GET',
       headers: {
@@ -41,11 +43,11 @@ export const GET = async (req: NextRequest) => {
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to fetch bulletin' }, { status: res.status });
+      return NextResponse.json({ error: 'Failed to fetch program' }, { status: res.status });
     }
 
     const data = await res.json();
-    // console.log("Bulletin Data: ", data);
+    
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });

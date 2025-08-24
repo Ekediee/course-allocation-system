@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import Select from 'react-select';
-import { useAppContext } from '@/contexts/ContextProvider'
+// import { useAppContext } from '@/contexts/ContextProvider'
 
 export type Items = {
   id: string;
@@ -12,14 +12,15 @@ export type Items = {
 
 type ComboboxDemoProps = {
   data?: Items[];
+  onSelect: (value: string) => void;
 }
 
-export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data}) => {
-  const { setSelectedOption } = useAppContext();
+export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data, onSelect}) => {
+  // const { setSelectedOption } = useAppContext();
 
   const handleChange = (option: any) => {
-    setSelectedOption(option.value);
-    // console.log('Selected:', option.value);
+    onSelect(option.value);
+    
   };
 
   return (
@@ -28,7 +29,7 @@ export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data}) => {
       onChange={handleChange}
       placeholder="Select an Item"
       isSearchable
-      className="text-black"
+      className="text-black w-full"
     />
   );
 }

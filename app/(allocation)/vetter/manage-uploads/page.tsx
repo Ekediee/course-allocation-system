@@ -14,6 +14,7 @@ import BulletinContent from '@/components/ResourceUpload/Bulletin/BulletinConten
 import SchoolContent from '@/components/ResourceUpload/School/SchoolContent'
 import DepartmentContent from '@/components/ResourceUpload/department/DepartmentContent'
 import ProgramContent from '@/components/ResourceUpload/program/ProgramContent'
+import CourseContent from '@/components/ResourceUpload/course/CourseContent'
 
 const Tab_Items = [
     'Session', 'Semester', 'Bulletin', 'School', 'Department', 'Program', 'Course', 'Users'
@@ -46,6 +47,7 @@ const ResourceUpload = () => {
             <SchoolContent />
             <DepartmentContent />
             <ProgramContent />
+            <CourseContent />
             {/* Add other TabsContent for Semester, Bulletin, etc. */}
         </Tabs>
     </>

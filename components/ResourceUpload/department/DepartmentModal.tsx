@@ -37,7 +37,8 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
     const [departmentAcronym, setDepartmentAcronym] = useState<departmentAcronym>();
     const [open, setOpen] = useState(false)
     const [file, setFile] = useState<File | null>(null);
-    const { setIsUploading, fetchSchoolName, selectedOption } = useAppContext();
+    const { setIsUploading, fetchSchoolName } = useAppContext();
+    const [selectedSchool, setSelectedSchool] = useState('');
 
     const { toast } = useToast()
 
@@ -60,7 +61,7 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
 
         const department_data = {
             name: departmentName,
-            school_id: selectedOption,
+            school_id: selectedSchool,
             acronym: departmentAcronym
         };
 
@@ -152,7 +153,7 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('school_id', selectedOption);
+        formData.append('school_id', selectedSchool);
 
         try {
         
@@ -220,7 +221,7 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
                 <div className="flex flex-col gap-2 mt-4">
                 <div className="flex flex-col gap-2 ">
                     <Label htmlFor="school">Select School</Label>
-                    {!isLoading && <ComboboxMain data={schools} />}
+                    {!isLoading && <ComboboxMain data={schools} onSelect={setSelectedSchool} />}
 
                     <Label htmlFor="department" className="mt-2">Department Name</Label>
                     <input
