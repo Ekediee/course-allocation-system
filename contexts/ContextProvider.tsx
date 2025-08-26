@@ -356,6 +356,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const [departmentData, setDepartmentData] = useState<DepartmentType | null>(null);
     const [programData, setProgramData] = useState<DepartmentType | null>(null);
+    const [specializationData, setSpecializationData] = useState<DepartmentType | null>(null);
 
     const fetchDepartments = async () => {
       try {
@@ -372,6 +373,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const [showDeptCombo, setShowDeptCombo] = useState(false);
     const [showProgCombo, setShowProgCombo] = useState(false);
+    
     // Fetch department names for the combobox
     const fetchDepartmentName = async () => {
       try {
@@ -419,6 +421,18 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchSpecializations = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/specialization');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          setSpecializationData(data.specializations); 
+          return data
+      } catch (error) {
+          console.error('Failed to fetch specializations:', error);
+      }
+    };
+
     const fetchProgramName = async () => {
       try {
           const res = await fetch('/api/manage-uploads/program/names');
@@ -428,6 +442,17 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
           return data.programs
       } catch (error) {
           console.error('Failed to fetch programs:', error);
+      }
+    };
+
+    const fetchSpecializationName = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/specialization/names');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          return data.specializations
+      } catch (error) {
+          console.error('Failed to fetch specializations:', error);
       }
     };
 
@@ -449,6 +474,29 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         return data.programs
       } catch (error) {
           console.error('Failed to fetch programs:', error);
+      }
+    };
+
+    const [showSpecCombo, setShowSpecCombo] = useState(false);
+
+    const fetchSpecializationNameByProgram = async (program: string) => {
+      try {
+        const selectedProg = {
+          program_id: program,
+        }
+        const res = await fetch('/api/manage-uploads/specialization/names', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(selectedProg)
+        });
+        if (!res.ok) throw new Error('Network error');
+        const data = await res.json();
+        setShowSpecCombo(true); 
+        return data.specializations
+      } catch (error) {
+          console.error('Failed to fetch specializations:', error);
       }
     };
 
@@ -502,7 +550,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 departmentData, setDepartmentData, fetchDepartments, schoolNameData, fetchSchoolName,
                 selectedOption, setSelectedOption, programData, fetchPrograms, fetchDepartmentName,
                 fetchProgramName, showDeptCombo, fetchDepartmentNameBySchool, fetchBulletinName, showProgCombo,
-                fetchProgramNameByDepartment, fetchLevels
+                fetchProgramNameByDepartment, fetchLevels, specializationData, fetchSpecializations, 
+                fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo
             }}
         >
             { children }

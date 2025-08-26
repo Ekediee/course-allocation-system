@@ -1,40 +1,60 @@
-import React, { useEffect } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowDownWideNarrow, ChevronDown, Loader2, Plus } from 'lucide-react';
+import React from 'react'
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowDownWideNarrow, ChevronDown, Loader2 } from 'lucide-react';
 import EmptyPage from './EmptyPage';
 import { useAppContext } from '@/contexts/ContextProvider'
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SchoolType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import CourseModal from './CourseModal';
 
 const CourseContent = () => {
     const {
-        courseData, 
         fetchCourses,
         isUploading,
     } = useAppContext()
 
-    // useEffect(() => {
-    //     fetchCourses();
-    // }, []);
-
-    const queryResult = useQuery<SchoolType>({
+    const { data: courseResult, isLoading, error } = useQuery<{ courses: any[] }>({
         queryKey: ['courses'],
         queryFn: fetchCourses
     })
 
-    // console.log("Department Data:", departmentData);
+    const courseData = courseResult?.courses;
 
-    const { isLoading, error } = queryResult;
+    if (isLoading) {
+        return (
+            <div className="p-8">
+                <div className="flex items-center justify-between mb-4">
+                    <Skeleton className="h-10 w-[150px]" />
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-10 w-[120px]" />
+                        <Skeleton className="h-10 w-[120px]" />
+                    </div>
+                </div>
+                <Card className="p-4 md:p-6 max-w-full">
+                    <CardContent>
+                        <div className="space-y-4">
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
 
     if (isUploading) {
-        <div className="flex items-center gap-2">
-            <Loader2 className="animate-spin w-4 h-4" />
-            Uploading...
-        </div>
+        return (
+            <div className="flex items-center gap-2">
+                <Loader2 className="animate-spin w-4 h-4" />
+                Uploading...
+            </div>
+        )
     }
   return (
     <>
@@ -43,7 +63,7 @@ const CourseContent = () => {
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
                         <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            Course
+                            Courses
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
@@ -52,18 +72,18 @@ const CourseContent = () => {
                             <CourseModal btnName="Add Course" onAddCourse={fetchCourses}/>
                         </div>
                     </div>
-                    {courseData?.length > 0 ? (
+                    {courseData && courseData.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
                             <TableHeader>
                                 <TableRow>
                                 <TableHead>Course Code</TableHead>
                                 <TableHead>Course Title</TableHead>
-                                <TableHead className="">Program</TableHead>
+                                <TableHead>Program</TableHead>
+                                <TableHead>Specialization</TableHead>
                                 <TableHead className="text-center">Bulletin</TableHead>
                                 <TableHead className="text-center">Level</TableHead>
                                 <TableHead className="text-center">Unit</TableHead>
-                                <TableHead className="text-center">Type</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -71,21 +91,21 @@ const CourseContent = () => {
                             {courseData.map((course:any) => (
                                 <TableRow key={course.id}>
                                     <TableCell >{course.code}</TableCell>
-                                    <TableCell >{course.name}</TableCell>
-                                    <TableCell className="">
-                                        {course.program}
+                                    <TableCell >{course.title}</TableCell>
+                                    <TableCell >
+                                        {course.program?.name}
+                                    </TableCell>
+                                    <TableCell >
+                                        {course.specialization?.name}
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        {course.bulletin}
+                                        {course.bulletin?.name}
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        {course.level}
+                                        {course.level?.name}
                                     </TableCell>
                                     <TableCell className="text-center">
                                         {course.unit}
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        {course.type}
                                     </TableCell>
                                     <TableCell className="text-center"></TableCell>
                                 </TableRow>
@@ -95,7 +115,7 @@ const CourseContent = () => {
                         </div>
                     ) : (
                         <EmptyPage 
-                            title="No Course Available" 
+                            title="No Courses Available" 
                             desc="Create a new course to see details" 
                             btnName="Add Course" 
                             onAddCourse={fetchCourses}
