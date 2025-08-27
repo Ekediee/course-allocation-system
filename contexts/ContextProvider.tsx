@@ -524,6 +524,17 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchCourses = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/course');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          return data
+      } catch (error) {
+          console.error('Failed to fetch courses:', error);
+      }
+    };
+
     const [isUploading, setIsUploading] = useState(false);
     
     const [selectedOption, setSelectedOption] = React.useState(null);
@@ -551,7 +562,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 selectedOption, setSelectedOption, programData, fetchPrograms, fetchDepartmentName,
                 fetchProgramName, showDeptCombo, fetchDepartmentNameBySchool, fetchBulletinName, showProgCombo,
                 fetchProgramNameByDepartment, fetchLevels, specializationData, fetchSpecializations, 
-                fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo
+                fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses
             }}
         >
             { children }

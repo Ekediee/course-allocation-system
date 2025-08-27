@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowDownWideNarrow, ChevronDown, Loader2 } from 'lucide-react';
 import EmptyPage from './EmptyPage';
 import { useAppContext } from '@/contexts/ContextProvider'
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import CourseModal from './CourseModal';
@@ -15,12 +15,16 @@ const CourseContent = () => {
         isUploading,
     } = useAppContext()
 
+    const queryClient = useQueryClient();
+
     const { data: courseResult, isLoading, error } = useQuery<{ courses: any[] }>({
         queryKey: ['courses'],
         queryFn: fetchCourses
     })
 
     const courseData = courseResult?.courses;
+
+    
 
     if (isLoading) {
         return (
@@ -69,7 +73,7 @@ const CourseContent = () => {
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
                             </div>
-                            <CourseModal btnName="Add Course" onAddCourse={fetchCourses}/>
+                            <CourseModal btnName="Add Course" onAddCourse={() => queryClient.invalidateQueries({ queryKey: ['courses'] })}/>
                         </div>
                     </div>
                     {courseData && courseData.length > 0 ? (
@@ -118,7 +122,7 @@ const CourseContent = () => {
                             title="No Courses Available" 
                             desc="Create a new course to see details" 
                             btnName="Add Course" 
-                            onAddCourse={fetchCourses}
+                            onAddCourse={() => queryClient.invalidateQueries({ queryKey: ['courses'] })}
                         />
                     )}
                     

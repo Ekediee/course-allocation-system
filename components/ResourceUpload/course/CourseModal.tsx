@@ -227,17 +227,17 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
         enabled: !!selectedProgram,
     });
 
-    const { data: semesterResult, isLoading: loadingSemester } = useQuery<{ semesters: Items[] }>({
+    const { data: semesterResult, isLoading: loadingSemester } = useQuery<Items[]>({
         queryKey: ["semesters"],
         queryFn: fetchSemesters,
     });
-    const semesters = semesterResult?.semesters || [];
+    const semesters = semesterResult ?? [];
 
-    const { data: levelResult, isLoading: loadingLevel } = useQuery<{ levels: Items[] }>({
+    const { data: levelResult, isLoading: loadingLevel } = useQuery<Items[]>({
         queryKey: ["levels"],
         queryFn: fetchLevels,
     });
-    const levels = levelResult?.levels || [];
+    const levels = levelResult ?? [];
     
   return (
     <>
@@ -298,18 +298,19 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
                             <ComboboxMain data={specializations} onSelect={setSelectedSpecialization} /></>}
                         </div>
                         <div className="w-full">
-                            <Label htmlFor="semester">Select Semester</Label>
-                            <ComboboxMain data={semesters} onSelect={setSelectedSemester} />
+                            {showSpecCombo && <><Label htmlFor="semester">Select Semester</Label>
+                            <ComboboxMain data={semesters} onSelect={setSelectedSemester} /></>}
                         </div>
                     </div>
                     <div className="w-full">
-                        <Label htmlFor="level">Select Level</Label>
-                        <ComboboxMain data={levels} onSelect={setSelectedLevel} />
+                        {showSpecCombo && <><Label htmlFor="level">Select Level</Label>
+                        <ComboboxMain data={levels} onSelect={setSelectedLevel} /></>}
                     </div>
                     <div className="flex gap-2 mt-2">
                         <div className="w-full">  
                             <Label htmlFor="course_code">Course Code</Label>
                             <Input
+                                id="course_code"
                                 type="text"
                                 placeholder="e.g. COSC101"
                                 className="border p-2 rounded"
@@ -321,6 +322,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
                         <div className="w-full">
                             <Label htmlFor="course_title">Course Title</Label>
                             <Input
+                                id="course_title"
                                 type="text"
                                 placeholder="e.g. Introduction to Computer Science"
                                 className="border p-2 rounded"
@@ -332,6 +334,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
                     </div>
                     <Label htmlFor="unit" className="mt-2">Course Unit</Label>
                     <Input
+                        id="unit"
                         type="number"
                         placeholder="e.g. 3"
                         className="border p-2 rounded"
