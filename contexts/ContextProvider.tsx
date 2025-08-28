@@ -535,6 +535,17 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchUsers = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/user');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          return data
+      } catch (error) {
+          console.error('Failed to fetch users:', error);
+      }
+    };
+
     const [isUploading, setIsUploading] = useState(false);
     
     const [selectedOption, setSelectedOption] = React.useState(null);
@@ -562,7 +573,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 selectedOption, setSelectedOption, programData, fetchPrograms, fetchDepartmentName,
                 fetchProgramName, showDeptCombo, fetchDepartmentNameBySchool, fetchBulletinName, showProgCombo,
                 fetchProgramNameByDepartment, fetchLevels, specializationData, fetchSpecializations, 
-                fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses
+                fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses,
+                fetchUsers
             }}
         >
             { children }

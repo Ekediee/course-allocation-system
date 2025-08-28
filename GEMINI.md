@@ -1,6 +1,6 @@
 # GEMINI.md - AI Assistant Project Overview
 
-This document provides a high-level overview of the Course Allocation System, as analyzed by the Gemini AI assistant. It outlines the current architecture, identifies core features, and proposes a strategic roadmap for future development and improvement.
+This document provides a high-level overview of the Course Allocation System. It outlines the current architecture, identifies core features, and proposes a strategic roadmap for future development and improvement.
 
 ## 1. Architecture Overview
 
@@ -65,6 +65,9 @@ To enhance the project's robustness, maintainability, and scalability, the follo
     2.  **Generate a Type-Safe Client**: Use a tool like `openapi-typescript-codegen` to automatically generate a TypeScript client from the OpenAPI spec.
     3.  **Integrate Generated Client**: Replace the manual API client from Initiative 2 with the newly generated, fully type-safe client.
 
-## 4. Conclusion
+## Additional - Very important instructions
 
-This is a high-quality project with a strong architectural foundation. By focusing on the strategic initiatives outlined above—starting with testing and configuration—you can significantly enhance its long-term stability and maintainability, ensuring it evolves into a truly production-grade system.
+You need to adhere to these instructions for every contributions you will make to this projects development.
+- For every prompt - always show me your plan on how you intend to implement a solution for solving the problem, and ask for my approval before proceeding.
+- When there is need to make code changes or persist code to file, always ask me to review your code and give you permission before writing any code to file.
+- Take up the habit of always asking questions to clarify issues before making any decision, I don't want you to make decisions for me - ask me first so that I can approve of your choices.

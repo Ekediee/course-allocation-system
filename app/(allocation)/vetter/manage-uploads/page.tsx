@@ -16,6 +16,7 @@ import DepartmentContent from '@/components/ResourceUpload/department/Department
 import ProgramContent from '@/components/ResourceUpload/program/ProgramContent'
 import CourseContent from '@/components/ResourceUpload/course/CourseContent'
 import SpecializationContent from '@/components/ResourceUpload/Specialization/SpecializationContent'
+import UserContent from '@/components/ResourceUpload/user/UserContent'
 
 const Tab_Items = [
     'Session', 'Semester', 'Bulletin', 'School', 'Department', 'Program', 'Specialization', 'Course', 'Users'
@@ -50,6 +51,7 @@ const ResourceUpload = () => {
             <ProgramContent />
             <SpecializationContent />
             <CourseContent />
+            <UserContent />
             {/* Add other TabsContent for Semester, Bulletin, etc. */}
         </Tabs>
     </>
