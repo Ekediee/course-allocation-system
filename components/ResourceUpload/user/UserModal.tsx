@@ -161,6 +161,9 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
 
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('department_id', selectedDepartment);
+
+        console.log("selectedDepartment: ", selectedDepartment)
 
         try {
         

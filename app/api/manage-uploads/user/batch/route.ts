@@ -5,6 +5,12 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get('file');
+    const departmentId = formData.get('department_id');
+
+    if (departmentId === null) {
+      return NextResponse.json({ error: 'department_id is required' }, { status: 400 });
+    }
+    const department_id: number = Number(departmentId);
 
     if (!file || !(file instanceof File)) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -12,15 +18,16 @@ export async function POST(req: NextRequest) {
 
     const buffer = await file.arrayBuffer();
     const text = Buffer.from(buffer).toString('utf8');
-
     const lines = text.split('\n').filter(Boolean);
     const records: any[] = [];
-
+    
+    
     // Assuming CSV format: name,gender,email,role,rank,phone,qualification,area_of_specialization,other_responsibilities,department_id
     // Skip header and process each line
     for (const line of lines.slice(1)) {
-      const [name, gender, email, role, rank, phone, qualification, specialization, other_responsibilities, department_id] = line.split(',').map(s => s.trim());
-      if (name && gender && email && role && rank && phone && qualification && specialization && department_id) {
+      const [name, gender, email, role, rank, phone, qualification, specialization, other_responsibilities] = line.split(',').map(s => s.trim());
+      if (name && gender && email && role && rank && phone && qualification && specialization) {
+        
         records.push({
           name,
           gender,
@@ -31,7 +38,7 @@ export async function POST(req: NextRequest) {
           qualification,
           specialization,
           other_responsibilities,
-          department_id: parseInt(department_id),
+          department_id,
         });
       }
     }
