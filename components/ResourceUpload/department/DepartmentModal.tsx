@@ -30,14 +30,15 @@ type departmentAcronym = string;
 type DepartmentModalProps = {
   btnName: string;
   onAddDepartment?: () => void;
+  isCalledFromAdmin: boolean;
 };
 
-const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartment}) => {
+const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartment, isCalledFromAdmin}) => {
     const [departmentName, setDepartmentName] = useState<departmentName>();
     const [departmentAcronym, setDepartmentAcronym] = useState<departmentAcronym>();
     const [open, setOpen] = useState(false)
     const [file, setFile] = useState<File | null>(null);
-    const { setIsUploading, fetchSchoolName } = useAppContext();
+    const { setIsUploading, fetchSchoolName, fetchSchoolNameAdmin } = useAppContext();
     const [selectedSchool, setSelectedSchool] = useState('');
 
     const { toast } = useToast()
@@ -189,7 +190,12 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
         }
     };
 
-    const queryResult = useQuery<Items[]>({
+    const queryResult = isCalledFromAdmin
+        ? useQuery<Items[]>({
+            queryKey: ['schools'],
+            queryFn: fetchSchoolNameAdmin
+        })
+        : useQuery<Items[]>({
             queryKey: ['schools'],
             queryFn: fetchSchoolName
         })

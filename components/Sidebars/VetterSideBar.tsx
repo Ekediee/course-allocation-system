@@ -42,6 +42,10 @@ const VetterSideBar = () => {
             <Upload className="h-5 w-5 mr-3" />
             <span>Upload Resources</span>
           </Link>
+          <Link href="/vetter/admin-management" className={` ${pathname.includes('admin-management') ?  activeLink : normalLink }`}>
+            <Users className="h-5 w-5 mr-3" />
+            <span>Admin Management</span>
+          </Link>
         </div>
     </>
   )

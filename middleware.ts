@@ -24,7 +24,7 @@ export function middleware(request: NextRequest) {
     url.pathname = '/';
     return NextResponse.redirect(url);
   }
-  console.log("token: ", token)
+  // console.log("token: ", token)
   // restrict routes
   if (url.pathname.startsWith('/dashboard/superadmin') && role !== 'superadmin') {
     url.pathname = '/unauthorized';
@@ -36,7 +36,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (url.pathname.startsWith('/vetter/manage-uploads') && role !== 'vetter') {
+  if ((url.pathname.startsWith('/vetter/manage-uploads') || url.pathname.startsWith('/vetter/admin-management')) && role !== 'vetter') {
     url.pathname = '/unauthorized';
     return NextResponse.redirect(url);
   }
@@ -47,6 +47,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/dashboard/:path*',
     '/course-allocation/:path*',
-    '/vetter/manage-uploads'
+    '/vetter/:path*'
   ],
 };

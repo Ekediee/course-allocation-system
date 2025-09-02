@@ -19,7 +19,7 @@ import SpecializationContent from '@/components/ResourceUpload/Specialization/Sp
 import UserContent from '@/components/ResourceUpload/user/UserContent'
 
 const Tab_Items = [
-    'Session', 'Semester', 'Bulletin', 'School', 'Department', 'Program', 'Specialization', 'Course', 'Users'
+    'Session', 'Semester', 'Bulletin', 'School', 'Department', 'Program', 'Specialization', 'Course', 'Lecturers'
 ]
 
 const ResourceUpload = () => {
@@ -47,7 +47,7 @@ const ResourceUpload = () => {
             <SemesterContent />
             <BulletinContent />
             <SchoolContent />
-            <DepartmentContent />
+            <DepartmentContent isCalledFromAdmin={false} />
             <ProgramContent />
             <SpecializationContent />
             <CourseContent />

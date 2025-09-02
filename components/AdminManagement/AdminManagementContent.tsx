@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,11 +7,10 @@ import { useAppContext } from '@/contexts/ContextProvider'
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import UserModal from './UserModal';
+import AdminManagementModal from './AdminManagementModal';
 import { Button } from "@/components/ui/button"
-// import { Combobox } from '@/components/ui/combobox';
 
-const UserContent = () => {
+const AdminManagementContent = () => {
     const [searchTerm, setSearchTerm] = React.useState('');
     const [sortColumn, setSortColumn] = React.useState('');
     const [sortDirection, setSortDirection] = React.useState('asc');
@@ -21,16 +19,17 @@ const UserContent = () => {
     const [selectedDepartment, setSelectedDepartment] = React.useState('');
 
     const {
-        fetchUsers,
+        fetchAdminUsers, 
         isUploading,
         fetchDepartmentName
     } = useAppContext()
 
     const queryClient = useQueryClient();
 
+    // I'll need a new query key and function
     const { data: userResult, isLoading, error } = useQuery<{ users: any[] }>({
-        queryKey: ['users'],
-        queryFn: fetchUsers
+        queryKey: ['adminUsers'],
+        queryFn: fetchAdminUsers
     })
 
     const { data: departments } = useQuery({
@@ -44,10 +43,7 @@ const UserContent = () => {
         (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.role?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.rank?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.qualification?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.area_of_specialization?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        user.department?.toLowerCase().includes(searchTerm.toLowerCase())) &&
         (selectedDepartment ? user.department?.id === selectedDepartment : true)
     );
 
@@ -105,7 +101,7 @@ const UserContent = () => {
     }
   return (
     <>
-        <TabsContent value="lecturers">
+        <TabsContent value="users">
             <Card>
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
@@ -118,7 +114,7 @@ const UserContent = () => {
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
                             </div>
-                            <UserModal btnName="Add Lecturer" onAddUser={() => queryClient.invalidateQueries({ queryKey: ['users'] })}/>
+                            <AdminManagementModal btnName="Add User" onAddUser={() => queryClient.invalidateQueries({ queryKey: ['adminUsers'] })}/>
                         </div>
                     </div>
                     {paginatedUsers && paginatedUsers.length > 0 ? (
@@ -130,11 +126,8 @@ const UserContent = () => {
                                 <TableHead onClick={() => { setSortColumn('gender'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Gender</TableHead>
                                 <TableHead onClick={() => { setSortColumn('email'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Email</TableHead>
                                 <TableHead onClick={() => { setSortColumn('role'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Role</TableHead>
-                                <TableHead onClick={() => { setSortColumn('rank'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Rank</TableHead>
                                 <TableHead onClick={() => { setSortColumn('department'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Department</TableHead>
-                                <TableHead onClick={() => { setSortColumn('qualification'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Qualification</TableHead>
-                                <TableHead onClick={() => { setSortColumn('specialization'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Area of Specialization</TableHead>
-                                <TableHead>Other Responsibilities</TableHead>
+                                <TableHead onClick={() => { setSortColumn('phone'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Phone</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -145,11 +138,8 @@ const UserContent = () => {
                                     <TableCell >{user.gender}</TableCell>
                                     <TableCell >{user.email}</TableCell>
                                     <TableCell >{user.role}</TableCell>
-                                    <TableCell >{user.rank}</TableCell>
                                     <TableCell >{user.department}</TableCell>
-                                    <TableCell className="text-center">{user.qualification}</TableCell>
-                                    <TableCell className="text-center">{user.specialization}</TableCell>
-                                    <TableCell className="text-center">{user.other_responsibilities ? user.other_responsibilities : "N/A"}</TableCell>
+                                    <TableCell >{user.phone}</TableCell>
                                     <TableCell className="text-center"></TableCell>
                                 </TableRow>
                             ))}
@@ -163,10 +153,10 @@ const UserContent = () => {
                         </div>
                     ) : (
                         <EmptyPage 
-                            title="No Lecturer Available" 
-                            desc="Add a new lecturer to see details" 
-                            btnName="Add Lecturer" 
-                            onAddUser={() => queryClient.invalidateQueries({ queryKey: ['users'] })}
+                            title="No User Available" 
+                            desc="Add a new user to see details" 
+                            btnName="Add User" 
+                            onAddUser={() => queryClient.invalidateQueries({ queryKey: ['adminUsers'] })}
                         />
                     )}
                     
@@ -177,4 +167,4 @@ const UserContent = () => {
   )
 }
 
-export default UserContent
+export default AdminManagementContent;

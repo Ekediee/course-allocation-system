@@ -354,6 +354,18 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchSchoolNameAdmin = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/school/names/admin');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          // setSchoolNameData(data.schools); // Update state with fetched data
+          return data.schools
+      } catch (error) {
+          console.error('Failed to fetch schools:', error);
+      }
+    };
+
     const [departmentData, setDepartmentData] = useState<DepartmentType | null>(null);
     const [programData, setProgramData] = useState<DepartmentType | null>(null);
     const [specializationData, setSpecializationData] = useState<DepartmentType | null>(null);
@@ -364,7 +376,19 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
           if (!res.ok) throw new Error('Network error');
           const data = await res.json();
           setDepartmentData(data.departments); 
-          return data
+          return data.departments
+      } catch (error) {
+          console.error('Failed to fetch departments:', error);
+      }
+    };
+
+    const fetchAdminDepartments = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/department/admin');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          setDepartmentData(data.departments); 
+          return data.departments
       } catch (error) {
           console.error('Failed to fetch departments:', error);
       }
@@ -550,6 +574,17 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     
     const [selectedOption, setSelectedOption] = React.useState(null);
 
+    const fetchAdminUsers = async () => {
+      try {
+          const res = await fetch('/api/admin/users');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          return data
+      } catch (error) {
+          console.error('Failed to fetch admin users:', error);
+      }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -573,8 +608,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 selectedOption, setSelectedOption, programData, fetchPrograms, fetchDepartmentName,
                 fetchProgramName, showDeptCombo, fetchDepartmentNameBySchool, fetchBulletinName, showProgCombo,
                 fetchProgramNameByDepartment, fetchLevels, specializationData, fetchSpecializations, 
-                fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses,
-                fetchUsers
+                                fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses,
+                fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments
             }}
         >
             { children }

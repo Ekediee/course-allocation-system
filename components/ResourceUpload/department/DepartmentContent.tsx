@@ -10,27 +10,36 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SchoolType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
+type DepartmentProps = {
+  isCalledFromAdmin: boolean;
+};
 
-const departmentContent = () => {
-    const {
-        departmentData, 
+const departmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => {
+    const { 
+        departmentData,
         fetchDepartments,
+        fetchAdminDepartments,
         isUploading
     } = useAppContext()
 
     useEffect(() => {
-        fetchDepartments();
-    }, []);
+        isCalledFromAdmin ? fetchAdminDepartments() : fetchDepartments()
+    }, [isCalledFromAdmin]);
 
-    const queryResult = useQuery<SchoolType>({
-        queryKey: ['departments'],
-        queryFn: fetchDepartments
-    })
+    const queryResult = isCalledFromAdmin
+        ? useQuery<SchoolType>({
+            queryKey: ['departments'],
+            queryFn: fetchAdminDepartments
+        })
+        : useQuery<SchoolType>({
+            queryKey: ['departments'],
+            queryFn: fetchDepartments
+        })
 
-    console.log("Department Data:", departmentData);
-
-    const { isLoading, error } = queryResult;
-
+        
+        const { isLoading, error } = queryResult;
+        
+        console.log("Department Data:", departmentData);
     if (isLoading) {
         return (
             <div className="p-8">
@@ -87,7 +96,7 @@ const departmentContent = () => {
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
                             </div>
-                            <DepartmentModal btnName="Add Department" onAddDepartment={fetchDepartments}/>
+                            <DepartmentModal btnName="Add Department" onAddDepartment={isCalledFromAdmin ? fetchAdminDepartments : fetchDepartments} isCalledFromAdmin={isCalledFromAdmin}/>
                         </div>
                     </div>
                     {departmentData?.length > 0 ? (
@@ -102,7 +111,7 @@ const departmentContent = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                            {departmentData.map((department:any) => (
+                            {departmentData?.map((department:any) => (
                                 <TableRow key={department.id}>
                                     <TableCell >{department.name}</TableCell>
                                     <TableCell className="">
@@ -122,7 +131,7 @@ const departmentContent = () => {
                             title="No Department Available" 
                             desc="Create a new department to see details" 
                             btnName="Add Department" 
-                            onAddDepartment={fetchDepartments}
+                            onAddDepartment={isCalledFromAdmin ? fetchAdminDepartments : fetchDepartments}
                         />
                     )}
                     
