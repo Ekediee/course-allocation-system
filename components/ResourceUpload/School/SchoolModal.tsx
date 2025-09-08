@@ -60,8 +60,6 @@ const SchoolModal: React.FC<SchoolModalProps> = ({btnName, onAddSchool}) => {
             acronym: schoolAcronym
         };
 
-        // console.log("School Data: ", school_data);
-
         try {
             const res = await fetch('/api/manage-uploads/school', {
                 method: 'POST',

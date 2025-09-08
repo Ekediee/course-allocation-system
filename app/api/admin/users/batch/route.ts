@@ -1,3 +1,4 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'CSV file is empty or contains no valid data.' }, { status: 400 });
     }
 
-    const flaskRes = await fetch('http://127.0.0.1:5000/api/v1/admin/users/batch', {
+    const flaskRes = await fetch(getBackendApiUrl('/api/v1/admin/users/batch'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

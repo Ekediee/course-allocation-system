@@ -63,8 +63,7 @@ const SemesterModal: React.FC<SemesterModalProps> = ({btnName, onAddSemester}) =
       normalizedSemester !== "second semester" &&
       normalizedSemester !== "summer semester"
     ) {
-      console.log("Raw semester: ", semester)
-      console.log(normalizedSemester)
+      
       toast({
         variant: "destructive",
         title: "Semester Creation Failed",

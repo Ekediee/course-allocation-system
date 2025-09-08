@@ -56,8 +56,6 @@ const BulletinModal: React.FC<BulletinModalProps> = ({btnName, onAddBulletin}) =
       start_year: fromYear,
       end_year: toYear
     };
-
-    console.log("Bulletin Data: ", bulletin_data);
     
     try {
       const res = await fetch('/api/manage-uploads/bulletin', {

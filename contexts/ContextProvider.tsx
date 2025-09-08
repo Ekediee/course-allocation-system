@@ -159,7 +159,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
 
     const login = (name: string, role: string, department: string, email: string) => {
-      console.log("Logging in", { name, role });
+      
       // localStorage.setItem('access_token', token);
       // Cookies.set('name', name, { path: '/' });
       // Cookies.set('role', role, { path: '/' });
@@ -295,13 +295,13 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       return await res.json();
     };
 
-    const fetchProgramSA = async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_SA_COURSES_API;
-      if (!apiUrl) throw new Error('NEXT_PUBLIC_PROGRAM_SA_API is not set');
-      const res = await fetch(apiUrl);
-      if (!res.ok) throw new Error('Network error');
-      return await res.json();
-    };
+    // const fetchProgramSA = async () => {
+    //   const apiUrl = process.env.NEXT_PUBLIC_SA_COURSES_API;
+    //   if (!apiUrl) throw new Error('NEXT_PUBLIC_PROGRAM_SA_API is not set');
+    //   const res = await fetch(apiUrl);
+    //   if (!res.ok) throw new Error('Network error');
+    //   return await res.json();
+    // };
 
     const fetchSemesters = async () => {
       try {
@@ -439,9 +439,55 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
           if (!res.ok) throw new Error('Network error');
           const data = await res.json();
           setProgramData(data.programs); 
-          return data
+          return data.programs
       } catch (error) {
           console.error('Failed to fetch programs:', error);
+      }
+    };
+
+    const fetchProgramSA = async (department: string) => {
+      try {
+        const selectedDept = {
+          department: department,
+        }
+
+        const res = await fetch('/api/special-allocation/program', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(selectedDept)
+        });
+        if (!res.ok) throw new Error('Network error');
+        const data = await res.json();
+           
+          return data.programs
+      } catch (error) {
+          console.error('Failed to fetch programs:', error);
+      }
+    };
+
+    const fetchCourseSA = async (bulletin: string, program: string, semester: string) => {
+      try {
+        const bullParams = {
+          bulletin: bulletin,
+          program: program,
+          semester: semester,
+        }
+        const res = await fetch('/api/special-allocation/courses', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(bullParams),
+        });
+        if (!res.ok) {
+          throw new Error('Network error');
+        }
+        return await res.json();
+      } catch (error) {
+        console.error('Failed to fetch special allocation courses:', error);
+        throw error;
       }
     };
 
@@ -597,7 +643,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 groups, setGroups, isLevelFullyAllocated, computeAllocationProgress,
                 overallAllocationProgress, fetchSemesterData, fetchSemesterDataDE,
                 prevPath, setPrevPath, selectedBulletin, setSelectedBulletin,
-                programs, setPrograms, selectedProgram, setSelectedProgram, fetchProgramSA,
+                programs, setPrograms, selectedProgram, setSelectedProgram, fetchProgramSA, fetchCourseSA,
                 semesters, setSemesters, selectedSemester, setSelectedSemester,
                 username, setUsername, password, setPassword,
                 token, role, login, fetchLecturers, department, email, name,

@@ -26,8 +26,6 @@ const ProgramContent = () => {
         queryFn: fetchPrograms
     })
 
-    // console.log("Department Data:", departmentData);
-
     const { isLoading, error } = queryResult;
 
     if (isLoading) {

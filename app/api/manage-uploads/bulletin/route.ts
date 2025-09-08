@@ -1,3 +1,4 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 // POST Session data
@@ -5,7 +6,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const reqBody = await req.json();
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/bulletins/create', {
+    const res = await fetch(getBackendApiUrl('/api/v1/bulletins/create'), {
       cache: 'no-store',
       method: 'POST',
       headers: {
@@ -31,7 +32,7 @@ export const POST = async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
   try {
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/bulletins/list', {
+    const res = await fetch(getBackendApiUrl('/api/v1/bulletins/list'), {
       cache: 'no-store',
       method: 'GET',
       headers: {
@@ -45,7 +46,7 @@ export const GET = async (req: NextRequest) => {
     }
 
     const data = await res.json();
-    // console.log("Bulletin Data: ", data);
+    
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });

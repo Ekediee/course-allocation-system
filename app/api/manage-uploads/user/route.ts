@@ -1,10 +1,10 @@
-
+import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
 
 // GET request to fetch all users
 export const GET = async (req: any) => {
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/v1/users', {
+    const res = await fetch(getBackendApiUrl('/api/v1/users'), {
       cache: 'no-store',
       method: "GET",
       headers: {
@@ -28,7 +28,7 @@ export const GET = async (req: any) => {
 export const POST = async (req: any) => {
     try {
         const body = await req.json();
-        const res = await fetch('http://127.0.0.1:5000/api/v1/users', {
+        const res = await fetch(getBackendApiUrl('/api/v1/users'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

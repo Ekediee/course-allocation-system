@@ -17,8 +17,8 @@ const BulletinProgram = ({step, view}: any) => {
             <div className="flex gap-2">
             <div className="flex justify-center items-center w-8 h-8 rounded-full bg-white"><FaBook className='text-lg text-center'/></div>
             <div className="flex flex-col">
-                <div className="font-medium">Semester</div>
-                <div className="text-sm text-muted-foreground">{selectedSemester || '-'}</div>
+                <div className="font-medium">Bulletin</div>
+                <div className="text-sm text-muted-foreground">{selectedBulletin || '-'}</div>
             </div> 
             </div>
         </div>
@@ -26,8 +26,8 @@ const BulletinProgram = ({step, view}: any) => {
             <div className="flex gap-2">
             <div className="flex justify-center items-center w-8 h-8 rounded-full bg-white"><FaBook className='text-lg text-center'/></div>
             <div className="flex flex-col">
-                <div className="font-medium">Bulletin</div>
-                <div className="text-sm text-muted-foreground">{selectedBulletin || '-'}</div>
+                <div className="font-medium">Program</div>
+                <div className="text-sm text-muted-foreground">{selectedProgram || '-'}</div>
             </div> 
             </div>
         </div>
@@ -35,8 +35,8 @@ const BulletinProgram = ({step, view}: any) => {
             <div className="flex gap-2">
             <div className="flex justify-center items-center w-8 h-8 rounded-full bg-white"><FaBookOpen className='text-lg text-center'/></div>
             <div className="flex flex-col">
-                <div className="font-medium">Program</div>
-                <div className="text-sm text-muted-foreground">{selectedProgram || '-'}</div>
+                <div className="font-medium">Semester</div>
+                <div className="text-sm text-muted-foreground">{selectedSemester || '-'}</div>
             </div>
             </div>
         </div>

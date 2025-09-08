@@ -42,17 +42,11 @@ const AllocationPage = ({allocationPage, url}: any) => {
         });
 
     const { data: semesters, isLoading, error } = queryResult;
-
-    // useEffect(() => {
-    //     if (semesters && semesters.length > 0) {
-    //         setActiveSemester(semesters[0].id);
-    //     }
-    // }, [semesters]);
     
     const semesterdata: Semester | undefined = semesters?.find(
         (sem: Semester) => sem.id === semesters[0].id
     );
-    // console.log("check active semester: ", activeSemester);
+    
     // Set default active program for each semester when data is loaded
     useEffect(() => {
         if (semesters) {
@@ -201,7 +195,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                             level.id,
                                             semesters
                                         );
-                                        console.log("isAllocated", isAllocated)
+                                        
                                         return(
                                             <TabsTrigger key={level.id} value={level.id} className="bg-gray-100 md:h-8 data-[state=active]:bg-white">
                                                 {level.name}

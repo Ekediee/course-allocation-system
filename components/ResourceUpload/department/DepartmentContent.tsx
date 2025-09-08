@@ -39,7 +39,6 @@ const departmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
         
         const { isLoading, error } = queryResult;
         
-        console.log("Department Data:", departmentData);
     if (isLoading) {
         return (
             <div className="p-8">

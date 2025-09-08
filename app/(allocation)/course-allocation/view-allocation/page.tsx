@@ -16,12 +16,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 const CourseAllocation = () => {
   const {fetchSemesterData, prevPath, fetchSemesterDataDE} = useAppContext()
   
-  
-  console.log("Previous Path:", prevPath);
-  // const { data: allocation_data, isLoading, error } = useQuery<Semester[]>({
-  //     queryKey: ['semesters'],
-  //     queryFn: fetchSemesterData
-  // });
 
   const queryResult = prevPath === "/course-allocation"
     ? useQuery<Semester[]>({
@@ -35,12 +29,6 @@ const CourseAllocation = () => {
 
   const { data: allocation_data, isLoading, error } = queryResult;
 
-  // const allocat = fetchSemesterData()
-
-  // console.log("Allocation Data:", allocat);
-
-  // const semesters = useMemo(() => allocation_data?.map((sem) => sem.id), []);
-  // const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
 
   const semesters = useMemo(() => allocation_data?.map((sem) => sem.id) ?? [], [allocation_data]);
   const [selectedSemester, setSelectedSemester] = useState<string | undefined>("");

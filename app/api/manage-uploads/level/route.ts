@@ -1,10 +1,11 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET level data
 export const GET = async (req: NextRequest) => {
   try {
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/levels/list', {
+    const res = await fetch(getBackendApiUrl('/api/v1/levels/list'), {
       cache: 'no-store',
       method: 'GET',
       headers: {

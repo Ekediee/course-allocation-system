@@ -24,14 +24,14 @@ export function middleware(request: NextRequest) {
     url.pathname = '/';
     return NextResponse.redirect(url);
   }
-  // console.log("token: ", token)
+  
   // restrict routes
   if (url.pathname.startsWith('/dashboard/superadmin') && role !== 'superadmin') {
     url.pathname = '/unauthorized';
     return NextResponse.redirect(url);
   }
 
-  if ((url.pathname.startsWith('/dashboard/hod') || url.pathname.startsWith('/course-allocation')) && role !== 'hod') {
+  if ((url.pathname.startsWith('/dashboard/hod') || url.pathname.startsWith('/course-allocation') || url.pathname.startsWith('/special-allocation/')) && role !== 'hod') {
     url.pathname = '/unauthorized';
     return NextResponse.redirect(url);
   }
@@ -47,6 +47,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/dashboard/:path*',
     '/course-allocation/:path*',
-    '/vetter/:path*'
+    '/vetter/:path*', '/special-allocation/:path*'
   ],
 };

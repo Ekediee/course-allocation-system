@@ -1,3 +1,4 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
 
 // POST handler for creating a new course
@@ -5,7 +6,7 @@ export const POST = async (req: Request) => {
   const reqBody = await req.json();
 
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/v1/courses', {
+    const res = await fetch(getBackendApiUrl('/api/v1/courses'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -30,7 +31,7 @@ export const POST = async (req: Request) => {
 // GET handler for fetching all courses
 export const GET = async (req: Request) => {
     try {
-        const res = await fetch('http://127.0.0.1:5000/api/v1/courses', {
+        const res = await fetch(getBackendApiUrl('/api/v1/courses'), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

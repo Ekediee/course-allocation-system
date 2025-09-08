@@ -1,9 +1,10 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (req: NextRequest) => {
   try {
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/bulletins/list/name', {
+    const res = await fetch(getBackendApiUrl('/api/v1/bulletins/list/name'), {
       cache: 'no-store',
       method: 'GET',
       headers: {
@@ -17,7 +18,7 @@ export const GET = async (req: NextRequest) => {
     }
 
     const data = await res.json();
-    // console.log("Bulletin Data: ", data);
+    
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });

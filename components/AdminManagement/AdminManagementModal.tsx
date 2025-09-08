@@ -95,6 +95,7 @@ const AdminManagementModal: React.FC<AdminManagementModalProps> = ({btnName, onA
                 title: "User Creation Success",
                 description: data.msg,
             });
+            alert(data.msg)
 
             // Clear form
             setName('');

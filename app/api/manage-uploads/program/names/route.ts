@@ -1,10 +1,11 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (req: NextRequest) => {
   try {
     const reqBody = await req.json();
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/programs/names/list', {
+    const res = await fetch(getBackendApiUrl('/api/v1/programs/names/list'), {
       cache: 'no-store',
       method: 'POST',
       headers: {

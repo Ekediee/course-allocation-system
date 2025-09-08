@@ -1,3 +1,4 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
 
 export const POST = async (req: any) => {
@@ -5,7 +6,7 @@ export const POST = async (req: any) => {
   const reqBody = await req.json()
 
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/v1/auth/login', {
+    const res = await fetch(getBackendApiUrl('/api/v1/auth/login'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -25,8 +26,7 @@ export const POST = async (req: any) => {
       department: data.user.department,
       email: data.user.email,
     }
-    // console.log("fetched allocation: ", data)
-    // const resp = NextResponse.json({ message: 'Login successful' });
+    
     const response = NextResponse.json({
       user,
       message: 'Login successful' 

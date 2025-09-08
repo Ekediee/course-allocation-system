@@ -1,9 +1,10 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (req: NextRequest) => {
   try {
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/schools/lists/admin', {
+    const res = await fetch(getBackendApiUrl('/api/v1/schools/lists/admin'), {
       cache: 'no-store',
       method: 'GET',
       headers: {

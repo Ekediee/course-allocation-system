@@ -31,7 +31,6 @@ const PrintLink = ({ semester }: Props) => {
     const total = allCourses?.length;
     const allocated = allCourses?.filter(c => c.isAllocated).length;
     
-    // console.log(semester)
     let allAllocated;
     if (semester.id === "summer") {
         allAllocated = true;

@@ -3,20 +3,21 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (req: NextRequest) => {
   try {
-    const reqBody = await req.json();
 
-    const res = await fetch(getBackendApiUrl('/api/v1/specializations/names/list'), {
+    const reqBody = await req.json();
+    
+    const res = await fetch(getBackendApiUrl('/api/v1/programs/department-list'), {
       cache: 'no-store',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Cookie: req.headers.get('cookie') || '',
       },
-      body: JSON.stringify(reqBody),
+      body: JSON.stringify(reqBody)
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to fetch specialization' }, { status: res.status });
+      return NextResponse.json({ error: 'Failed to fetch program' }, { status: res.status });
     }
 
     const data = await res.json();

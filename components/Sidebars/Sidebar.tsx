@@ -36,6 +36,7 @@ const Sidebar = () => {
 
   return (
     <>
+      <div>
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -58,8 +59,9 @@ const Sidebar = () => {
         
         {role == "hod" && <HODSideBar />}
         {role == "vetter" && <VetterSideBar />}
-        
-        <div className="mt-auto p-4 border-t border-gray-200">
+      </div>
+      <div>  
+        {/* <div className="mt-auto p-4 border-t border-gray-200">
           <div className="flex items-center">
             <HelpCircle className="w-5 h-5 text-gray-500 mr-2" />
             <div className="flex-1">
@@ -70,7 +72,7 @@ const Sidebar = () => {
               <ChevronDown className="w-4 h-4" />
             </Button>
           </div>
-        </div>
+        </div> */}
         
         <div className="p-4 border-t border-gray-200 flex items-center">
           <div className="w-8 h-8 bg-blue-500 rounded-full text-white flex items-center justify-center">
@@ -89,6 +91,7 @@ const Sidebar = () => {
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
+      </div>
     </>
   )
 }

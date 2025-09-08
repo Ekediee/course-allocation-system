@@ -1,10 +1,11 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET semester data
 export const GET = async (req: NextRequest) => {
   try {
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/semesters/list', {
+    const res = await fetch(getBackendApiUrl('/api/v1/semesters/list'), {
       cache: 'no-store',
       method: 'GET',
       headers: {
@@ -28,9 +29,8 @@ export const GET = async (req: NextRequest) => {
 export const POST = async (req: NextRequest) => {
   try {
     const reqBody = await req.json();
-    console.log("Received semester data:", reqBody);
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/semesters/create', {
+    const res = await fetch(getBackendApiUrl('/api/v1/semesters/create'), {
       cache: 'no-store',
       method: 'POST',
       headers: {

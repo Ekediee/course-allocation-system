@@ -35,7 +35,7 @@ const CourseAllocation = () => {
 
   return (
     <>
-        <AllocationPage allocationPage={allocationPage} url="de-allocation" />
+        <AllocationPage url="de-allocation" allocationPage={allocationPage} />
     </>
   )
 }

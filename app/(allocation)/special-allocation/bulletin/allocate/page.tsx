@@ -33,45 +33,54 @@ type Program = {
 
 const Allocate = () => {
     const { 
-        fetchProgramSA,
-        setSelectedCourse
+        fetchCourseSA,
+        department,
+        setSelectedCourse,
+        selectedCourse,
+        selectedProgram,
+        selectedBulletin,
+        selectedSemester,
     } = useAppContext()
 
     
     const view = true; // Changes the width of the bulletin program component
-    // 'https://mocki.io/v1/59bc9992-2ce7-4794-8db1-57a525897cbc'
+    
+    const saParams = {
+        bulletin: selectedBulletin,
+        program: selectedProgram,
+        semester: selectedSemester,
+    }
 
-    const { data: programs, isLoading, error } = useQuery<Program[]>({
-        queryKey: ['programs'], // Add bulletin to the key
-        queryFn: fetchProgramSA, // Wrap call in function
+    const { data: saCourses, isLoading, error } = useQuery<Level[]>({
+        queryKey: ['sacourse'], // Add bulletin to the key
+        queryFn: () => fetchCourseSA(selectedBulletin, selectedProgram, selectedSemester), // Wrap call in function
     });
 
     if (isLoading) {
         return <div>Loading...</div>;
     }
 
-    if (error || !programs || programs.length === 0) {
-        return <div>No programs found.</div>;
+    if (error || !saCourses || saCourses.length === 0) {
+        return <div>No courses found.</div>;
     }
-
+    
   return (
     <>
         <BulletinProgram step={0} view={view} />
 
         <Card className="m-4">
             <CardContent className="p-2">
-                <Tabs defaultValue={programs[0]?.levels[0]?.id} className="w-full">
+                <Tabs defaultValue={saCourses?.[0]?.id} className="w-full">
                     <div className="md:flex justify-between bg-gray-100 md:h-10">
                         <TabsList className="grid grid-cols-4 md:flex md:justify-start md:h-10 md:grid-cols-4 gap-2 mb-2">
-                            {programs[0].levels.map((level: Level) => (
+                            {saCourses.map((level: Level) => (
                                 <TabsTrigger key={level.id} value={level.id} className="bg-gray-100 md:h-8 data-[state=active]:bg-white">
                                     {level.name}
                                 </TabsTrigger>
-                                
                             ))}
                         </TabsList>
                     </div>
-                    {programs[0].levels.map((level: Level) => (
+                    {saCourses.map((level: Level) => (
                         <TabsContent key={level.id} value={level.id}>
                         {level.courses.length === 0 ? (
                             <div className="p-4 text-center text-muted-foreground">
@@ -91,9 +100,9 @@ const Allocate = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {level.courses.map((course: Course) => (
+                                {level.courses.map((course: Course, index: number) => (
                                 <TableRow key={course.id}>
-                                    <TableCell className="font-medium">{course.id}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell >{course.code}</TableCell>
                                     <TableCell>{course.title}</TableCell>
                                     <TableCell>{course.unit}</TableCell>
@@ -113,15 +122,17 @@ const Allocate = () => {
                                                     },
                                                 }} 
                                                 className="text-blue-500 hover:text-blue-700"
-                                                onClick={() => setSelectedCourse({
-                                                    courseId: course.id,
-                                                    courseCode: course.code,
-                                                    courseTitle: course.title,
-                                                    // semesterId: semester.id,
-                                                    programId: programs[0].id,
-                                                    programName: programs[0].name,
-                                                    levelId: level.id
-                                                })}
+                                                onClick={() => {
+                                                    const programName = department?.programs?.find((p: any) => p.id === selectedProgram)?.name || '';
+                                                    setSelectedCourse({
+                                                        courseId: course.id,
+                                                        courseCode: course.code,
+                                                        courseTitle: course.title,
+                                                        programId: selectedProgram,
+                                                        semesterId: selectedSemester,
+                                                        levelId: level.id
+                                                    })
+                                                }}
                                             >
                                                 Allocate Lecturer
                                             </Link>

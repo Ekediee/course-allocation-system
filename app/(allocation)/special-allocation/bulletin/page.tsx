@@ -9,10 +9,10 @@ import { useAppContext } from '@/contexts/ContextProvider';
 import BulletinProgram from '@/components/BulletinProgram';
 import Link from 'next/link';
 
-const bulletins = [
-  { id: '2019 - 2023', name: '2019 - 2023' },
-  { id: '2015 - 2019', name: '2015 - 2019' },
-];
+// const bulletins = [
+//   { id: '2019 - 2023', name: '2019 - 2023' },
+//   { id: '2015 - 2019', name: '2015 - 2019' },
+// ];
 
 // 
 
@@ -28,6 +28,7 @@ type Semester = {
 
 const StepperPage = () => {
   const {
+    department,
     programs, 
     setPrograms, 
     selectedProgram, 
@@ -35,52 +36,17 @@ const StepperPage = () => {
     selectedBulletin, 
     setSelectedBulletin,
     semesters, setSemesters,
-    selectedSemester, setSelectedSemester
+    selectedSemester, setSelectedSemester,
+    fetchBulletinName, fetchSemester, fetchProgramSA
   } = useAppContext()
   const [step, setStep] = useState(1);
   
   const [loading, setLoading] = useState(false);
 
-  const fetchPrograms = async (bulletinId: string) => {
-    setLoading(true);
-    try {
-      // Simulate API call based on selected bulletin
-      
-      const apiUrl = process.env.NEXT_PUBLIC_SA_PROGRAM_API;
-      if (!apiUrl) throw new Error('NEXT_PUBLIC_SA_PROGRAM_API is not set');
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      return data
-      // console.log('Fetched programs:', data);
-    } catch (error) {
-      console.error('Error fetching programs:', error);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const fetchSemester = async () => {
-    setLoading(true);
-    try {
-      // Simulate API call based on selected bulletin
-      const apiUrl = process.env.NEXT_PUBLIC_SEMESTER_API;
-      if (!apiUrl) throw new Error('NEXT_PUBLIC_SEMESTER_API is not set');
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      // console.log('Fetched semesters:', data);
-      return data
-    } catch (error) {
-      console.error('Error fetching programs:', error);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const { data: bulletin_data, isLoading: isBulletinLoading, error: bulletinError } = useQuery<Bulletin[]>({
-    queryKey: ['bulletins', selectedBulletin], // Add bulletin to the key
-    queryFn: () => fetchPrograms(selectedBulletin), // Wrap call in function
+  const { data: program_data, isLoading: isProgramLoading, error: programError } = useQuery<Bulletin[]>({
+    queryKey: ['programs', selectedBulletin], // Add bulletin to the key
+    queryFn: () => fetchProgramSA(department), // Wrap call in function
     enabled: !!selectedBulletin, // Only run query when bulletin is selected
   });
 
@@ -89,22 +55,26 @@ const StepperPage = () => {
     queryFn: fetchSemester,
   });
 
-  const handleSemesterProceed = () => {
+  const { data: bulletin_data, isLoading: isBulletinLoading, error: bulletinError } = useQuery<Semester[]>({
+    queryKey: ['bulletin'], // Add bulletin to the key
+    queryFn: fetchBulletinName,
+  });
+
+  const handleProgramProceed = () => {
     if (semester_data) {
       
-      
-      setStep(2);
-    }
-  };
-
-  const handleBulletinProceed = () => {
-    if (selectedBulletin && bulletin_data) {
-      setPrograms(bulletin_data.map(b => b.name));
       
       setStep(3);
     }
   };
 
+  const handleBulletinProceed = () => {
+    if (selectedBulletin && program_data) {
+      setPrograms(program_data.map(b => b.name));
+      
+      setStep(2);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center px-4 py-36">
@@ -119,18 +89,18 @@ const StepperPage = () => {
 
           {step === 1 && (
             <div>
-              <h3 className="text-center text-blue-600 font-medium mb-2">Select a semester</h3>
-              <Select onValueChange={setSelectedSemester} value={selectedSemester || ''}>
+              <h3 className="text-center text-blue-600 font-medium mb-2">Select a bulletin</h3>
+              <Select onValueChange={setSelectedBulletin} value={selectedBulletin || ''}>
                 <SelectTrigger className="w-full mb-4">
                   <SelectValue placeholder="Select Bulletin" />
                 </SelectTrigger>
                 <SelectContent>
-                  {semester_data?.map((s:any) => (
-                    <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>
+                  {bulletin_data?.map((b) => (
+                    <SelectItem key={b.id} value={b.name}>{b.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button disabled={!selectedSemester} variant="default" className="w-full bg-blue-800 hover:bg-blue-600" onClick={handleSemesterProceed}>
+              <Button disabled={!selectedBulletin} variant="default" className="w-full bg-blue-800 hover:bg-blue-600" onClick={handleBulletinProceed}>
                 Proceed
               </Button>
             </div>
@@ -138,20 +108,21 @@ const StepperPage = () => {
 
           {step === 2 && (
             <div>
-              <h3 className="text-center text-blue-600 font-medium mb-2">Select a bulletin</h3>
-              <Select onValueChange={setSelectedBulletin} value={selectedBulletin || ''}>
+              <h3 className="text-center text-blue-600 font-medium mb-2">Select a program</h3>
+              <Select onValueChange={setSelectedProgram} value={selectedProgram || ''}>
                 <SelectTrigger className="w-full mb-4">
-                  <SelectValue placeholder="Select Bulletin" />
+                  <SelectValue placeholder="Select Program" />
                 </SelectTrigger>
                 <SelectContent>
-                  {bulletins.map((b) => (
-                    <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
+                  {programs?.map((program:any) => (
+                    <SelectItem key={program} value={program}>{program}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              
               <div className="flex justify-between">
                 <Button variant="ghost" onClick={() => setStep(1)}>Back</Button>
-                <Button disabled={!selectedBulletin} variant="default" className="bg-blue-800 hover:bg-blue-600" onClick={handleBulletinProceed}>
+                <Button disabled={!selectedProgram} variant="default" className="bg-blue-800 hover:bg-blue-600" onClick={handleProgramProceed}>
                   Proceed
                 </Button>
               </div>
@@ -160,14 +131,14 @@ const StepperPage = () => {
 
           {step === 3 && (
             <div>
-              <h3 className="text-center text-blue-600 font-medium mb-2">Select a program</h3>
-              <Select onValueChange={setSelectedProgram} value={selectedProgram || ''}>
+              <h3 className="text-center text-blue-600 font-medium mb-2">Select a semester</h3>
+              <Select onValueChange={setSelectedSemester} value={ selectedSemester || ''}>
                 <SelectTrigger className="w-full mb-4">
                   <SelectValue placeholder={loading ? 'Loading...' : 'Select Program'} />
                 </SelectTrigger>
                 <SelectContent>
-                  {programs?.map((program:any) => (
-                    <SelectItem key={program} value={program}>{program}</SelectItem>
+                  {semester_data?.map((s:any) => (
+                    <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -176,7 +147,7 @@ const StepperPage = () => {
                 <Link
                   href={{ pathname: "/special-allocation/bulletin/allocate" }}
                 >
-                  <Button disabled={!selectedProgram} className="">Proceed</Button>
+                  <Button disabled={!selectedSemester} className="">Proceed</Button>
                 </Link>
               </div>
             </div>

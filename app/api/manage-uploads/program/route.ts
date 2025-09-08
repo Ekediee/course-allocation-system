@@ -1,3 +1,4 @@
+import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 // POST Session data
@@ -5,7 +6,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const reqBody = await req.json();
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/programs/create', {
+    const res = await fetch(getBackendApiUrl('/api/v1/programs/create'), {
       cache: 'no-store',
       method: 'POST',
       headers: {
@@ -33,7 +34,7 @@ export const POST = async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
   try {
 
-    const res = await fetch('http://127.0.0.1:5000/api/v1/programs/list', {
+    const res = await fetch(getBackendApiUrl('/api/v1/programs/list'), {
       cache: 'no-store',
       method: 'GET',
       headers: {

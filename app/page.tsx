@@ -8,6 +8,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { useAppContext } from '@/contexts/ContextProvider';
 import Cookies from 'js-cookie';
+import Image from "next/image";
 
 // using zod for form validation
 import { useForm } from 'react-hook-form';
@@ -42,7 +43,7 @@ const Login = () => {
   const router = useRouter();
 
   const onSubmit = async (values: FormData) => {
-    // console.log("Form Data: ", data);
+    
     // Handle login logic here
     setIsSubmitting(true)
     try {
@@ -101,9 +102,11 @@ const Login = () => {
           {/* Logo and Title */}
           <div className="flex flex-col items-center mb-8">
             <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <img 
-                src="" 
+              <Image 
+                src="/images/bu_logo.png" 
                 alt="Babcock University Logo" 
+                width={64}
+                height={64}
                 className="h-16 w-16 object-contain" 
               />
             </div>
@@ -112,7 +115,7 @@ const Login = () => {
           </div>
 
           {/* Login Title */}
-          <div className="mb-8">
+          <div className="mb-8 text-center">
             <h2 className="text-2xl font-bold">Login to your account</h2>
             <p className="text-gray-600">Enter your details to login.</p>
           </div>
@@ -226,13 +229,12 @@ const Login = () => {
           <p className="text-lg mb-8 text-center text-gray-600">Assign lecturers to the courses they are to teach</p>
           
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <img 
+            <Image 
               src="/images/Desktop - 280.png" 
               alt="Dashboard Preview" 
-              className="w-full rounded-lg"
-              onError={(e) => {
-                e.currentTarget.src = "https://placehold.co/600x400?text=Dashboard+Preview";
-              }}
+              width={600}
+              height={400}
+              className="w-full h-auto rounded-lg"
             />
           </div>
 

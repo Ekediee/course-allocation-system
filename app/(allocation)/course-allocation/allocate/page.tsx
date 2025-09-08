@@ -19,7 +19,8 @@ const Allocate = () => {
   const searchParams = useSearchParams();
   const { 
     selectedCourse,
-    setSelectedCourse, 
+    setSelectedCourse,
+    selectedProgram, 
     updateCourse, 
     setAllocateCourse,
     groups, setGroups,
@@ -85,7 +86,7 @@ const Allocate = () => {
       }
       
     });
-
+    
     const allocatedCourse = JSON.stringify(data)
 
     const res = await fetch(`/api/allocation?token=${token}`,{
@@ -167,7 +168,7 @@ const Allocate = () => {
           
           <div className="text-blue-800">
             <h3 className="text-lg font-medium mb-2">Program:</h3>
-            <p className="text-lg">{selectedCourse?.programName}</p>
+            <p className="text-lg">{selectedProgram ? selectedProgram : selectedCourse?.programName}</p>
           </div>
           
           <div className="text-blue-800">

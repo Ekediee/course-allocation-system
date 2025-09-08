@@ -37,15 +37,15 @@ const HODSideBar = () => {
             <BookOpen className="h-5 w-5 mr-3" />
             <span>Course Allocation</span>
           </Link>
-          <Link href="/de-allocation" className={` ${pathname.includes('de-allocation') ?  activeLink : normalLink }`}>
+          {/* <Link href="/de-allocation" className={` ${pathname.includes('de-allocation') ?  activeLink : normalLink }`}>
             <User className="h-5 w-5 mr-3" />
             <span>DE Allocation</span>
-          </Link>
+          </Link> */}
           <Link href="/special-allocation" className={` ${pathname.includes('special-allocation') ?  activeLink : normalLink }`}>
             <Users className="h-5 w-5 mr-3" />
             <span>Special Allocation</span>
           </Link>
-          <Link href="/support-request" className={` ${pathname.includes('support-request') ?  activeLink : normalLink }`}>
+          {/* <Link href="/support-request" className={` ${pathname.includes('support-request') ?  activeLink : normalLink }`}>
             <MessageSquare className="h-5 w-5 mr-3" />
             <span>Support and Requests</span>
           </Link>
@@ -54,7 +54,7 @@ const HODSideBar = () => {
           <Link href="/lecturers" className={` ${pathname.includes('lecturers') ?  activeLink : normalLink }`}>
             <Users className="h-5 w-5 mr-3" />
             <span>Lecturers</span>
-          </Link>
+          </Link> */}
         </div>
     </>
   )

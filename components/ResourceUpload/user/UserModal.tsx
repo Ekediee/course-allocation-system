@@ -163,8 +163,6 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
         formData.append('file', file);
         formData.append('department_id', selectedDepartment);
 
-        console.log("selectedDepartment: ", selectedDepartment)
-
         try {
         
         const res = await fetch('/api/manage-uploads/user/batch', {

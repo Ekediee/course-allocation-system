@@ -18,6 +18,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Babcock University | Smart Course Allocation System",
   description: "An integrated platform designed for efficient and transparent course allocation — facilitating streamlined assignment of lecturers, department-level oversight, and institutional reporting.",
+  icons: {
+    icon: '/images/bu_logo.png'
+  }
 };
 
 
