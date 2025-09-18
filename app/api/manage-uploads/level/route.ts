@@ -1,26 +1,51 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 
-// GET level data
-export const GET = async (req: NextRequest) => {
-  try {
+export async function POST(req: NextRequest) {
+    const reqBody = await req.json();
 
-    const res = await fetch(getBackendApiUrl('/api/v1/levels/list'), {
-      cache: 'no-store',
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: req.headers.get('cookie') || '',
-      },
-    });
+    try {
+        const response = await fetch(getBackendApiUrl('/api/v1/levels/create'), {
+            cache: 'no-store',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Cookie: req.headers.get('cookie') || '',
+            },
+            body: JSON.stringify(reqBody),
+        });
 
-    if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to fetch levels' }, { status: res.status });
+        if (response.ok) {
+            const data = await response.json();
+            return NextResponse.json(data, { status: 201 });
+        } else {
+            const errorData = await response.json();
+            return NextResponse.json(errorData, { status: response.status });
+        }
+    } catch (error) {
+        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
+}
 
-    const data = await res.json();
-    return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
-  }
-};
+export async function GET(req: NextRequest) {
+    try {
+        const response = await fetch(getBackendApiUrl('/api/v1/levels/list'), {
+            cache: 'no-store',
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Cookie: req.headers.get('cookie') || '',
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return NextResponse.json(data, { status: 200 });
+        } else {
+            const errorData = await response.json();
+            return NextResponse.json(errorData, { status: response.status });
+        }
+    } catch (error) {
+        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    }
+}

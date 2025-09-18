@@ -107,6 +107,16 @@ export type DepartmentType = {
   acronym: string;
 };
 
+export type CourseTypeType = {
+  id: number;
+  name: string;
+};
+
+export type LevelType = {
+  id: number;
+  name: string;
+};
+
 
 export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -143,6 +153,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [semesterData, setSemesterData] = useState<SemesterType | null>(null);
     const [schoolData, setSchoolData] = useState<SchoolType | null>(null);
     const [bulletinData, setBulletinData] = useState<Bulletin | null>(null);
+    const [levelData, setLevelData] = useState<LevelType | null>(null);
     
 
     useEffect(() => {
@@ -320,7 +331,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
           const res = await fetch('/api/manage-uploads/level');
           if (!res.ok) throw new Error('Network error');
           const data = await res.json();
-          
+          setLevelData(data);
           return data
       } catch (error) {
           console.error('Failed to fetch levels:', error);
@@ -503,6 +514,20 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const [courseTypeData, setCourseTypeData] = useState<CourseTypeType | null>(null);
+
+    const fetchCourseTypes = async () => {
+      try {
+          const res = await fetch('/api/manage-uploads/course-type');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          setCourseTypeData(data); 
+          return data
+      } catch (error) {
+          console.error('Failed to fetch course types:', error);
+      }
+    };
+
     const fetchProgramName = async () => {
       try {
           const res = await fetch('/api/manage-uploads/program/names');
@@ -655,7 +680,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchProgramName, showDeptCombo, fetchDepartmentNameBySchool, fetchBulletinName, showProgCombo,
                 fetchProgramNameByDepartment, fetchLevels, specializationData, fetchSpecializations, 
                                 fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses,
-                fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments
+                fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments,
+                courseTypeData, fetchCourseTypes, levelData
             }}
         >
             { children }

@@ -82,7 +82,7 @@ const SemesterContent = () => {
   return (
     <>
         <TabsContent value="semester">
-            <Card>
+            <Card className="m-4">
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
                         <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">

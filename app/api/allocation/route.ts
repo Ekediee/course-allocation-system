@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // GET Allocation List
 export const GET = async (req: NextRequest) => {
   try {
-    const res = await fetch(getBackendApiUrl('/api/v1/allocation/list'), {
+    const res = await fetch(getBackendApiUrl('/api/v1/allocation/detailed-list'), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

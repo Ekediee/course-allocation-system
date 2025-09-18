@@ -104,6 +104,7 @@ describe('CourseModal', () => {
   it('successfully creates a course with valid data', async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
+      status: 200,
       json: async () => ({ msg: 'Course created successfully' }),
     });
 

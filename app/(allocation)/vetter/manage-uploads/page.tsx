@@ -16,10 +16,12 @@ import DepartmentContent from '@/components/ResourceUpload/department/Department
 import ProgramContent from '@/components/ResourceUpload/program/ProgramContent'
 import CourseContent from '@/components/ResourceUpload/course/CourseContent'
 import SpecializationContent from '@/components/ResourceUpload/Specialization/SpecializationContent'
+import CourseTypeContent from '@/components/ResourceUpload/CourseType/CourseTypeContent'
+import LevelContent from '@/components/ResourceUpload/Level/LevelContent'
 import UserContent from '@/components/ResourceUpload/user/UserContent'
 
 const Tab_Items = [
-    'Session', 'Semester', 'Bulletin', 'School', 'Department', 'Program', 'Specialization', 'Course', 'Lecturers'
+    'Session', 'Semester', 'Bulletin', 'Level', 'School', 'Department', 'Program', 'Specialization', 'Course Type', 'Course', 'Lecturers'
 ]
 
 const ResourceUpload = () => {
@@ -38,7 +40,7 @@ const ResourceUpload = () => {
         <Tabs defaultValue="session" className="w-full">
             <TabsList className="w-full justify-start rounded-none border-b h-8 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-20">
                 {Tab_Items.map((item, index) => (
-                    <TabsTrigger key={index} value={item.toLowerCase()} className={disabledTabs?.includes(item) ? "pointer-events-none opacity-50 cursor-not-allowed" : "rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20"}>
+                    <TabsTrigger key={index} value={item.toLowerCase().replace(' ', '-')} className={disabledTabs?.includes(item) ? "pointer-events-none opacity-50 cursor-not-allowed" : "rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20"}>
                         {item}
                     </TabsTrigger>
                 ))}
@@ -46,10 +48,12 @@ const ResourceUpload = () => {
             <SessionContent />
             <SemesterContent />
             <BulletinContent />
+            <LevelContent />
             <SchoolContent />
             <DepartmentContent isCalledFromAdmin={false} />
             <ProgramContent />
             <SpecializationContent />
+            <CourseTypeContent />
             <CourseContent />
             <UserContent />
             {/* Add other TabsContent for Semester, Bulletin, etc. */}

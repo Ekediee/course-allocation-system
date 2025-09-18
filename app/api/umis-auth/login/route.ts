@@ -1,0 +1,64 @@
+import { getBackendApiUrl } from '@/lib/api';
+import { NextResponse } from 'next/server';
+
+export const POST = async (req: any) => {
+
+  const reqBody = await req.json()
+
+  try {
+    const res = await fetch(getBackendApiUrl('/api/v1/auth/umis-login'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reqBody),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      return NextResponse.json({ error: errorData.error || 'Login Failed' }, { status: res.status });
+    }
+
+    const data = await res.json();
+    const user = {
+      name: data.user.name,
+      role: data.user.role,
+      department: data.user.department,
+      email: data.user.email,
+    }
+    
+    const response = NextResponse.json({
+      user,
+      message: 'Login successful' 
+    });
+
+    response.cookies.set('access_token_cookie', data.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24,
+    });
+
+    response.cookies.set('name', user.name, {
+      path: '/',
+      sameSite: 'lax',
+    });
+    response.cookies.set('role', user.role, {
+      path: '/',
+      sameSite: 'lax',
+    });
+    response.cookies.set('department', user.department, {
+      path: '/',
+      sameSite: 'lax',
+    });
+    response.cookies.set('email', user.email, {
+      path: '/',
+      sameSite: 'lax',
+    });
+
+    return response;
+  } catch (error) {
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}

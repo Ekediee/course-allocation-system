@@ -41,6 +41,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
         fetchSpecializationNameByProgram,
         fetchSemesters,
         fetchLevels,
+        fetchCourseTypes,
         showDeptCombo,
         showProgCombo,
         showSpecCombo,
@@ -52,6 +53,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
     const [selectedSpecialization, setSelectedSpecialization] = useState('');
     const [selectedSemester, setSelectedSemester] = useState('');
     const [selectedLevel, setSelectedLevel] = useState('');
+    const [selectedCourseType, setSelectedCourseType] = useState('');
 
     const { toast } = useToast()
     
@@ -73,7 +75,8 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
             level_id: selectedLevel,
             semester_id: selectedSemester,
             specialization_id: selectedSpecialization,
-            bulletin_id: selectedBulletin
+            bulletin_id: selectedBulletin,
+            course_type_id: selectedCourseType
         };
 
         try {
@@ -164,6 +167,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
         formData.append('specialization_id', selectedSpecialization);
         formData.append('semester_id', selectedSemester);
         formData.append('level_id', selectedLevel);
+        formData.append('course_type_id', selectedCourseType);
 
         try {
         
@@ -238,6 +242,12 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
         queryFn: fetchLevels,
     });
     const levels = levelResult ?? [];
+
+    const { data: courseTypesResult, isLoading: loadingCourseTypes } = useQuery<Items[]>({
+        queryKey: ["courseTypes"],
+        queryFn: fetchCourseTypes,
+    });
+    const courseTypes = courseTypesResult ?? [];
     
   return (
     <>
@@ -305,6 +315,10 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
                     <div className="w-full">
                         {showSpecCombo && <><Label htmlFor="level">Select Level</Label>
                         <ComboboxMain data={levels} onSelect={setSelectedLevel} /></>}
+                    </div>
+                    <div className="w-full">
+                        {showSpecCombo && <><Label htmlFor="courseType">Select Course Type</Label>
+                        <ComboboxMain data={courseTypes} onSelect={setSelectedCourseType} /></>}
                     </div>
                     <div className="flex gap-2 mt-2">
                         <div className="w-full">  

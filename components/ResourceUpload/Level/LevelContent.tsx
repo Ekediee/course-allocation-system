@@ -1,29 +1,32 @@
 import React, { useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from '../../ui/button';
 import { ArrowDownWideNarrow, ChevronDown, Loader2, Plus } from 'lucide-react';
+import { EmptyFolderIcon } from '../../EmptyFolder';
 import EmptyPage from './EmptyPage';
+import LevelModal from './LevelModal';
 import { useAppContext } from '@/contexts/ContextProvider'
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SchoolType } from '@/contexts/ContextProvider';
+import { LevelType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import SpecializationModal from './SpecializationModal';
+import { Badge } from '@/components/ui/badge';
 
-const SpecializationContent = () => {
+const LevelContent = () => {
     const {
-        specializationData, 
-        fetchSpecializations,
+        levelData,
+        fetchLevels,
         isUploading
     } = useAppContext()
 
     useEffect(() => {
-        fetchSpecializations();
+        fetchLevels(); // Call the async function
     }, []);
 
-    const queryResult = useQuery<SchoolType>({
-        queryKey: ['specializations'],
-        queryFn: fetchSpecializations
+    const queryResult = useQuery<LevelType>({
+        queryKey: ['levels'],
+        queryFn: fetchLevels
     })
 
     const { isLoading, error } = queryResult;
@@ -71,43 +74,36 @@ const SpecializationContent = () => {
             Uploading...
         </div>
     }
+
   return (
     <>
-        <TabsContent value="specialization">
+        <TabsContent value="level">
             <Card className="m-4">
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
                         <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            Specialization
+                            Levels
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
                             </div>
-                            <SpecializationModal btnName="Add Specialization" onAddSpecialization={fetchSpecializations}/>
+                            <LevelModal btnName="Add Level" onAddLevel={fetchLevels}/>
                         </div>
                     </div>
-                    {specializationData?.length > 0 ? (
+                    {levelData?.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
                             <TableHeader>
                                 <TableRow>
-                                <TableHead>Specialization Name</TableHead>
-                                <TableHead className="">Program</TableHead>
-                                <TableHead className="">Department</TableHead>
+                                <TableHead>Level</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                            {specializationData.map((specialization:any) => (
-                                <TableRow key={specialization.id}>
-                                    <TableCell >{specialization.name}</TableCell>
-                                    <TableCell className="">
-                                        {specialization.program}
-                                    </TableCell>
-                                    <TableCell className="">
-                                        {specialization.department}
-                                    </TableCell>
+                            {levelData.map((level:any) => (
+                                <TableRow key={level.id}>
+                                    <TableCell >{level.name}</TableCell>
                                     <TableCell className="text-center"></TableCell>
                                 </TableRow>
                             ))}
@@ -115,14 +111,14 @@ const SpecializationContent = () => {
                             </Table>
                         </div>
                     ) : (
-                        <EmptyPage 
-                            title="No Specialization Available" 
-                            desc="Create a new specialization to see details" 
-                            btnName="Add Specialization" 
-                            onAddSpecialization={fetchSpecializations}
+                        <EmptyPage
+                            title="No Level Available"
+                            desc="Create a new level to see details"
+                            btnName="Add Level"
+                            onAddLevel={fetchLevels}
                         />
                     )}
-                    
+
                 </CardContent>
             </Card>
         </TabsContent>
@@ -130,4 +126,4 @@ const SpecializationContent = () => {
   )
 }
 
-export default SpecializationContent
+export default LevelContent
