@@ -6,7 +6,7 @@ export const POST = async (req: any) => {
   const reqBody = await req.json()
 
   try {
-    const res = await fetch(getBackendApiUrl('/api/v1/auth/umis-login'), {
+    const res = await fetch(getBackendApiUrl('/api/v1/auth/umis/login'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

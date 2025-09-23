@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SchoolType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from "@/components/ui/button"
 
 type DepartmentProps = {
   isCalledFromAdmin: boolean;
@@ -21,6 +22,11 @@ const departmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
         fetchAdminDepartments,
         isUploading
     } = useAppContext()
+    const [searchTerm, setSearchTerm] = React.useState('');
+    const [sortColumn, setSortColumn] = React.useState('');
+    const [sortDirection, setSortDirection] = React.useState('asc');
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [itemsPerPage, setItemsPerPage] = React.useState(13);
 
     useEffect(() => {
         isCalledFromAdmin ? fetchAdminDepartments() : fetchDepartments()
@@ -38,6 +44,30 @@ const departmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
 
         
         const { isLoading, error } = queryResult;
+
+        const filteredDepartments = departmentData?.filter((department: any) =>
+            department?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            department?.school.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            department?.acronym.toLowerCase().includes(searchTerm.toLowerCase()) 
+        );
+
+        const sortedDepartments = filteredDepartments?.sort((a: any, b: any) => {
+            if (sortColumn) {
+                const aValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], a) : a[sortColumn];
+                const bValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], b) : b[sortColumn];
+
+                if (aValue < bValue) {
+                    return sortDirection === 'asc' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return sortDirection === 'asc' ? 1 : -1;
+                }
+            }
+            return 0;
+        });
+
+        const totalPages = Math.ceil((sortedDepartments?.length || 0) / itemsPerPage);
+        const paginatedDepartments = sortedDepartments?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
         
     if (isLoading) {
         return (
@@ -89,7 +119,7 @@ const departmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
                         <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            Department
+                            <input type="text" placeholder="Search..." className="border-0 focus:ring-0 w-96 p-2" onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
@@ -98,19 +128,19 @@ const departmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
                             <DepartmentModal btnName="Add Department" onAddDepartment={isCalledFromAdmin ? fetchAdminDepartments : fetchDepartments} isCalledFromAdmin={isCalledFromAdmin}/>
                         </div>
                     </div>
-                    {departmentData?.length > 0 ? (
+                    {paginatedDepartments && paginatedDepartments.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
                             <TableHeader>
                                 <TableRow>
-                                <TableHead>Department Name</TableHead>
-                                <TableHead className="">School</TableHead>
-                                <TableHead className="text-center">Acronym</TableHead>
+                                <TableHead onClick={() => { setSortColumn('name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Department Name</TableHead>
+                                <TableHead onClick={() => { setSortColumn('school'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>School</TableHead>
+                                <TableHead className="text-center" onClick={() => { setSortColumn('acronym'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Acronym</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                            {departmentData?.map((department:any) => (
+                            {paginatedDepartments?.map((department:any) => (
                                 <TableRow key={department.id}>
                                     <TableCell >{department.name}</TableCell>
                                     <TableCell className="">
@@ -124,6 +154,11 @@ const departmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
                             ))}
                             </TableBody>
                             </Table>
+                            <div className="flex justify-end items-center gap-2 mt-4">
+                                <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Previous</Button>
+                                <span>Page {currentPage} of {totalPages}</span>
+                                <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</Button>
+                            </div>
                         </div>
                     ) : (
                         <EmptyPage 

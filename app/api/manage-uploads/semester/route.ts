@@ -41,7 +41,8 @@ export const POST = async (req: NextRequest) => {
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to create semester' }, { status: res.status });
+      const data = await res.json();
+      return NextResponse.json({ error: data.error || 'Failed to create semester' }, { status: res.status });
     }
 
     const data = await res.json();

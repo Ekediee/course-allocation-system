@@ -68,7 +68,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
         // let sem = semesterId.toUpperCase() + " Semester";
         // setPageHeaderPeriod(semesterId)
     };
-
+    console.log("Active Semester:", semesters);
     const handleProgramChange = (semesterId: string, programId: string) => {
         setActiveProgramMap(prev => ({
             ...prev,
