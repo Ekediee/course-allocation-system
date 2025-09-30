@@ -21,6 +21,8 @@ export interface Program {
 }
 
 export interface Semester {
+  sessionId: string;
+  sessionName: string;
   id: string;
   name: string;
   programs: Program[];

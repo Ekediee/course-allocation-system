@@ -51,3 +51,30 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
+
+// PUT Update Allocated Course
+export const PUT = async (req: NextRequest) => {
+  try {
+    const reqBody = await req.json();
+
+    const res = await fetch(getBackendApiUrl('/api/v1/allocation/update'), {
+      cache: 'no-store',
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: req.headers.get('cookie') || '',
+      },
+      body: JSON.stringify(reqBody),
+    });
+
+    if (!res.ok) {
+      return NextResponse.json({ error: 'Failed to update allocation' }, { status: res.status });
+    }
+
+    const data = await res.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("PUT allocation error:", error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+};

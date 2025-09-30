@@ -36,7 +36,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if ((url.pathname.startsWith('/vetter/manage-uploads') || url.pathname.startsWith('/vetter/admin-management')) && role !== 'vetter') {
+  if ((url.pathname.startsWith('/vetter/manage-uploads') ||
+      url.pathname.startsWith('/vetter/manage-uploads') || 
+      url.pathname.startsWith('/dashboard/vetter')) && 
+      role !== 'vetter') {
     url.pathname = '/unauthorized';
     return NextResponse.redirect(url);
   }

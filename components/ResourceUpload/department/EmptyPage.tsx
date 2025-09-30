@@ -8,9 +8,10 @@ type EmptyPageProps = {
   desc: string;
   btnName: string;
   onAddDepartment?: () => void;
+  isCalledFromAdmin: boolean;
 };
 
-const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddDepartment}) => {
+const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddDepartment, isCalledFromAdmin}) => {
   return (
     <>
         <div className="flex flex-col items-center justify-center text-center mt-4 py-16 px-4 bg-blue-100 h-[510px] rounded-3xl">
@@ -24,7 +25,7 @@ const EmptyPage: React.FC<EmptyPageProps> = ({title, desc, btnName, onAddDepartm
                 {desc}
             </p>
             
-            <DepartmentModal btnName={btnName} onAddDepartment={onAddDepartment} />
+            <DepartmentModal btnName={btnName} onAddDepartment={onAddDepartment} isCalledFromAdmin={isCalledFromAdmin} />
         </div>
     </>
   )

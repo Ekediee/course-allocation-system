@@ -1,20 +1,25 @@
 'use client'
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle, Loader2, SquarePen } from "lucide-react";
 import Link from 'next/link';
+import { useToast } from "@/hooks/use-toast";
 
 import { Semester, Program, Course, Level } from "@/data/constants";
 // import { allocation_data } from "@/data/course_data";
 import { useAppContext } from '@/contexts/ContextProvider'
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import AllocateLecturerModal from "@/components/Allocations/AllocateLecturerModal";
+import AllocateLecturerModal from "@/components/Allocations/SubmitAllocationModal";
 import PrintLink from "../PrintLink";
+
+type AllocationStatus = {
+    is_submitted: boolean;
+}
 
 
 const AllocationPage = ({allocationPage, url}: any) => {
@@ -24,12 +29,19 @@ const AllocationPage = ({allocationPage, url}: any) => {
         allocateCourse, 
         isLevelFullyAllocated,
         fetchSemesterDataDE,
-        fetchSemesterData
+        fetchSemesterData,
+        fetchAllocationStatus
     } = useAppContext()
     const [activeSemester, setActiveSemester] = useState<string>('');
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
 
-
+    // check allocation submission status
+    const { data: allocationStatus } = useQuery<AllocationStatus>({
+        queryKey: ['allocation_status', activeSemester],
+        queryFn: () => fetchAllocationStatus(activeSemester),
+        enabled: !!activeSemester,
+    });
+    
     // Use a single query result based on allocationPage
     const queryResult = allocationPage === "Course Allocation"
         ? useQuery<Semester[]>({
@@ -49,26 +61,27 @@ const AllocationPage = ({allocationPage, url}: any) => {
     
     // Set default active program for each semester when data is loaded
     useEffect(() => {
-        if (semesters) {
+        if (semesters && semesters.length > 0) {
+            const defaultSemesterId = semesters[0].id;
+            setActiveSemester(defaultSemesterId); // Initialize active semester
+
             const defaultProgramMap: Record<string, string> = {};
             semesters.forEach((semester: Semester) => {
-            if (semester.programs.length > 0) {
-                defaultProgramMap[semester.id] = semester.programs[0].id;
-            }
+                if (semester.programs.length > 0) {
+                    defaultProgramMap[semester.id] = semester.programs[0].id;
+                }
             });
             setActiveProgramMap(defaultProgramMap);
         }
 
         setPageHeader(allocationPage)
         // setPageHeaderPeriod("First 24/25.3");
-    }, [semesters]);
+    }, [semesters, allocationPage, setPageHeader]);
 
     const handleSemesterChange = (semesterId: string) => {
-        setActiveSemester(semesters && semesters.length > 0 ? semesters[0].id : "");
-        // let sem = semesterId.toUpperCase() + " Semester";
-        // setPageHeaderPeriod(semesterId)
+        setActiveSemester(semesterId);
     };
-    console.log("Active Semester:", semesters);
+    console.log("Active Semester:", activeSemester);
     const handleProgramChange = (semesterId: string, programId: string) => {
         setActiveProgramMap(prev => ({
             ...prev,
@@ -76,8 +89,52 @@ const AllocationPage = ({allocationPage, url}: any) => {
         }));
     };
 
-    const handleSubmit = () => {
-        console.log("Submitting semester allocation...");
+    const { toast } = useToast();
+    const queryClient = useQueryClient();
+
+    const handleSubmit = async () => {
+        // console.log("Submitting semester allocation... ", activeSemester);
+
+        const submi_allocation_data = {
+            semester_id: activeSemester,
+        };
+
+        try {
+            const res = await fetch('/api/allocation/submit', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(submi_allocation_data),
+            });
+
+            if (res.status.toString().startsWith("40")) {
+                const data = await res.json();
+                toast({
+                    variant: "destructive",
+                    title: "Something is wrong",
+                    description: data.error
+                });
+                return;
+            }
+
+            if (res.ok) {
+                const data = await res.json();
+                
+                toast({
+                    variant: "success",
+                    title: "Allocation Submitted Successfully",
+                    description: data.message,
+                });
+                await queryClient.invalidateQueries({ queryKey: ['allocation_status', activeSemester] });
+            }
+        } catch (err) {
+        toast({
+            variant: "destructive",
+            title: "Allocation Submission Failed",
+            description: (err as Error).message,
+            });
+        }
     };
 
     if (isLoading) {
@@ -211,7 +268,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                     {semesterdata && (
                                         <PrintLink semester={semester} />
                                     )}
-                                    {semesterdata && <AllocateLecturerModal semester={semester} onSubmit={handleSubmit} />}
+                                    {(semesterdata && !allocationStatus?.is_submitted) && <AllocateLecturerModal semester={semester} onSubmit={handleSubmit} />}
                                 </div>
                                 </div>
     
@@ -233,6 +290,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                             <TableHead>Unit</TableHead>
                                             <TableHead className="text-center">Allocated To</TableHead>
                                             <TableHead className="text-center">Action</TableHead>
+                                            <TableHead className="text-center">Edit</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -272,6 +330,32 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                                         </Link>
                                                     </Badge>
                                                 )}
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    {(course.isAllocated && !allocationStatus?.is_submitted) ? (
+                                                        <Link
+                                                            href={{
+                                                                pathname: "/course-allocation/allocate",
+                                                                query: {
+                                                                    from: url,
+                                                                },
+                                                            }}
+                                                            onClick={() => setSelectedCourse({
+                                                                courseId: course.id,
+                                                                courseCode: course.code,
+                                                                courseTitle: course.title,
+                                                                semesterId: semester.id,
+                                                                programId: program.id,
+                                                                programName: program.name,
+                                                                levelId: level.id,
+                                                                allocatedTo: course.allocatedTo,
+                                                            })}
+                                                        >
+                                                            <SquarePen className="cursor-pointer text-blue-500 hover:text-blue-700" />
+                                                        </Link>
+                                                    ) : (
+                                                        <SquarePen className="text-gray-300" />
+                                                    )}
                                                 </TableCell>
                                             </TableRow>
                                             ))}

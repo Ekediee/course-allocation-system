@@ -495,7 +495,27 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         if (!res.ok) {
           throw new Error('Network error');
         }
-        return await res.json();
+
+        const data = await res.json();
+        return data.levels
+      } catch (error) {
+        console.error('Failed to fetch special allocation courses:', error);
+        throw error;
+      }
+    };
+
+    const fetchAllocationStatus = async (semester: string) => {
+      try {
+        // const semester_data = {
+        //   semester: semester,
+        // }
+        const res = await fetch(`/api/allocation/status?semesterId=${semester}`);
+        if (!res.ok) {
+          throw new Error('Network error');
+        }
+
+        const data = await res.json();
+        return data
       } catch (error) {
         console.error('Failed to fetch special allocation courses:', error);
         throw error;
@@ -656,6 +676,17 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchAllocatationStatusOverview = async () => {
+      try {
+          const res = await fetch('/api/allocation/status/overview');
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          return data
+      } catch (error) {
+          console.error('Failed to fetch allocation status overview:', error);
+      }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -681,7 +712,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchProgramNameByDepartment, fetchLevels, specializationData, fetchSpecializations, 
                                 fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses,
                 fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments,
-                courseTypeData, fetchCourseTypes, levelData
+                courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview
             }}
         >
             { children }

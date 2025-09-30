@@ -166,6 +166,7 @@ const departmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
                             desc="Create a new department to see details" 
                             btnName="Add Department" 
                             onAddDepartment={isCalledFromAdmin ? fetchAdminDepartments : fetchDepartments}
+                            isCalledFromAdmin={isCalledFromAdmin}
                         />
                     )}
                     

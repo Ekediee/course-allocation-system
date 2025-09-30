@@ -42,7 +42,10 @@ const PrintLink = ({ semester }: Props) => {
     <>
         {allAllocated && (
             <Link
-                href={{ pathname: "/course-allocation/view-allocation" }}
+                href={{
+                    pathname: "/course-allocation/reports",
+                    query: { semester: semester.id }
+                }}
             >
                 <Button variant="outline" className="text-gray-500">View Report</Button>
             </Link>

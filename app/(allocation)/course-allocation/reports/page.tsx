@@ -1,18 +1,21 @@
-"use client";
+'use client';
 import React, { useState, useMemo, useRef, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from 'next/navigation';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import autoTable, { RowInput } from "jspdf-autotable";
 import { saveAs } from "file-saver";
 import { useAppContext } from "@/contexts/ContextProvider";
 import { useQuery } from "@tanstack/react-query";
 import { Semester } from "@/data/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const CourseAllocation = () => {
+const CourseAllocationReport = () => {
   const { fetchSemesterData, prevPath, fetchSemesterDataDE } = useAppContext();
+  const searchParams = useSearchParams();
+  const semesterId = searchParams.get('semester');
 
   const queryResult =
     prevPath === "/course-allocation"
@@ -27,57 +30,37 @@ const CourseAllocation = () => {
 
   const { data: allocation_data, isLoading, error } = queryResult;
 
-  const semesters = useMemo(
-    () => allocation_data?.map((sem) => sem.id) ?? [],
-    [allocation_data]
+  const semesterData = useMemo(
+    () => allocation_data?.find((sem) => String(sem.id) === semesterId),
+    [allocation_data, semesterId]
   );
-  const [selectedSemester, setSelectedSemester] = useState<string | undefined>("");
-
-  useEffect(() => {
-    if (semesters.length > 0 && !selectedSemester) {
-      setSelectedSemester(semesters[0]);
-    }
-  }, [semesters, selectedSemester]);
 
   const programs = useMemo(() => {
-    const semester = allocation_data?.find(
-      (sem) => sem.id === selectedSemester
-    );
-    return semester ? semester.programs.map((p) => p.id) : [];
-  }, [selectedSemester, allocation_data]);
+    return semesterData?.programs ?? [];
+  }, [semesterData]);
 
-  const [selectedProgram, setSelectedProgram] = useState(programs[0]);
-
-  useEffect(() => {
-    if (programs.length > 0 && !selectedProgram) {
-      setSelectedProgram(programs[0]);
-    }
-  }, [programs, selectedProgram]);
+  const [selectedProgramId, setSelectedProgramId] = useState<string | undefined>();
+  const activeProgramId = selectedProgramId ?? programs[0]?.id;
 
   const selectedData = useMemo(() => {
-    const semester = allocation_data?.find(
-      (sem) => sem.id === selectedSemester
-    );
-    return semester?.programs.find((p) => p.id === selectedProgram);
-  }, [selectedSemester, selectedProgram, allocation_data]);
+    return programs.find((p) => String(p.id) === String(activeProgramId));
+  }, [activeProgramId, programs]);
 
   const levels = selectedData?.levels || [];
-  const [selectedLevelId, setSelectedLevelId] = useState(levels[0]?.id);
+  const [selectedLevelId, setSelectedLevelId] = useState<string | undefined>();
+  const activeLevelId = selectedLevelId ?? levels[0]?.id;
 
-  useEffect(() => {
-    if (levels.length > 0 && !selectedLevelId) {
-      setSelectedLevelId(levels[0].id);
-    }
-  }, [levels, selectedLevelId]);
+  const currentLevel = useMemo(() => {
+      return levels.find((l) => l.id === activeLevelId);
+  }, [levels, activeLevelId]);
 
-  const currentLevel = levels.find((l) => l.id === selectedLevelId);
   const printRef = useRef<HTMLDivElement>(null);
 
   const groupCourses = (courses: any) => {
     const core = [];
     const general = [];
     for (const course of courses) {
-      if (course.code.startsWith("GEDS") || course.code.startsWith("BU-GST")) {
+      if (course.code.startsWith("GEDS") || course.code.startsWith("BU-GST") || course.code.includes("GST")) {
         general.push(course);
       } else {
         core.push(course);
@@ -96,11 +79,9 @@ const CourseAllocation = () => {
     const doc = new jsPDF();
     doc.setFontSize(12);
 
-    const headerText = `${String(selectedProgram)
+    const headerText = `BABCOCK UNIVERSITY\n${String(semesterData?.sessionName).toUpperCase()} ACADEMIC SESSION\n${String(semesterData?.name).toUpperCase()} COURSE ALLOCATION\n${String(selectedData?.name)
       .replace(/_/g, " ")
-      .toUpperCase()}
-${String(selectedSemester).toUpperCase()} SEMESTER COURSE ALLOCATION
-${currentLevel?.name.toUpperCase()} COURSES`;
+      .toUpperCase()}\n${currentLevel?.name.toUpperCase()} COURSES`;
     const lines = doc.splitTextToSize(headerText, 180);
     const pageWidth = doc.internal.pageSize.getWidth();
     const textHeight = 7;
@@ -114,20 +95,64 @@ ${currentLevel?.name.toUpperCase()} COURSES`;
 
     const tableYStart = startY + lines.length * textHeight + 4;
 
-    const result = autoTable(doc, {
-      startY: tableYStart,
-      head: [["Code", "Title", "Unit", "Allocated To"]],
-      body: [...general, ...core].map((c) => [
-        c.code,
-        c.title,
-        c.unit,
-        c.allocatedTo,
-      ]),
-      theme: "striped",
-    }) as any;
+    const tableBody: RowInput[] = [];
+    if (general.length > 0) {
+        tableBody.push([
+            {
+                content: 'GENERAL COURSES',
+                colSpan: 5,
+                styles: { fontStyle: 'bold', fillColor: [220, 220, 220], textColor: [0, 0, 0], halign: 'center' }
+            }
+        ]);
+        general.forEach((course, index) => {
+            tableBody.push([index + 1, course.code, course.title, course.unit, course.allocatedTo]);
+        });
+    }
 
-    const finalY = result?.cursor?.y ?? tableYStart + 10;
-    doc.text(`Total Units: ${totalUnits}`, 14, finalY + 120);
+    if (core.length > 0) {
+        tableBody.push([
+            {
+                content: 'CORE COURSES',
+                colSpan: 5,
+                styles: { fontStyle: 'bold', fillColor: [220, 220, 220], textColor: [0, 0, 0], halign: 'center' }
+            }
+        ]);
+        core.forEach((course, index) => {
+            tableBody.push([index + general.length + 1, course.code, course.title, course.unit, course.allocatedTo]);
+        });
+    }
+
+    tableBody.push([
+        {
+            content: 'Total',
+            colSpan: 3,
+            styles: { fontStyle: 'bold', fillColor: [41, 41, 41], textColor: [255, 255, 255], halign: 'center' }
+        },
+        {
+            content: String(totalUnits),
+            styles: { fontStyle: 'bold', fillColor: [41, 41, 41], textColor: [255, 255, 255], halign: 'left' }
+        },
+        {
+            content: '',
+            styles: { fillColor: [41, 41, 41] }
+        }
+    ]);
+
+    autoTable(doc, {
+      startY: tableYStart,
+      head: [["SN", "Code", "Title", "Unit", "Lecturer"]],
+      body: tableBody,
+      theme: "striped",
+      didDrawPage: function (data) {
+        // Footer
+        const docHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        const timestamp = new Date().toLocaleString();
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text("Date Printed: " + timestamp, data.settings.margin.left, docHeight - 10);
+      },
+    });
+
     doc.save("course_allocation.pdf");
   };
 
@@ -161,13 +186,9 @@ ${currentLevel?.name.toUpperCase()} COURSES`;
   };
 
   const handleDownloadCSV = () => {
-    const headerText = `${String(selectedProgram)
+    const headerText = `${String(semesterData?.sessionName).toUpperCase()} ACADEMIC SESSION\n${String(semesterData?.name).toUpperCase()} COURSE ALLOCATION\n${String(selectedData?.name)
       .replace(/_/g, " ")
-      .toUpperCase()}
-${String(selectedSemester).toUpperCase()} SEMESTER COURSE ALLOCATION
-${currentLevel?.name.toUpperCase()} COURSES
-
-`;
+      .toUpperCase()}\n${currentLevel?.name.toUpperCase()} COURSES\n\n`;
     const header = "Code,Title,Unit,Allocated To\n";
     const rows = [...general, ...core]
       .map((c) => `${c.code},${c.title},${c.unit},${c.allocatedTo}`)
@@ -182,35 +203,18 @@ ${currentLevel?.name.toUpperCase()} COURSES
   if (isLoading) {
     return (
       <div className="p-8">
-        <div className="flex items-center justify-start mb-2 gap-4">
-          <Skeleton className="h-12 w-[200px] mb-1" />
-          <Skeleton className="h-12 w-[200px] mb-1" />
-          <Skeleton className="h-12 w-[200px] mb-1" />
-        </div>
-        <div className="flex items-center justify-start mb-2 gap-4">
-          <Skeleton className="h-10 w-[300px] mb-1" />
-          <Skeleton className="h-10 w-[300px] mb-1" />
-          <Skeleton className="h-10 w-[300px] mb-1" />
-        </div>
-        <div className="flex items-center justify-start mb-2 gap-4">
-          <Skeleton className="h-10 w-[100px] mb-6" />
-          <Skeleton className="h-10 w-[100px] mb-6" />
-          <Skeleton className="h-10 w-[100px] mb-6" />
-        </div>
-        <Card className="p-4 md:p-6 max-w-full">
-          <CardContent>
-            <div className="space-y-4">
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-            </div>
-          </CardContent>
+        <Skeleton className="h-10 w-1/4 mb-4" />
+        <Skeleton className="h-8 w-full mb-2" />
+        <Skeleton className="h-8 w-full mb-2" />
+        <Skeleton className="h-8 w-full mb-2" />
+        <Card className="p-4 md:p-6 max-w-full mt-4">
+            <CardContent>
+                <div className="space-y-4">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                </div>
+            </CardContent>
         </Card>
       </div>
     );
@@ -231,41 +235,39 @@ ${currentLevel?.name.toUpperCase()} COURSES
       </Card>
     );
   }
+  
+  if (!semesterData) {
+    return (
+      <Card className="max-w-3xl mx-auto mt-8">
+        <CardHeader>
+          <CardTitle>Report Not Found</CardTitle>
+          <CardDescription>
+            The report for the specified semester could not be found.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>Please check the URL or go back to the allocation page.</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <>
-      <div className="space-y-2">
+      <div className="space-y-2 p-4">
         <Tabs
-          value={selectedSemester}
-          onValueChange={setSelectedSemester}
-          className="w-full"
-        >
-          <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-8 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-100">
-            {allocation_data?.map((sem) => (
-              <TabsTrigger
-                key={sem.id}
-                value={sem.id}
-                className="capitalize rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6"
-              >
-                {sem.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-
-        <Tabs
-          value={String(selectedProgram)}
-          onValueChange={setSelectedProgram}
+          value={programs.length > 0 ? String(activeProgramId) : ""}
+          onValueChange={setSelectedProgramId}
           className="w-full"
         >
           <TabsList className="grid grid-cols-2 md:flex md:justify-start bg-transparent px-4 h-20 md:h-10 gap-2 mb-3 md:mb-2">
-            {programs.map((progId) => (
+            {programs.map((program) => (
               <TabsTrigger
-                key={String(progId)}
-                value={String(progId)}
+                key={String(program.id)}
+                value={String(program.id)}
                 className="capitalize bg-white md:w-56 md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white"
               >
-                {String(progId).replace(/_/g, " ")}
+                {program.name}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -273,7 +275,7 @@ ${currentLevel?.name.toUpperCase()} COURSES
 
         <div className="flex justify-between items-center">
           <Tabs
-            value={selectedLevelId}
+            value={activeLevelId}
             onValueChange={setSelectedLevelId}
             className="w-full"
           >
@@ -307,32 +309,37 @@ ${currentLevel?.name.toUpperCase()} COURSES
             <div ref={printRef}>
               <div className="text-center mb-4">
                 <p className="font-semibold">
-                  B.Sc (Hons.) {String(selectedProgram).replace(/_/g, " ").toUpperCase()}
+                  {String(semesterData?.sessionName).toUpperCase()} ACADEMIC SESSION
                 </p>
                 <p className="font-semibold">
-                  {String(selectedSemester).toUpperCase()} SEMESTER COURSE ALLOCATION
+                  {String(semesterData?.name).toUpperCase()} COURSE ALLOCATION
+                </p>
+                <p className="font-semibold">
+                  B.Sc (Hons.) {String(selectedData?.name).toUpperCase()}
                 </p>
                 <p className="font-semibold">
                   {currentLevel?.name.toUpperCase()} COURSES
                 </p>
               </div>
 
-              {general.length > 0 && (
-                <>
-                  <h2 className="font-semibold mt-4 bg-gray-200 p-2 rounded">
-                    GENERAL COURSES
-                  </h2>
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-gray-100 p-2 rounded">
-                        <th className="text-left">SN</th>
-                        <th className="text-left">Code</th>
-                        <th className="text-left">Title</th>
-                        <th className="text-left">Unit</th>
-                        <th className="text-left">Lecturer</th>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-100 p-2 rounded">
+                    <th className="text-left">SN</th>
+                    <th className="text-left">Code</th>
+                    <th className="text-left">Title</th>
+                    <th className="text-left">Unit</th>
+                    <th className="text-left">Lecturer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {general.length > 0 && (
+                    <>
+                      <tr>
+                        <td colSpan={5} className="font-semibold mt-4 bg-gray-200 p-2 rounded">
+                          GENERAL COURSES
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
                       {general.map((course, index) => (
                         <tr key={course.id}>
                           <td>{index + 1}</td>
@@ -342,27 +349,15 @@ ${currentLevel?.name.toUpperCase()} COURSES
                           <td>{course.allocatedTo}</td>
                         </tr>
                       ))}
-                    </tbody>
-                  </table>
-                </>
-              )}
-
-              {core.length > 0 && (
-                <>
-                  <h2 className="font-semibold mt-4 bg-gray-200 p-2 rounded">
-                    CORE COURSES
-                  </h2>
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-gray-100 p-2 rounded">
-                        <th className="text-left">SN</th>
-                        <th className="text-left">Code</th>
-                        <th className="text-left">Title</th>
-                        <th className="text-left">Unit</th>
-                        <th className="text-left">Lecturer</th>
+                    </>
+                  )}
+                  {core.length > 0 && (
+                    <>
+                      <tr>
+                        <td colSpan={5} className="font-semibold mt-4 bg-gray-200 p-2 rounded">
+                          CORE COURSES
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
                       {core.map((course, index) => (
                         <tr key={course.id}>
                           <td>{index + general.length + 1}</td>
@@ -372,10 +367,10 @@ ${currentLevel?.name.toUpperCase()} COURSES
                           <td>{course.allocatedTo}</td>
                         </tr>
                       ))}
-                    </tbody>
-                  </table>
-                </>
-              )}
+                    </>
+                  )}
+                </tbody>
+              </table>
 
               <div className="flex mt-4 justify-between font-semibold text-lg bg-gray-900 text-white p-2 rounded">
                 <div className="w-full text-center pr-[70px]">Total</div>
@@ -391,4 +386,4 @@ ${currentLevel?.name.toUpperCase()} COURSES
   );
 };
 
-export default CourseAllocation;
+export default CourseAllocationReport;

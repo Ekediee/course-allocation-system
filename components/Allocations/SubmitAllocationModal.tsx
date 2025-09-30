@@ -84,11 +84,11 @@ const AllocateLecturerModal = ({ semester, onSubmit }: Props) => {
             </p>
 
           </div>
-          <input
+          {/* <input
             type="text"
             placeholder="Lecturer's Name"
             className="border p-2 rounded"
-          />
+          /> */}
           <div className='flex gap-2 justify-between mt-4'>
             <DialogClose  
               className="w-full"
@@ -98,7 +98,7 @@ const AllocateLecturerModal = ({ semester, onSubmit }: Props) => {
             <DialogClose  
               className="w-full"
             asChild>
-             <Button variant="secondary" className="w-full bg-blue-700 hover:bg-blue-400" onClick={onSubmit}>Continue</Button>
+             <Button variant="secondary" className="w-full bg-blue-700 text-white hover:bg-blue-400" onClick={onSubmit}>Continue</Button>
             </DialogClose>
           </div>
         </div>

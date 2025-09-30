@@ -30,11 +30,11 @@ const VetterSideBar = () => {
     <>
         <div className="py-4 space-y-1 px-3">
           {/* <p className="px-4 text-xs font-medium text-gray-500 mb-2">NAV</p> */}
-          {/* <Link href="/dashboard/vetter" className={` ${pathname.includes('dashboard') ?  activeLink : normalLink }`}>
+          <Link href="/dashboard/vetter" className={` ${pathname.includes('dashboard') ?  activeLink : normalLink }`}>
             <Blocks className="h-5 w-5 mr-3" />
             <span>Dashboard</span>
           </Link>
-          <Link href="/course-allocation/vet-allocation" className={` ${pathname.includes('course-allocation') ?  activeLink : normalLink }`}>
+          {/* <Link href="/course-allocation/vet-allocation" className={` ${pathname.includes('course-allocation') ?  activeLink : normalLink }`}>
             <BookOpen className="h-5 w-5 mr-3" />
             <span>Course Allocation</span>
           </Link> */}

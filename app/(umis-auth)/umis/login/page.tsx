@@ -82,10 +82,10 @@ const Login = () => {
             router.replace('/dashboard/lecturer');
             break;
           case 'vetter':
-            router.replace('/vetter/manage-uploads');
+            router.replace('/dashboard/vetter');
             break;
           default:
-            router.replace('/');
+            router.replace('/umis/login');
         }
       }
 

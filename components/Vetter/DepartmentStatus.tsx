@@ -1,0 +1,135 @@
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { CheckCircle, Hourglass, XCircle } from "lucide-react";
+import { useAppContext } from "@/contexts/ContextProvider";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case "Allocated":
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
+    case "Still Allocating":
+      return <Hourglass className="h-4 w-4 text-yellow-500" />;
+    case "Not Started":
+      return <XCircle className="h-4 w-4 text-red-500" />;
+    default:
+      return null;
+  }
+};
+
+type Department = {
+    sn: number;
+    department_id: string;
+    department_name: string;
+    status: string;
+}
+
+type AllocationStatus = {
+    id: string;
+    name: string;
+    departments: Department[];
+}
+
+const DepartmentStatus = () => {
+  const {
+    fetchAllocatationStatusOverview
+  } = useAppContext()
+
+  // check allocation submission status
+  const { data: allocationStatus, isLoading } = useQuery<AllocationStatus[]>({
+      queryKey: ['allocation_status'],
+      queryFn: fetchAllocatationStatusOverview,
+  });
+
+  const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (allocationStatus && allocationStatus.length > 0) {
+      setActiveTab(allocationStatus[0].id);
+    }
+  }, [allocationStatus]);
+
+  console.log('allocationStatus', allocationStatus);
+      
+  return (
+    <Card className="p-4 col-span-2 h-full">
+      <div className="flex items-center justify-between mb-4">
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : allocationStatus && allocationStatus.length > 0 && activeTab ? (
+        <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-[400px]">
+          <TabsList>
+            {allocationStatus?.map((semester: AllocationStatus) => (
+              <TabsTrigger key={semester.id} value={semester.id} className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20">
+                  {semester.name.split(" ")[0]}
+              </TabsTrigger>
+              ))}
+          </TabsList>
+          {allocationStatus?.map((semester: AllocationStatus) => (
+            <TabsContent key={semester.id} value={semester.id}>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[50px]">SN</TableHead>
+                    <TableHead>Departments</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {semester.departments.map((dept) => (
+                    <TableRow key={dept.department_id}>
+                      <TableCell className="font-medium">{dept.sn}</TableCell>
+                      <TableCell>{dept.department_name}</TableCell>
+                      <TableCell className="flex items-center gap-2">
+                        {getStatusIcon(dept.status)} {dept.status}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+          ))}
+          {/* <TabsContent value="first">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">SN</TableHead>
+                  <TableHead>Departments</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {departments.map((dept) => (
+                  <TableRow key={dept.id}>
+                    <TableCell className="font-medium">{dept.id}</TableCell>
+                    <TableCell>{dept.name}</TableCell>
+                    <TableCell className="flex items-center gap-2">
+                      {getStatusIcon(dept.status)} {dept.status}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TabsContent>
+          <TabsContent value="second">Change your password here.</TabsContent>
+          <TabsContent value="summer">Change your password here.</TabsContent> */}
+        </Tabs>
+        ) : (
+          <div>No data available</div>
+        )}
+        {/* Sort by dropdown can go here */}
+      </div>
+    </Card>
+  );
+};
+
+export default DepartmentStatus;

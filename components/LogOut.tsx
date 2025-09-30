@@ -4,9 +4,11 @@ import { LogOut, Key } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import React from 'react'
+import { useAppContext } from '@/contexts/ContextProvider';
 
 const LogOutMenu = () => {
   const router = useRouter()
+  const { role } = useAppContext()
 
   const handleLogout = async () => {
     // Clear relevant cookies/localStorage if needed
@@ -14,9 +16,15 @@ const LogOutMenu = () => {
     // document.cookie = 'name=; Max-Age=0; path=/;'
     // document.cookie = 'access_token_cookie=; Max-Age=0; path=/;'
     // router.push('/')
+    const tempRole = role
     try {
       await fetch('/api/logout')
-      router.replace("/")
+
+      if(tempRole === 'hod' || tempRole === 'lecturer'){
+        router.replace("/umis/login")
+      }else{
+        router.replace("/")
+      }
     }catch (error){
       console.log("Error: ", error)
     }

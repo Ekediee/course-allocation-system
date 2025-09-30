@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import GroupCard from "@/components/GroupCard";
 import { ArrowLeft, Plus } from "lucide-react";
@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation"
 
 import { allocation_data } from "@/data/course_data";
-import AllocateLecturerModal from "@/components/Allocations/AllocateLecturerModal";
+import AllocateLecturerModal from "@/components/Allocations/SubmitAllocationModal";
 import { useToast } from "@/hooks/use-toast"
 import VerifyAllocation from "@/components/Allocations/verifyAllocation";
 
@@ -26,6 +26,30 @@ const Allocate = () => {
     groups, setGroups,
     token 
   } = useAppContext()
+
+  const isEditMode = !!selectedCourse?.allocatedTo;
+
+  useEffect(() => {
+    if (selectedCourse) {
+        if (isEditMode) {
+            // Reallocation: pre-fill with existing data
+            setGroups([
+                {
+                    id: 0,
+                    name: 'Group A',
+                    lecturer: selectedCourse.allocatedTo,
+                    classSize: '', // User needs to re-enter this
+                    classHours: '-',
+                }
+            ]);
+        } else {
+            // New allocation: reset to a single default group
+            setGroups([
+                { id: 0, name: "Group A", lecturer: "", classSize: "", classHours: "-" },
+            ]);
+        }
+    }
+  }, [selectedCourse, setGroups, isEditMode]);
   
 
   const handleAddGroup = () => {
@@ -86,6 +110,10 @@ const Allocate = () => {
       }
       
     });
+
+    if (data.length < groups.length) {
+        return; // Stop if form is incomplete
+    }
     
     const allocatedCourse = JSON.stringify(data)
 
@@ -110,17 +138,64 @@ const Allocate = () => {
       })
     } 
 
-    // resdata.forEach((data: any) =>{
-    //   toast({
-    //     variant: "success",
-    //     title: "Lecturer Allocated for:",
-    //     description: data.code + " - " + data.title
-    //   })
-    // })
-
-    // Unset course selection
     setSelectedCourse(null);
     
+    router.push(`/${from}`);
+  };
+
+  const handleUpdateAllocation = async () => {
+    const data: any[] = [];
+
+    groups.forEach((group:any) => {      
+      if (group.lecturer === "" || group.classSize === "") {
+        toast({
+          variant: "destructive",
+          title: "Update Failed",
+          description: "Please fill the allocation form to continue.",
+        });
+        return;
+      } else {
+        data.push({
+          semesterId: selectedCourse?.semesterId,
+          programId: selectedCourse?.programId,
+          levelId: selectedCourse?.levelId,
+          courseId: selectedCourse?.courseId,
+          classSize: group.classSize,
+          isAllocated: true,
+          allocatedTo: group.lecturer,
+          groupName: group.name,
+        });
+      }
+    });
+
+    if (data.length < groups.length) {
+        return; // Stop if form is incomplete
+    }
+    
+    const updatedAllocation = JSON.stringify(data)
+
+    const res = await fetch(`/api/allocation?token=${token}`,{
+      method: 'PUT',
+      body: updatedAllocation
+    });
+
+    const resdata = await res.json();
+
+    if(resdata.status == "success") {
+      toast({
+        variant: "success",
+        title: "Allocation Updated:",
+        description: resdata.message
+      })
+    } else if(resdata.status == "error") {
+      toast({
+        variant: "destructive",
+        title: "Update Failed",
+        description: resdata.message
+      })
+    } 
+
+    setSelectedCourse(null);
     router.push(`/${from}`);
   };
 
@@ -128,7 +203,9 @@ const Allocate = () => {
     <div className="p-4 md:p-6">
       <div className="bg-gradient-to-r from-amber-200 to-amber-50 rounded-2xl p-4 md:p-6 mb-6">
         <div className="flex justify-between items-center mb-4 border-b border-gray-300">
-          <h2 className="text-xl font-medium mb-5">Allocate Lecturer</h2>
+          <h2 className="text-xl font-medium mb-5">
+            {isEditMode ? 'Update Course Allocation' : 'Allocate Lecturer'}
+          </h2>
 
           <div className="flex justify-end items-center gap-4">
             <Link 
@@ -142,21 +219,13 @@ const Allocate = () => {
               </Button>
             </Link>
 
-
-            {/* <VerifyAllocation onAllocate={handleConfirmAllocation} /> */}
-            {/* <Link 
-              href={{
-                  pathname:"/course-allocation"
-              }} 
-            > */}
-              <Button 
-                size="sm" 
-                className="bg-blue-700 hover:bg-blue-800"
-                onClick={handleConfirmAllocation}
-              >
-                Confirm Allocation
-              </Button>
-            {/* </Link> */}
+            <Button 
+              size="sm" 
+              className="bg-blue-700 hover:bg-blue-800"
+              onClick={isEditMode ? handleUpdateAllocation : handleConfirmAllocation}
+            >
+              {isEditMode ? 'Update Allocation' : 'Confirm Allocation'}
+            </Button>
           </div>
         </div>
         
