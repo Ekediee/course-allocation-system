@@ -62,11 +62,12 @@ const DepartmentStatus = () => {
       
   return (
     <Card className="p-4 col-span-2 h-full">
+      <div className="flex font-bold mb-2">Allocation Status By Department - Most recent 10</div>
       <div className="flex items-center justify-between mb-4">
         {isLoading ? (
           <div>Loading...</div>
         ) : allocationStatus && allocationStatus.length > 0 && activeTab ? (
-        <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-[400px]">
+        <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full h-full">
           <TabsList>
             {allocationStatus?.map((semester: AllocationStatus) => (
               <TabsTrigger key={semester.id} value={semester.id} className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20">
@@ -75,19 +76,19 @@ const DepartmentStatus = () => {
               ))}
           </TabsList>
           {allocationStatus?.map((semester: AllocationStatus) => (
-            <TabsContent key={semester.id} value={semester.id}>
-              <Table>
+            <TabsContent key={semester.id} value={semester.id} className="h-full">
+              <Table className="w-full h-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[50px]">SN</TableHead>
+                    {/* <TableHead className="w-[50px]">SN</TableHead> */}
                     <TableHead>Departments</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="w-full h-full">
                   {semester.departments.map((dept) => (
                     <TableRow key={dept.department_id}>
-                      <TableCell className="font-medium">{dept.sn}</TableCell>
+                      {/* <TableCell className="font-medium">{dept.sn}</TableCell> */}
                       <TableCell>{dept.department_name}</TableCell>
                       <TableCell className="flex items-center gap-2">
                         {getStatusIcon(dept.status)} {dept.status}
