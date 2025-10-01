@@ -21,9 +21,9 @@ const LogOutMenu = () => {
       await fetch('/api/logout')
 
       if(tempRole === 'hod' || tempRole === 'lecturer'){
-        router.replace("/umis/login")
-      }else{
         router.replace("/")
+      }else{
+        router.replace("/admin/login")
       }
     }catch (error){
       console.log("Error: ", error)
