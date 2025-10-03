@@ -1,8 +1,9 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
-
+    logger.info({ message: 'Fetching allocation status overview' });
     try {
         const response = await fetch(getBackendApiUrl(`/api/v1/allocation/allocation-status-overview`), {
             cache: 'no-store',
@@ -15,12 +16,15 @@ export async function GET(req: NextRequest) {
 
         if (response.ok) {
             const data = await response.json();
+            logger.info({ message: 'Fetching allocation status overview successful' });
             return NextResponse.json(data, { status: 201 });
         } else {
             const errorData = await response.json();
+            logger.error({ message: 'Fetching allocation status overview failed', error: errorData });
             return NextResponse.json(errorData, { status: response.status });
         }
     } catch (error) {
+        logger.error({ message: 'Fetching allocation status overview error', error });
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

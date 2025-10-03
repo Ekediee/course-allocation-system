@@ -1,7 +1,9 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  logger.info({ message: 'Batch department upload attempt' });
   try {
     const formData = await req.formData();
     const file = formData.get('file');
@@ -9,11 +11,13 @@ export async function POST(req: NextRequest) {
 
     // If you want to throw an error if missing:
     if (schoolid === null) {
-    return NextResponse.json({ error: 'school_id is required' }, { status: 400 });
+      logger.error({ message: 'Batch department upload failed', error: 'school_id is required' });
+      return NextResponse.json({ error: 'school_id is required' }, { status: 400 });
     }
     const school_id: number = Number(schoolid);
 
     if (!file || !(file instanceof File)) {
+      logger.error({ message: 'Batch department upload failed', error: 'No file uploaded' });
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
@@ -43,15 +47,18 @@ export async function POST(req: NextRequest) {
     const flaskData = await flaskRes.json();
 
     if (!flaskRes.ok) {
+      logger.error({ message: 'Batch department upload failed', error: flaskData });
       return NextResponse.json({ error: flaskData.error || 'Something went wrong' }, { status: flaskRes.status });
     }
 
+    logger.info({ message: 'Batch department upload successful', count: records.length });
     return NextResponse.json({
       message: 'CSV uploaded and sent to backend successfully',
       count: records.length,
       response: flaskData,
     });
   } catch (error) {
+    logger.error({ message: 'Batch department upload error', error });
     return NextResponse.json({ error: 'Error processing upload' }, { status: 500 });
   }
 }

@@ -1,7 +1,9 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  logger.info({ message: 'Batch course upload attempt' });
   try {
     const formData = await req.formData();
     const file = formData.get('file');
@@ -13,15 +15,19 @@ export async function POST(req: NextRequest) {
 
     // Validate required fields
     if (bulletinId === null) {
+      logger.error({ message: 'Batch course upload failed', error: 'bulletin_id is required' });
       return NextResponse.json({ error: 'bulletin_id is required' }, { status: 400 });
     }
     if (programId === null) {
+      logger.error({ message: 'Batch course upload failed', error: 'program_id is required' });
       return NextResponse.json({ error: 'program_id is required' }, { status: 400 });
     }
     if (semesterId === null) {
+      logger.error({ message: 'Batch course upload failed', error: 'semester_id is required' });
       return NextResponse.json({ error: 'semester_id is required' }, { status: 400 });
     }
     if (levelId === null) {
+      logger.error({ message: 'Batch course upload failed', error: 'level_id is required' });
       return NextResponse.json({ error: 'level_id is required' }, { status: 400 });
     }
 
@@ -32,6 +38,7 @@ export async function POST(req: NextRequest) {
     const specialization_id: number | null = specializationId ? Number(specializationId) : null;
 
     if (!file || !(file instanceof File)) {
+      logger.error({ message: 'Batch course upload failed', error: 'No file uploaded' });
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
@@ -60,6 +67,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (records.length === 0) {
+        logger.error({ message: 'Batch course upload failed', error: 'CSV file is empty or contains no valid data.' });
         return NextResponse.json({ error: 'CSV file is empty or contains no valid data.' }, { status: 400 });
     }
 
@@ -75,15 +83,18 @@ export async function POST(req: NextRequest) {
     const flaskData = await flaskRes.json();
     
     if (!flaskRes.ok) {
+      logger.error({ message: 'Batch course upload failed', error: flaskData });
       return NextResponse.json({ error: flaskData.errors || flaskData.msg || 'Something went wrong' }, { status: flaskRes.status });
     }
 
+    logger.info({ message: 'Batch course upload successful', count: records.length });
     return NextResponse.json({
       message: 'CSV uploaded and sent to backend successfully',
       count: records.length,
       response: flaskData,
     });
   } catch (error) {
+    logger.error({ message: 'Batch course upload error', error });
     return NextResponse.json({ error: error || 'Error processing upload' }, { status: 500 });
   }
 }

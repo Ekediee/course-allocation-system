@@ -1,18 +1,22 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  logger.info({ message: 'Batch user upload attempt' });
   try {
     const formData = await req.formData();
     const file = formData.get('file');
     const departmentId = formData.get('department_id');
 
     if (departmentId === null) {
+      logger.error({ message: 'Batch user upload failed', error: 'department_id is required' });
       return NextResponse.json({ error: 'department_id is required' }, { status: 400 });
     }
     const department_id: number = Number(departmentId);
 
     if (!file || !(file instanceof File)) {
+      logger.error({ message: 'Batch user upload failed', error: 'No file uploaded' });
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
@@ -44,6 +48,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (records.length === 0) {
+        logger.error({ message: 'Batch user upload failed', error: 'CSV file is empty or contains no valid data.' });
         return NextResponse.json({ error: 'CSV file is empty or contains no valid data.' }, { status: 400 });
     }
 
@@ -59,15 +64,18 @@ export async function POST(req: NextRequest) {
     const flaskData = await flaskRes.json();
     
     if (!flaskRes.ok) {
+      logger.error({ message: 'Batch user upload failed', error: flaskData });
       return NextResponse.json({ error: flaskData.errors || flaskData.msg || 'Something went wrong' }, { status: flaskRes.status });
     }
 
+    logger.info({ message: 'Batch user upload successful', count: records.length });
     return NextResponse.json({
       message: 'CSV uploaded and sent to backend successfully',
       count: records.length,
       response: flaskData,
     });
   } catch (error) {
+    logger.error({ message: 'Batch user upload error', error });
     return NextResponse.json({ error: error || 'Error processing upload' }, { status: 500 });
   }
 }

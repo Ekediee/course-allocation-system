@@ -1,9 +1,11 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 
 export const POST = async (req: any) => {
 
   const reqBody = await req.json()
+  logger.info({ message: 'UMIS login attempt', umisId: reqBody.umisid });
 
   try {
     const res = await fetch(getBackendApiUrl('/api/v1/auth/umis/login'), {
@@ -16,6 +18,7 @@ export const POST = async (req: any) => {
 
     if (!res.ok) {
       const errorData = await res.json();
+      logger.error({ message: 'UMIS login failed', umisId: reqBody.umisid, error: errorData });
       return NextResponse.json({ error: errorData.error || 'Login Failed' }, { status: res.status });
     }
 
@@ -27,6 +30,7 @@ export const POST = async (req: any) => {
       email: data.user.email,
     }
     
+    logger.info({ message: 'UMIS login successful', user });
     const response = NextResponse.json({
       user,
       message: 'Login successful' 
@@ -59,6 +63,7 @@ export const POST = async (req: any) => {
 
     return response;
   } catch (error) {
+    logger.error({ message: 'UMIS login error', error });
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
