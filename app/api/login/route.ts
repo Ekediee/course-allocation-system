@@ -63,13 +63,19 @@ export const POST = async (req: any) => {
 
     return response;
   } catch (err: any) {
-    logger.error({
-      message: 'Login error',
-      type: typeof err,
-      instanceOfError: err instanceof Error,
-      err,
-      rawError: JSON.stringify(err, Object.getOwnPropertyNames(err))
-    });
+    try {
+      logger.error({
+        message: 'Login error',
+        type: typeof err,
+        instanceOfError: err instanceof Error,
+        name: err?.name,
+        msg: err?.message,
+        stack: err?.stack,
+        stringified: JSON.stringify(err, Object.getOwnPropertyNames(err)),
+      });
+    } catch (logErr) {
+      console.error('Failed to log error properly:', logErr);
+    }
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 //   return NextResponse.json(reqBody);
