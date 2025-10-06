@@ -1,6 +1,6 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
-import logger from '@/lib/server/logger';
+import logger from '@/lib/server-only/logger';
 
 // GET request to fetch all users
 export const GET = async (req: any) => {

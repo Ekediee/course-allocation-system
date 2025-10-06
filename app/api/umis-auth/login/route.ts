@@ -1,6 +1,6 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
-import logger from '@/lib/server/logger';
+import logger from '@/lib/server-only/logger';
 
 export const POST = async (req: any) => {
 

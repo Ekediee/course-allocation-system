@@ -1,6 +1,6 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
-import logger from '@/lib/server/logger';
+import logger from '@/lib/server-only/logger';
 
 export const GET = async (req: NextRequest) => {
   logger.info({url: req.url, method: req.method, message: 'Fetching admin school names' });
