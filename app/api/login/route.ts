@@ -62,8 +62,14 @@ export const POST = async (req: any) => {
     });
 
     return response;
-  } catch (err) {
-    logger.error({ err }, 'Login error');
+  } catch (err: any) {
+    logger.error({
+      message: 'Login error',
+      type: typeof err,
+      instanceOfError: err instanceof Error,
+      err,
+      rawError: JSON.stringify(err, Object.getOwnPropertyNames(err))
+    });
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 //   return NextResponse.json(reqBody);
