@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
       count: records.length,
       response: flaskData,
     });
-  } catch (error) {
-    logger.error({ message: 'Batch school upload error', error });
+  } catch (err) {
+    logger.error({ err }, 'Batch school upload error');
     return NextResponse.json({ error: 'Error processing upload' }, { status: 500 });
   }
 }

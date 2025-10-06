@@ -27,8 +27,8 @@ export const POST = async (req: Request) => {
     logger.info({ message: 'Course creation successful', course: data });
     return NextResponse.json(data);
 
-  } catch (error) {
-    logger.error({ message: 'Course creation error', error });
+  } catch (err) {
+    logger.error({ err }, 'Course creation error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

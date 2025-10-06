@@ -27,8 +27,8 @@ export const POST = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Creating bulletin successful', bulletin: data });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Creating bulletin error', error });
+  } catch (err) {
+    logger.error({ err }, 'Creating bulletin error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -56,8 +56,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching bulletins successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching bulletins error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching bulletins error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

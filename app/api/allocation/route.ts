@@ -24,8 +24,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching allocation list successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching allocation list error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching allocation list error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -55,8 +55,8 @@ export const POST = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Course allocation successful', allocation: data });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Course allocation error', error });
+  } catch (err) {
+    logger.error({ err }, 'Course allocation error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -86,8 +86,8 @@ export const PUT = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Course allocation update successful', allocation: data });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Course allocation update error', error });
+  } catch (err) {
+    logger.error({ err }, 'Course allocation update error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

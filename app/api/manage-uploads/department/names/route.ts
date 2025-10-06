@@ -26,8 +26,8 @@ export const POST = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching department names by school successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching department names by school error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching department names by school error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -55,8 +55,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching all department names successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching all department names error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching all department names error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

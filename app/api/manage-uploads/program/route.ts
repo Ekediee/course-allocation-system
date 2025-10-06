@@ -27,8 +27,8 @@ export const POST = async (req: NextRequest) => {
 
     logger.info({ message: 'Creating program successful', program: data });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Creating program error', error });
+  } catch (err) {
+    logger.error({ err }, 'Creating program error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -56,8 +56,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching programs successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching programs error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching programs error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

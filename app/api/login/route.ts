@@ -62,8 +62,8 @@ export const POST = async (req: any) => {
     });
 
     return response;
-  } catch (error) {
-    logger.error({ message: 'Login error', error });
+  } catch (err) {
+    logger.error({ err }, 'Login error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 //   return NextResponse.json(reqBody);

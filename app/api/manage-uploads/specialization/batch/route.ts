@@ -69,8 +69,8 @@ export async function POST(req: NextRequest) {
       count: records.length,
       response: flaskData,
     });
-  } catch (error) {
-    logger.error({ message: 'Batch specialization upload error', error });
+  } catch (err) {
+    logger.error({ err }, 'Batch specialization upload error');
     return NextResponse.json({ error: 'Error processing upload' }, { status: 500 });
   }
 }

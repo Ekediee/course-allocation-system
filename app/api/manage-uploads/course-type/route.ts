@@ -27,8 +27,8 @@ export const POST = async (req: NextRequest) => {
 
     logger.info({ message: 'Creating course type successful', courseType: data });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Creating course type error', error });
+  } catch (err) {
+    logger.error({ err }, 'Creating course type error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

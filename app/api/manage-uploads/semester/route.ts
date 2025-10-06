@@ -25,8 +25,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching semesters successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching semesters error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching semesters error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -56,8 +56,8 @@ export const POST = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Creating semester successful', semester: data });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Creating semester error', error });
+  } catch (err) {
+    logger.error({ err }, 'Creating semester error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

@@ -24,8 +24,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching school names successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching school names error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching school names error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

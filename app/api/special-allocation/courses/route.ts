@@ -32,8 +32,8 @@ export const POST = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching special allocation courses successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching special allocation courses error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching special allocation courses error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

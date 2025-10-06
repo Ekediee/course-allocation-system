@@ -24,8 +24,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching admin departments successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching admin departments error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching admin departments error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

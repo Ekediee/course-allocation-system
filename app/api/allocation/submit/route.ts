@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
             logger.error({ message: 'Submitting allocation failed', allocation: reqBody, error: errorData });
             return NextResponse.json(errorData, { status: response.status });
         }
-    } catch (error) {
-        logger.error({ message: 'Submitting allocation error', error });
+    } catch (err) {
+        logger.error({ err }, 'Submitting allocation error');
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

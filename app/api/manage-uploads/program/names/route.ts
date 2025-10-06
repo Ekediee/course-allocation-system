@@ -26,8 +26,8 @@ export const POST = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching program names by department successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching program names by department error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching program names by department error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

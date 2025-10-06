@@ -27,8 +27,8 @@ export const POST = async (req: NextRequest) => {
 
     logger.info({ message: 'Creating specialization successful', specialization: data });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Creating specialization error', error });
+  } catch (err) {
+    logger.error({ err }, 'Creating specialization error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -56,8 +56,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching specializations successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching specializations error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching specializations error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

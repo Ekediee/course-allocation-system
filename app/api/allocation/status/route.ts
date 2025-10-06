@@ -26,8 +26,8 @@ export async function GET(req: NextRequest) {
             logger.error({ message: 'Fetching allocation status failed', semesterId, error: errorData });
             return NextResponse.json(errorData, { status: response.status });
         }
-    } catch (error) {
-        logger.error({ message: 'Fetching allocation status error', semesterId, error });
+    } catch (err) {
+        logger.error({ err }, 'Fetching allocation status error');
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

@@ -24,8 +24,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching bulletin names successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching bulletin names error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching bulletin names error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

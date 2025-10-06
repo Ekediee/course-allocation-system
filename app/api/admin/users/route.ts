@@ -24,8 +24,8 @@ export const GET = async (req: any) => {
     const data = await res.json();
     logger.info({ message: 'Fetching all users successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching all users error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching all users error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
@@ -54,8 +54,8 @@ export const POST = async (req: any) => {
         const data = await res.json();
         logger.info({ message: 'User creation successful', user: data });
         return NextResponse.json(data);
-    } catch (error) {
-        logger.error({ message: 'User creation error', error });
+    } catch (err) {
+        logger.error({ err }, 'User creation error');
         return NextResponse.json({ error: 'Server error' }, { status: 500 });
     }
 }

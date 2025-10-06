@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
             logger.error({ message: 'Creating level failed', level: reqBody, error: errorData });
             return NextResponse.json(errorData, { status: response.status });
         }
-    } catch (error) {
-        logger.error({ message: 'Creating level error', error });
+    } catch (err) {
+        logger.error({ err }, 'Creating level error');
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
@@ -53,8 +53,8 @@ export async function GET(req: NextRequest) {
             logger.error({ message: 'Fetching levels failed', error: errorData });
             return NextResponse.json(errorData, { status: response.status });
         }
-    } catch (error) {
-        logger.error({ message: 'Fetching levels error', error });
+    } catch (err) {
+        logger.error({ err }, 'Fetching levels error');
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

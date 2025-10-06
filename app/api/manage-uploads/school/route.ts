@@ -27,8 +27,8 @@ export const POST = async (req: NextRequest) => {
 
     logger.info({ message: 'Creating school successful', school: data });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Creating school error', error });
+  } catch (err) {
+    logger.error({ err }, 'Creating school error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
@@ -56,8 +56,8 @@ export const GET = async (req: NextRequest) => {
     const data = await res.json();
     logger.info({ message: 'Fetching schools successful' });
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error({ message: 'Fetching schools error', error });
+  } catch (err) {
+    logger.error({ err }, 'Fetching schools error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };

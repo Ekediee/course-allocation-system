@@ -62,8 +62,8 @@ export const POST = async (req: any) => {
     });
 
     return response;
-  } catch (error) {
-    logger.error({ message: 'UMIS login error', error });
+  } catch (err) {
+    logger.error({ err }, 'UMIS login error');
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
