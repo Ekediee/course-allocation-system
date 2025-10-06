@@ -1,6 +1,6 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
-import logger from '@/lib/logger';
+import logger from '@/lib/server/logger';
 
 // GET semester data
 export const GET = async (req: NextRequest) => {

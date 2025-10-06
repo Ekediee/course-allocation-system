@@ -1,6 +1,6 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
-import logger from '@/lib/logger';
+import logger from '@/lib/server/logger';
 
 export async function GET(req: NextRequest) {
     const url = req.nextUrl;
