@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 
 export const GET = async (req: NextRequest) => {
-  logger.info({ message: 'Fetching admin departments' });
+  logger.info({url: req.url, method: req.method, message: 'Fetching admin departments' });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/departments/list/admin'), {

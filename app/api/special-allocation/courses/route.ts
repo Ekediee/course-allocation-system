@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  logger.info({ message: 'Fetching special allocation courses', body });
+  logger.info({url: req.url, method: req.method, message: 'Fetching special allocation courses', body });
   try {
     
     if (!body.bulletin || !body.program || !body.semester) {

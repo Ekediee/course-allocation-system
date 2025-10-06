@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 
 export const GET = async (req: any) => {
-  logger.info({ message: 'Fetching lecturers' });
+  logger.info({  url: req.url, method: req.method, message: 'Fetching lecturers' });
   try {
     const res = await fetch(getBackendApiUrl('/api/v1/allocation/allocate/lecturers'), {
       cache: 'no-store', // prevent caching for fresh data

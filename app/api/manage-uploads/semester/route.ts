@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 // GET semester data
 export const GET = async (req: NextRequest) => {
-  logger.info({ message: 'Fetching semesters' });
+  logger.info({url: req.url, method: req.method, message: 'Fetching semesters' });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/semesters/list'), {
@@ -34,7 +34,7 @@ export const GET = async (req: NextRequest) => {
 // POST Session data
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Creating semester', semester: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Creating semester', semester: reqBody });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/semesters/create'), {

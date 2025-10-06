@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 
 export const GET = async (req: NextRequest) => {
-  logger.info({ message: 'Fetching bulletin names' });
+  logger.info({url: req.url, method: req.method, message: 'Fetching bulletin names' });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/bulletins/list/name'), {

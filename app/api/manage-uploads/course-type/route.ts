@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 // POST Course Type data
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Creating course type', courseType: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Creating course type', courseType: reqBody });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/course-types/create'), {
@@ -35,7 +35,7 @@ export const POST = async (req: NextRequest) => {
 
 // GET Course Type data
 export const GET = async (req: NextRequest) => {
-  logger.info({ message: 'Fetching course types' });
+  logger.info({url: req.url, method: req.method, message: 'Fetching course types' });
   try {
     const res = await fetch(getBackendApiUrl('/api/v1/course-types/list'), {
       cache: 'no-store',

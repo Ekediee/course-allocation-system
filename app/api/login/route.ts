@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 export const POST = async (req: any) => {
 
   const reqBody = await req.json()
-  logger.info({ message: 'Login attempt', email: reqBody.email });
+  logger.info({  url: req.url, method: req.method, message: 'Login attempt', email: reqBody.email });
 
   try {
     const res = await fetch(getBackendApiUrl('/api/v1/auth/login'), {

@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Fetching department names by school', school: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Fetching department names by school', school: reqBody });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/departments/names/list'), {
@@ -33,7 +33,7 @@ export const POST = async (req: NextRequest) => {
 };
 
 export const GET = async (req: NextRequest) => {
-  logger.info({ message: 'Fetching all department names' });
+  logger.info({url: req.url, method: req.method, message: 'Fetching all department names' });
   try {
   
 

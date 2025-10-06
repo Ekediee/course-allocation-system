@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Fetching specialization names by program', program: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Fetching specialization names by program', program: reqBody });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/specializations/names/list'), {

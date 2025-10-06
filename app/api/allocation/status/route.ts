@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 export async function GET(req: NextRequest) {
     const url = req.nextUrl;
     const semesterId = url.searchParams.get('semesterId'); // e.g. /api/allocation/status?semesterId=123
-    logger.info({ message: 'Fetching allocation status', semesterId });
+    logger.info({ url: req.url, method: req.method, semesterId }, 'Fetching allocation status');
 
     try {
         const response = await fetch(getBackendApiUrl(`/api/v1/allocation/status/${semesterId}`), {

@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 // GET Allocation List
 export const GET = async (req: NextRequest) => {
-  logger.info({ message: 'Fetching allocation list' });
+  logger.info({  url: req.url, method: req.method, message: 'Fetching allocation list' });
   try {
     const res = await fetch(getBackendApiUrl('/api/v1/allocation/detailed-list'), {
       method: 'GET',

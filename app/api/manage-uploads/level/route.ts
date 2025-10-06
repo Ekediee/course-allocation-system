@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
     const reqBody = await req.json();
-    logger.info({ message: 'Creating level', level: reqBody });
+    logger.info({url: req.url, method: req.method, message: 'Creating level', level: reqBody });
 
     try {
         const response = await fetch(getBackendApiUrl('/api/v1/levels/create'), {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-    logger.info({ message: 'Fetching levels' });
+    logger.info({url: req.url, method: req.method, message: 'Fetching levels' });
     try {
         const response = await fetch(getBackendApiUrl('/api/v1/levels/list'), {
             cache: 'no-store',

@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 // POST handler for creating a new course
 export const POST = async (req: Request) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Course creation attempt', course: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Course creation attempt', course: reqBody });
 
   try {
     const res = await fetch(getBackendApiUrl('/api/v1/courses'), {
@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
 
 // GET handler for fetching all courses
 export const GET = async (req: Request) => {
-    logger.info({ message: 'Fetching courses' });
+    logger.info({url: req.url, method: req.method, message: 'Fetching courses' });
     try {
         const res = await fetch(getBackendApiUrl('/api/v1/courses'), {
             method: 'GET',

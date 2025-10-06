@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Fetching special allocation programs', body: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Fetching special allocation programs', body: reqBody });
   try {
 
     

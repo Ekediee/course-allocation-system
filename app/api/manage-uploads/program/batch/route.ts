@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
-  logger.info({ message: 'Batch program upload attempt' });
+  logger.info({url: req.url, method: req.method, message: 'Batch program upload attempt' });
   try {
     const formData = await req.formData();
     const file = formData.get('file');

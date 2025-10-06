@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 // POST Session data
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Creating school', school: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Creating school', school: reqBody });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/schools/create'), {

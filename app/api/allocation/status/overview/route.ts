@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
-    logger.info({ message: 'Fetching allocation status overview' });
+    logger.info({ url: req.url, method: req.method }, 'Fetching allocation status overview');
     try {
         const response = await fetch(getBackendApiUrl(`/api/v1/allocation/allocation-status-overview`), {
             cache: 'no-store',

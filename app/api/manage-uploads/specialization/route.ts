@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 // POST Specialization data
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Creating specialization', specialization: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Creating specialization', specialization: reqBody });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/specializations/create'), {
@@ -35,7 +35,7 @@ export const POST = async (req: NextRequest) => {
 
 // GET Specialization data
 export const GET = async (req: NextRequest) => {
-  logger.info({ message: 'Fetching specializations' });
+  logger.info({url: req.url, method: req.method, message: 'Fetching specializations' });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/specializations/list'), {

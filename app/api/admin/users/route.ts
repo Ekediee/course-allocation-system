@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 // GET request to fetch all users
 export const GET = async (req: any) => {
-  logger.info({ message: 'Fetching all users' });
+  logger.info({ url: req.url, method: req.method }, 'Fetching all users');
   try {
     const res = await fetch(getBackendApiUrl('/api/v1/admin/users'), {
       cache: 'no-store',

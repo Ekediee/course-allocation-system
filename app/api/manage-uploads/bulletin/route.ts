@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 // POST Session data
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
-  logger.info({ message: 'Creating bulletin', bulletin: reqBody });
+  logger.info({url: req.url, method: req.method, message: 'Creating bulletin', bulletin: reqBody });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/bulletins/create'), {
@@ -35,7 +35,7 @@ export const POST = async (req: NextRequest) => {
 
 // GET Session data
 export const GET = async (req: NextRequest) => {
-  logger.info({ message: 'Fetching bulletins' });
+  logger.info({url: req.url, method: req.method, message: 'Fetching bulletins' });
   try {
 
     const res = await fetch(getBackendApiUrl('/api/v1/bulletins/list'), {

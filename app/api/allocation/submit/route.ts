@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
     const reqBody = await req.json();
-    logger.info({ message: 'Submitting allocation', allocation: reqBody });
+    logger.info({  url: req.url, method: req.method, message: 'Submitting allocation', allocation: reqBody });
 
     try {
         const response = await fetch(getBackendApiUrl('/api/v1/allocation/submit'), {
