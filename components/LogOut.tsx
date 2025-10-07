@@ -18,12 +18,12 @@ const LogOutMenu = () => {
     // router.push('/')
     const tempRole = role
     try {
-      await fetch('/api/logout')
+      await fetch('/api/logout', { method: 'POST' })
 
       if(tempRole === 'hod' || tempRole === 'lecturer'){
-        router.replace("/")
+        window.location.href = '/';
       }else{
-        router.replace("/admin/login")
+        window.location.href = "/admin/login"
       }
     }catch (error){
       console.log("Error: ", error)

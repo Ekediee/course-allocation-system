@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { Copy, EyeIcon, EyeOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { useAppContext } from '@/contexts/ContextProvider';
 import Cookies from 'js-cookie';
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight } from 'lucide-react'
 
 // using zod for form validation
 import { useForm } from 'react-hook-form';
@@ -16,6 +18,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from '@/components/ui/toaster';
+import CopyRight from "@/components/CopyRight";
 
 const schema = z.object({
   umisid: z.string().min(5, { message: 'Min 5 characters' }),
@@ -192,13 +195,17 @@ const Login = () => {
               {isSubmitting ? 'Logging in...' : 'Login'}
             </Button>
           </form>
+          <div className="flex justify-center items-center mt-6 gap-2">
+            <p className="text-sm text-gray-600">Admin User?</p>
+            <Link href="/admin/login" className="flex justify-center item-center text-sm text-blue-600 hover:underline inline-block">
+              Login Here <ArrowUpRight size={16} className="w-4 h-4" />
+            </Link>
+          </div>
           <Toaster />
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-sm text-gray-500">
-          {'© '} {new Date().getFullYear()} Babcock University
-        </div>
+        <CopyRight />
       </div>
 
       {/* Right Section - Illustration */}
