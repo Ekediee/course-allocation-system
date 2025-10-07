@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { Copy, EyeIcon, EyeOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { useAppContext } from '@/contexts/ContextProvider';
 import Cookies from 'js-cookie';
@@ -16,6 +16,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from '@/components/ui/toaster';
+import CopyRight from "@/components/CopyRight";
 
 const schema = z.object({
   email: z.string().email({ message: 'Invalid email' }),
@@ -222,9 +223,7 @@ const Login = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-sm text-gray-500">
-          {'© '} {new Date().getFullYear()} Babcock University
-        </div>
+        <CopyRight />
       </div>
 
       {/* Right Section - Illustration */}
