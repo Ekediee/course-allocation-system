@@ -19,7 +19,7 @@ export const POST = async (req: any) => {
     if (!res.ok) {
       const errorData = await res.json();
       logger.error({ message: 'UMIS login failed', umisId: reqBody.umisid, error: errorData });
-      return NextResponse.json({ error: errorData.error || 'Login Failed' }, { status: res.status });
+      return NextResponse.json({ error: errorData.msg || 'Login Failed' }, { status: res.status });
     }
 
     const data = await res.json();

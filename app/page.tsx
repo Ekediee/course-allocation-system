@@ -61,9 +61,14 @@ const Login = () => {
       if (!res.ok) {
         // alert(data.error);
         const errorData = await res.json();
+        const title =
+          res.status === 401 ? 'Invalid credentials' :
+          res.status === 403 ? 'Access denied' :
+          'Login failed';
+
         toast({
           variant: "destructive",
-          title: "Something is wrong",
+          title,
           description: errorData.error
         });
         return;
