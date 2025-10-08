@@ -23,8 +23,12 @@ import {
     Upload
   } from "lucide-react";
   import { activeLink, normalLink } from '@/data/constants';
+  import { useAppContext } from '@/contexts/ContextProvider';
 
 const VetterSideBar = () => {
+    const {
+      role
+    } = useAppContext()
     const pathname = usePathname();
   return (
     <>
@@ -42,10 +46,12 @@ const VetterSideBar = () => {
             <Upload className="h-5 w-5 mr-3" />
             <span>Upload Resources</span>
           </Link>
-          <Link href="/vetter/admin-management" className={` ${pathname.includes('admin-management') ?  activeLink : normalLink }`}>
-            <Users className="h-5 w-5 mr-3" />
-            <span>Admin Management</span>
-          </Link>
+          {/* {role === 'superadmin' && */}
+            <Link href="/vetter/admin-management" className={` ${pathname.includes('admin-management') ?  activeLink : normalLink }`}>
+              <Users className="h-5 w-5 mr-3" />
+              <span>Admin Management</span>
+            </Link>
+          {/* } */}
         </div>
     </>
   )

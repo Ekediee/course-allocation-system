@@ -58,7 +58,7 @@ const Sidebar = () => {
         </div>
         
         {role == "hod" && <HODSideBar />}
-        {role == "vetter" && <VetterSideBar />}
+        {(role == "vetter" || role == "superadmin") && <VetterSideBar />}
       </div>
       <div>  
         {/* <div className="mt-auto p-4 border-t border-gray-200">
