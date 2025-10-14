@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowDownWideNarrow, ChevronDown, Loader2, Plus } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SchoolType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import ProgramModal from './ProgramModal';
+import { Button } from '@/components/ui/button';
 
 const ProgramContent = () => {
     const {
@@ -16,6 +17,12 @@ const ProgramContent = () => {
         fetchPrograms,
         isUploading
     } = useAppContext()
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortColumn, setSortColumn] = useState('');
+    const [sortDirection, setSortDirection] = useState('asc');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(13);
 
     useEffect(() => {
         fetchPrograms();
@@ -27,6 +34,30 @@ const ProgramContent = () => {
     })
 
     const { isLoading, error } = queryResult;
+
+    const filteredPrograms = programData?.filter((program: any) =>
+        program?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        program?.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        program?.acronym.toLowerCase().includes(searchTerm.toLowerCase()) 
+    );
+
+    const sortedPrograms = filteredPrograms?.sort((a: any, b: any) => {
+        if (sortColumn) {
+            const aValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], a) : a[sortColumn];
+            const bValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], b) : b[sortColumn];
+
+            if (aValue < bValue) {
+                return sortDirection === 'asc' ? -1 : 1;
+            }
+            if (aValue > bValue) {
+                return sortDirection === 'asc' ? 1 : -1;
+            }
+        }
+        return 0;
+    });
+
+    const totalPages = Math.ceil((sortedPrograms?.length || 0) / itemsPerPage);
+    const paginatedPrograms = sortedPrograms?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     if (isLoading) {
         return (
@@ -78,28 +109,40 @@ const ProgramContent = () => {
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
                         <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            Program
+                            <input type="text" placeholder="Search..." className="border-0 focus:ring-0 w-96 p-2" onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
-                                <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
-                            </div>
                             <ProgramModal btnName="Add Program" onAddProgram={fetchPrograms}/>
                         </div>
                     </div>
-                    {programData?.length > 0 ? (
+                    {paginatedPrograms && paginatedPrograms?.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
                             <TableHeader>
                                 <TableRow>
-                                <TableHead>Program Name</TableHead>
-                                <TableHead className="">Department</TableHead>
-                                <TableHead className="text-center">Acronym</TableHead>
+                                <TableHead className="cursor-pointer" onClick={() => { setSortColumn('name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                    <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                    Program Name
+                                    </div>
+                                </TableHead>
+                                <TableHead className="cursor-pointer" onClick={() => { setSortColumn('department'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                    <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                    Department
+                                    </div>
+                                </TableHead>
+                                <TableHead className="flex cursor-pointer justify-center" onClick={() => { setSortColumn('acronym'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                    <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                    Acronym
+                                    </div>
+                                </TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                            {programData.map((program:any) => (
+                            {paginatedPrograms.map((program:any) => (
                                 <TableRow key={program.id}>
                                     <TableCell >{program.name}</TableCell>
                                     <TableCell className="">
@@ -113,6 +156,11 @@ const ProgramContent = () => {
                             ))}
                             </TableBody>
                             </Table>
+                            <div className="flex justify-end items-center gap-2 mt-4">
+                                <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Previous</Button>
+                                <span>Page {currentPage} of {totalPages}</span>
+                                <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</Button>
+                            </div>
                         </div>
                     ) : (
                         <EmptyPage 

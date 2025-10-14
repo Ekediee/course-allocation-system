@@ -230,11 +230,11 @@ const Login = () => {
           </div>
 
           {/* Pagination Dots */}
-          <div className="flex justify-center mt-8 space-x-2">
+          {/* <div className="flex justify-center mt-8 space-x-2">
             <div className="h-2 w-2 rounded-full bg-blue-500"></div>
             <div className="h-2 w-2 rounded-full bg-gray-300"></div>
             <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

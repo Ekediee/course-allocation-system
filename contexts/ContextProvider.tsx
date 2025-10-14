@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
 import Cookies from 'js-cookie';
+import { apiFetch } from '@/lib/api-client';
 
 
 const AppContext = createContext<any>(undefined);
@@ -287,15 +288,13 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     };
 
     const fetchSemesterData = async () => {
-      const res = await fetch(`/api/allocation`);
-      if (!res.ok) throw new Error('Network error');
-      return res.json();
+      const data = await apiFetch(`/api/allocation`);
+      return data;
     };
 
     const fetchLecturers = async () => {
-      const res = await fetch(`/api/lecturers`);
-      if (!res.ok) throw new Error('Network error');
-      return res.json();
+      const data = await apiFetch(`/api/lecturers`);
+      return data;
     };
 
     const fetchSemesterDataDE = async () => {
@@ -316,9 +315,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchSemesters = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/semester');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/semester');
           setSemesterData(data); // Update state with fetched data
           return data
       } catch (error) {
@@ -328,9 +325,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchLevels = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/level');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/level');
           setLevelData(data);
           return data
       } catch (error) {
@@ -340,9 +335,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchSchools = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/school');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/school');
           setSchoolData(data.schools); // Update state with fetched data
           return data
       } catch (error) {
@@ -355,9 +348,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     // Fetch school names for the combobox
     const fetchSchoolName = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/school/names');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/school/names');
           setSchoolNameData(data.schools); // Update state with fetched data
           return data.schools
       } catch (error) {
@@ -367,10 +358,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchSchoolNameAdmin = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/school/names/admin');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
-          // setSchoolNameData(data.schools); // Update state with fetched data
+          const data = await apiFetch('/api/manage-uploads/school/names/admin');
           return data.schools
       } catch (error) {
           console.error('Failed to fetch schools:', error);
@@ -383,9 +371,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchDepartments = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/department');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/department');
           setDepartmentData(data.departments); 
           return data.departments
       } catch (error) {
@@ -395,9 +381,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchAdminDepartments = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/department/admin');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/department/admin');
           setDepartmentData(data.departments); 
           return data.departments
       } catch (error) {
@@ -413,9 +397,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const fetchDepartmentName = async () => {
       try {
       
-        const res = await fetch('/api/manage-uploads/department/names');
-        if (!res.ok) throw new Error('Network error');
-        const data = await res.json();
+        const data = await apiFetch('/api/manage-uploads/department/names');
         
         return data.departments
       } catch (error) {
@@ -428,15 +410,13 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         const selectedSchool = {
           school_id: school,
         }
-        const res = await fetch('/api/manage-uploads/department/names', {
+        const data = await apiFetch('/api/manage-uploads/department/names', {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',
           },
           body: JSON.stringify(selectedSchool),
         });
-        if (!res.ok) throw new Error('Network error');
-        const data = await res.json();
         setShowDeptCombo(true); 
         return data.departments
       } catch (error) {
@@ -446,9 +426,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchPrograms = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/program');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/program');
           setProgramData(data.programs); 
           return data.programs
       } catch (error) {
@@ -462,15 +440,13 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
           department: department,
         }
 
-        const res = await fetch('/api/special-allocation/program', {
+        const data = await apiFetch('/api/special-allocation/program', {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',
           },
           body: JSON.stringify(selectedDept)
         });
-        if (!res.ok) throw new Error('Network error');
-        const data = await res.json();
            
           return data.programs
       } catch (error) {
@@ -485,18 +461,13 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
           program: program,
           semester: semester,
         }
-        const res = await fetch('/api/special-allocation/courses', {
+        const data = await apiFetch('/api/special-allocation/courses', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(bullParams),
         });
-        if (!res.ok) {
-          throw new Error('Network error');
-        }
-
-        const data = await res.json();
         return data.levels
       } catch (error) {
         console.error('Failed to fetch special allocation courses:', error);
@@ -509,12 +480,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         // const semester_data = {
         //   semester: semester,
         // }
-        const res = await fetch(`/api/allocation/status?semesterId=${semester}`);
-        if (!res.ok) {
-          throw new Error('Network error');
-        }
-
-        const data = await res.json();
+        const data = await apiFetch(`/api/allocation/status?semesterId=${semester}`);
+        
         return data
       } catch (error) {
         console.error('Failed to fetch special allocation courses:', error);
@@ -524,9 +491,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchSpecializations = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/specialization');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/specialization');
+          
           setSpecializationData(data.specializations); 
           return data
       } catch (error) {
@@ -538,9 +504,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchCourseTypes = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/course-type');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/course-type');
+          
           setCourseTypeData(data); 
           return data
       } catch (error) {
@@ -550,9 +515,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchProgramName = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/program/names');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/program/names');
+          
           // setProgramData(data.programs); 
           return data.programs
       } catch (error) {
@@ -562,9 +526,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchSpecializationName = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/specialization/names');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/specialization/names');
+          
           return data.specializations
       } catch (error) {
           console.error('Failed to fetch specializations:', error);
@@ -576,15 +539,14 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         const selectedDept = {
           department_id: department,
         }
-        const res = await fetch('/api/manage-uploads/program/names', {
+        const data = await apiFetch('/api/manage-uploads/program/names', {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',
           },
           body: JSON.stringify(selectedDept)
         });
-        if (!res.ok) throw new Error('Network error');
-        const data = await res.json();
+        
         setShowProgCombo(true); 
         return data.programs
       } catch (error) {
@@ -599,15 +561,14 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         const selectedProg = {
           program_id: program,
         }
-        const res = await fetch('/api/manage-uploads/specialization/names', {
+        const data = await apiFetch('/api/manage-uploads/specialization/names', {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',
           },
           body: JSON.stringify(selectedProg)
         });
-        if (!res.ok) throw new Error('Network error');
-        const data = await res.json();
+        
         setShowSpecCombo(true); 
         return data.specializations
       } catch (error) {
@@ -617,9 +578,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchBulletinName = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/bulletin/names');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/bulletin/names');
           
           return data.bulletins
       } catch (error) {
@@ -629,9 +588,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchSessionName = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/session/names');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/session/names');
+          
           // setProgramData(data.programs); 
           return data.programs
       } catch (error) {
@@ -641,9 +599,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchCourses = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/course');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/course');
+          
           return data
       } catch (error) {
           console.error('Failed to fetch courses:', error);
@@ -652,9 +609,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchUsers = async () => {
       try {
-          const res = await fetch('/api/manage-uploads/user');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/manage-uploads/user');
+          
           return data
       } catch (error) {
           console.error('Failed to fetch users:', error);
@@ -667,9 +623,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchAdminUsers = async () => {
       try {
-          const res = await fetch('/api/admin/users');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/admin/users');
+          
           return data
       } catch (error) {
           console.error('Failed to fetch admin users:', error);
@@ -678,9 +633,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchAllocatationStatusOverview = async () => {
       try {
-          const res = await fetch('/api/allocation/status/overview');
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
+          const data = await apiFetch('/api/allocation/status/overview');
+          
           return data
       } catch (error) {
           console.error('Failed to fetch allocation status overview:', error);

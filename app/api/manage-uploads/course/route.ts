@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 // POST handler for creating a new course
 export const POST = async (req: Request) => {
@@ -17,8 +18,18 @@ export const POST = async (req: Request) => {
         body: JSON.stringify(reqBody),
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'Course creation failed', course: reqBody, error: errorData });
       return NextResponse.json({ error: errorData.msg || 'Failed to create course' }, { status: res.status });
     }
@@ -45,10 +56,20 @@ export const GET = async (req: Request) => {
             },
         });
 
+        let errorData = null;
         if (!res.ok) {
-            const errorData = await res.json();
-            logger.error({ message: 'Fetching courses failed', error: errorData });
-            return NextResponse.json({ error: errorData.error || 'Failed to fetch courses' }, { status: res.status });
+          try {
+            errorData = await res.json();
+          } catch {
+            errorData = {};
+          }
+
+          // Check if token expired
+          const authError = handleAuthError(res, errorData);
+          if (authError) return authError; // auto-clears cookies
+
+          logger.error({ message: 'Fetching courses failed', error: errorData });
+          return NextResponse.json({ error: errorData.error || 'Failed to fetch courses' }, { status: res.status });
         }
 
         const data = await res.json();

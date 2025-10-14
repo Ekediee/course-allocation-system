@@ -13,6 +13,7 @@ export type Items = {
 type ComboboxDemoProps = {
   data?: Items[];
   onSelect: (value: string) => void;
+  initialValue?: string;
 }
 
 export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data, onSelect}) => {

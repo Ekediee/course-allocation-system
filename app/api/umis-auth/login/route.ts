@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 export const POST = async (req: any) => {
 
@@ -16,8 +17,18 @@ export const POST = async (req: any) => {
         body: JSON.stringify(reqBody),
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'UMIS login failed', umisId: reqBody.umisid, error: errorData });
       return NextResponse.json({ error: errorData.msg || 'Login Failed' }, { status: res.status });
     }

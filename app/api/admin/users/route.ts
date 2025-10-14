@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 // GET request to fetch all users
 export const GET = async (req: any) => {
@@ -45,8 +46,18 @@ export const POST = async (req: any) => {
             body: JSON.stringify(body),
         });
 
+        let errorData = null;
         if (!res.ok) {
-            const errorData = await res.json();
+            try {
+              errorData = await res.json();
+            } catch {
+              errorData = {};
+            }
+      
+            // Check if token expired
+            const authError = handleAuthError(res, errorData);
+            if (authError) return authError; // auto-clears cookies
+
             logger.error({ message: 'User creation failed', user: body, error: errorData });
             return NextResponse.json({ error: errorData.error || 'Failed to create user' }, { status: res.status });
         }
@@ -54,8 +65,20 @@ export const POST = async (req: any) => {
         const data = await res.json();
         logger.info({ message: 'User creation successful', user: data });
         return NextResponse.json(data);
-    } catch (err) {
-        logger.error({ err }, 'User creation error');
+    } catch (err: any) {
+        try {
+          logger.error({
+            message: 'User creation failed',
+            type: typeof err,
+            instanceOfError: err instanceof Error,
+            name: err?.name,
+            msg: err?.message,
+            stack: err?.stack,
+            stringified: JSON.stringify(err, Object.getOwnPropertyNames(err)),
+          });
+        } catch (logErr) {
+          console.error('Failed to log error properly:', logErr);
+        }
         return NextResponse.json({ error: 'Server error' }, { status: 500 });
     }
 }

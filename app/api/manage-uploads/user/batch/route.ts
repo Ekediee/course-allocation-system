@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 export async function POST(req: NextRequest) {
   logger.info({url: req.url, method: req.method, message: 'Batch user upload attempt' });
@@ -63,9 +64,20 @@ export async function POST(req: NextRequest) {
 
     const flaskData = await flaskRes.json();
     
+    let errorData = null;
     if (!flaskRes.ok) {
-      logger.error({ message: 'Batch user upload failed', error: flaskData });
-      return NextResponse.json({ error: flaskData.errors || flaskData.msg || 'Something went wrong' }, { status: flaskRes.status });
+      try {
+        errorData = await flaskRes.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(flaskRes, errorData);
+      if (authError) return authError; // auto-clears cookies
+
+      logger.error({ message: 'Batch user upload failed', error: errorData });
+      return NextResponse.json({ error: errorData.errors || flaskData.msg || 'Something went wrong' }, { status: flaskRes.status });
     }
 
     logger.info({ message: 'Batch user upload successful', count: records.length });

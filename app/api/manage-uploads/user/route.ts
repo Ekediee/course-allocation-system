@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 // GET request to fetch all users
 export const GET = async (req: any) => {
@@ -15,10 +16,20 @@ export const GET = async (req: any) => {
       },
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'Fetching all users failed', error: errorData });
-      return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+      return NextResponse.json({ error: errorData.error || 'Failed to fetch data' }, { status: 500 });
     }
 
     const data = await res.json();
@@ -44,8 +55,18 @@ export const POST = async (req: any) => {
             body: JSON.stringify(body),
         });
 
+        let errorData = null;
         if (!res.ok) {
-            const errorData = await res.json();
+            try {
+              errorData = await res.json();
+            } catch {
+              errorData = {};
+            }
+
+            // Check if token expired
+            const authError = handleAuthError(res, errorData);
+            if (authError) return authError; // auto-clears cookies
+
             logger.error({ message: 'User creation failed', user: body, error: errorData });
             return NextResponse.json({ error: errorData.error || 'Failed to create user' }, { status: res.status });
         }

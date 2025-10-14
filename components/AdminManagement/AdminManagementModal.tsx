@@ -80,9 +80,19 @@ const AdminManagementModal: React.FC<AdminManagementModalProps> = ({btnName, onA
 
             if (!res.ok) {
                 const data = await res.json();
+
+                const title =
+                    res.status === 401 ? 'Invalid credentials' :
+                    res.status === 403 ? 'Access denied' :
+                    res.status === 400 ? 'Bad request' :
+                    res.status === 500 ? 'Server error' :
+                    res.status === 409 ? 'Conflict' :
+                    res.status === 404 ? 'Not found' :
+                    'User Creation Failed';
+
                 toast({
                     variant: "destructive",
-                    title: "Something is wrong",
+                    title,
                     description: data.error || "An unknown error occurred."
                 });
                 return;

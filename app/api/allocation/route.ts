@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 // GET Allocation List
 export const GET = async (req: NextRequest) => {
@@ -15,8 +16,21 @@ export const GET = async (req: NextRequest) => {
       },
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) {
+        logger.error({ message: 'Token expired during allocation fetch' });
+        return authError; // auto-clears cookies
+      }
+
       logger.error({ message: 'Fetching allocation list failed', error: errorData });
       return NextResponse.json({ error: 'Failed to fetch data' }, { status: res.status });
     }
@@ -46,8 +60,18 @@ export const POST = async (req: NextRequest) => {
       body: JSON.stringify(reqBody),
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'Course allocation failed', allocation: reqBody, error: errorData });
       return NextResponse.json({ error: 'Failed to allocate course' }, { status: res.status });
     }
@@ -77,8 +101,18 @@ export const PUT = async (req: NextRequest) => {
       body: JSON.stringify(reqBody),
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'Course allocation update failed', allocation: reqBody, error: errorData });
       return NextResponse.json({ error: 'Failed to update allocation' }, { status: res.status });
     }

@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Info, Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast"
 import { SchoolType, SchoolTypes, useAppContext } from '@/contexts/ContextProvider'
 import { Label } from "@/components/ui/label";
@@ -29,13 +29,16 @@ type departmentAcronym = string;
 
 type DepartmentModalProps = {
   btnName: string;
-  onAddDepartment?: () => void;
+  onDepartmentUpdate?: () => void;
   isCalledFromAdmin: boolean;
+  department?: any;
+  isOpen?: boolean;
+  onClose?: () => void;
 };
 
-const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartment, isCalledFromAdmin}) => {
-    const [departmentName, setDepartmentName] = useState<departmentName>();
-    const [departmentAcronym, setDepartmentAcronym] = useState<departmentAcronym>();
+const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onDepartmentUpdate, isCalledFromAdmin, department, isOpen, onClose}) => {
+    const [departmentName, setDepartmentName] = useState<departmentName>("");
+    const [departmentAcronym, setDepartmentAcronym] = useState<departmentAcronym>("");
     const [open, setOpen] = useState(false)
     const [file, setFile] = useState<File | null>(null);
     const { setIsUploading, fetchSchoolName, fetchSchoolNameAdmin } = useAppContext();
@@ -43,7 +46,15 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
 
     const { toast } = useToast()
 
-    const handleCreateDepartment = async () => {
+    useEffect(() => {
+        if (department) {
+            setDepartmentName(department.name);
+            setDepartmentAcronym(department.acronym);
+            setSelectedSchool(department.school_id);
+        }
+    }, [department]);
+
+    const handleCreateOrUpdateDepartment = async () => {
         if(departmentName == "" || departmentAcronym == "") {
             toast({
             variant: "destructive",
@@ -66,9 +77,12 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
             acronym: departmentAcronym
         };
 
+        const url = department ? `/api/manage-uploads/department?id=${department.id}` : '/api/manage-uploads/department';
+        const method = department ? 'PUT' : 'POST';
+
         try {
-            const res = await fetch('/api/manage-uploads/department', {
-                method: 'POST',
+            const res = await fetch(url, {
+                method: method,
                 headers: {
                 'Content-Type': 'application/json',
                 },
@@ -89,22 +103,20 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
                 
                 const data = await res.json();
                 
-                // Fetch session data
-                if (onAddDepartment) onAddDepartment();
+                if (onDepartmentUpdate) onDepartmentUpdate();
                 toast({
                     variant: "success",
-                    title: "School Upload Success",
+                    title: department ? "Department Update Success" : "Department Upload Success",
                     description: data.msg,
                 });
 
             }
-
-
+            if (onClose) onClose();
             
         } catch (err) {
         toast({
             variant: "destructive",
-            title: "School Upload Failed",
+            title: department ? "Department Update Failed" : "Department Upload Failed",
             description: (err as Error).message,
             });
         }
@@ -166,7 +178,7 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
         const data = await res.json();
         if (res.ok) {
 
-            if (onAddDepartment) onAddDepartment();
+            if (onDepartmentUpdate) onDepartmentUpdate();
             toast({
             variant: "success",
             title: "✅ Upload successful",
@@ -204,12 +216,12 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
     
   return (
     <>
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogTrigger asChild>
-                <Button className="bg-blue-700 hover:bg-blue-400 text-white">
+                {!department && <Button className="bg-blue-700 hover:bg-blue-400 text-white">
                 <Plus className="h-4 w-4" />
                 { btnName }
-                </Button>
+                </Button>}
             </DialogTrigger>
             <DialogContent className="max-w-md">
                 <DialogHeader>
@@ -217,17 +229,17 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
                     
                     <Plus className="h-5 w-5 " />
                 
-                <DialogTitle className="">Add a Department Name</DialogTitle>
+                <DialogTitle className="">{department ? "Edit Department" : "Add a Department Name"}</DialogTitle>
                 </div>
                 <DialogDescription className="text-center">
-                    Specify the Name and Acronym for the Department
+                    {department ? "Edit the selected department" : "Specify the Name and Acronym for the Department"}
                 </DialogDescription>
                 </DialogHeader>
                 {/* Modal body content here */}
                 <div className="flex flex-col gap-2 mt-4">
                 <div className="flex flex-col gap-2 ">
                     <Label htmlFor="school">Select School</Label>
-                    {!isLoading && <ComboboxMain data={schools} onSelect={setSelectedSchool} />}
+                    {!isLoading && <ComboboxMain data={schools} onSelect={setSelectedSchool} initialValue={selectedSchool} />}
 
                     <Label htmlFor="department" className="mt-2">Department Name</Label>
                     <input
@@ -248,6 +260,7 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
                     required
                     />
                 </div>
+                {!department && <>
                 <Badge
                     variant="secondary"
                     className="bg-red-500 gap-3 mt-2 text-white dark:bg-blue-600"
@@ -259,6 +272,7 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
                     <Label htmlFor="file">Batch Upload</Label>
                     <Input id="file" type="file" accept=".csv" onChange={handleFileChange} onClick={() => setOpen(true)} />
                 </div>
+                </>}
                 <div className='flex gap-2 justify-between mt-4'>
                     <DialogClose  
                     className="w-full"
@@ -268,7 +282,7 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({btnName, onAddDepartme
                     <DialogClose  
                     className="w-full"
                     asChild>
-                    <Button className="w-full bg-blue-700 hover:bg-blue-400" onClick={open ? handleBatchUpload : handleCreateDepartment}>Create Department</Button>
+                    <Button className="w-full bg-blue-700 hover:bg-blue-400" onClick={open ? handleBatchUpload : handleCreateOrUpdateDepartment}>{department ? "Save Changes" : "Create Department"}</Button>
                     </DialogClose>
                 </div>
                 </div>

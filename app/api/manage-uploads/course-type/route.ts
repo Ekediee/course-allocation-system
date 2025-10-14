@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 // POST Course Type data
 export const POST = async (req: NextRequest) => {
@@ -20,9 +21,20 @@ export const POST = async (req: NextRequest) => {
 
     const data = await res.json();
 
+    let errorData = null;
     if (!res.ok) {
-      logger.error({ message: 'Creating course type failed', courseType: reqBody, error: data });
-      return NextResponse.json({ error: data.error || 'Server error' }, { status: res.status });
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
+      logger.error({ message: 'Creating course type failed', courseType: reqBody, error: errorData });
+      return NextResponse.json({ error: errorData.error || 'Server error' }, { status: res.status });
     }
 
     logger.info({ message: 'Creating course type successful', courseType: data });
@@ -46,10 +58,20 @@ export const GET = async (req: NextRequest) => {
       },
     });
 
+    let errorData = null;
     if (!res.ok) {
-        const data = await res.json();
-        logger.error({ message: 'Fetching course types failed', error: data });
-        return NextResponse.json({ error: data.error || 'Failed to fetch course types' }, { status: res.status });
+        try {
+          errorData = await res.json();
+        } catch {
+          errorData = {};
+        }
+
+        // Check if token expired
+        const authError = handleAuthError(res, errorData);
+        if (authError) return authError; // auto-clears cookies
+
+        logger.error({ message: 'Fetching course types failed', error: errorData });
+        return NextResponse.json({ error: errorData.error || 'Failed to fetch course types' }, { status: res.status });
     }
 
     const data = await res.json();

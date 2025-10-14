@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 export const POST = async (req: NextRequest) => {
   const reqBody = await req.json();
@@ -17,10 +18,20 @@ export const POST = async (req: NextRequest) => {
       body: JSON.stringify(reqBody),
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+      
       logger.error({ message: 'Fetching department names by school failed', school: reqBody, error: errorData });
-      return NextResponse.json({ error: 'Failed to fetch department' }, { status: res.status });
+      return NextResponse.json({ error: errorData.error || 'Failed to fetch department' }, { status: res.status });
     }
 
     const data = await res.json();
@@ -46,10 +57,20 @@ export const GET = async (req: NextRequest) => {
       },
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'Fetching all department names failed', error: errorData });
-      return NextResponse.json({ error: 'Failed to fetch department' }, { status: res.status });
+      return NextResponse.json({ error: errorData.error || 'Failed to fetch department' }, { status: res.status });
     }
 
     const data = await res.json();

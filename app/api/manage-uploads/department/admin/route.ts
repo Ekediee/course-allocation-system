@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 export const GET = async (req: NextRequest) => {
   logger.info({url: req.url, method: req.method, message: 'Fetching admin departments' });
@@ -15,8 +16,18 @@ export const GET = async (req: NextRequest) => {
       },
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'Fetching admin departments failed', error: errorData });
       return NextResponse.json({ error: 'Failed to fetch department' }, { status: res.status });
     }

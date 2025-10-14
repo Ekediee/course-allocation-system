@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 export const GET = async (req: any) => {
   logger.info({  url: req.url, method: req.method, message: 'Fetching lecturers' });
@@ -15,8 +16,18 @@ export const GET = async (req: any) => {
       },
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'Fetching lecturers failed', error: errorData });
       return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
     }

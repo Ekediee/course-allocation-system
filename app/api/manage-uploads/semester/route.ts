@@ -1,6 +1,7 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 // GET semester data
 export const GET = async (req: NextRequest) => {
@@ -16,10 +17,20 @@ export const GET = async (req: NextRequest) => {
       },
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const errorData = await res.json();
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+      if (authError) return authError; // auto-clears cookies
+
       logger.error({ message: 'Fetching semesters failed', error: errorData });
-      return NextResponse.json({ error: 'Failed to fetch semesters' }, { status: res.status });
+      return NextResponse.json({ error: errorData.error || 'Failed to fetch semesters' }, { status: res.status });
     }
 
     const data = await res.json();
@@ -47,10 +58,20 @@ export const POST = async (req: NextRequest) => {
       body: JSON.stringify(reqBody),
     });
 
+    let errorData = null;
     if (!res.ok) {
-      const data = await res.json();
-      logger.error({ message: 'Creating semester failed', semester: reqBody, error: data });
-      return NextResponse.json({ error: data.error || 'Failed to create semester' }, { status: res.status });
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(res, errorData);
+
+      if (authError) return authError; // auto-clears cookies
+      logger.error({ message: 'Creating semester failed', semester: reqBody, error: errorData });
+      return NextResponse.json({ error: errorData.error || 'Failed to create semester' }, { status: res.status });
     }
 
     const data = await res.json();

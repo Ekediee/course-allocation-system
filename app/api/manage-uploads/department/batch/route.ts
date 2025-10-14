@@ -1,6 +1,8 @@
 import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
+import { error } from 'console';
+import { handleAuthError } from '@/lib/server-only/auth-utils';
 
 export async function POST(req: NextRequest) {
   logger.info({url: req.url, method: req.method, message: 'Batch department upload attempt' });
@@ -46,9 +48,20 @@ export async function POST(req: NextRequest) {
 
     const flaskData = await flaskRes.json();
 
+    let errorData = null;
     if (!flaskRes.ok) {
-      logger.error({ message: 'Batch department upload failed', error: flaskData });
-      return NextResponse.json({ error: flaskData.error || 'Something went wrong' }, { status: flaskRes.status });
+      try {
+        errorData = await flaskRes.json();
+      } catch {
+        errorData = {};
+      }
+
+      // Check if token expired
+      const authError = handleAuthError(flaskRes, errorData);
+      if (authError) return authError; // auto-clears cookies
+
+      logger.error({ message: 'Batch department upload failed', error: errorData });
+      return NextResponse.json({ error: errorData.error || 'Something went wrong' }, { status: flaskRes.status });
     }
 
     logger.info({ message: 'Batch department upload successful', count: records.length });
