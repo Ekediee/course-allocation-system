@@ -243,7 +243,7 @@ const DepartmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
                                 title="No Department Available" 
                                 desc="Create a new department to see details" 
                                 btnName="Add Department" 
-                                onAddDepartment={isCalledFromAdmin ? fetchAdminDepartments : fetchDepartments}
+                                onDepartmentUpdate={isCalledFromAdmin ? fetchAdminDepartments : fetchDepartments}
                                 isCalledFromAdmin={isCalledFromAdmin}
                             />
                         )}
