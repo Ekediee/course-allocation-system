@@ -30,23 +30,36 @@ export async function POST(req: NextRequest) {
     // Assuming CSV format: name,gender,email,role,rank,phone,qualification,area_of_specialization,other_responsibilities,department_id
     // Skip header and process each line
     for (const line of lines.slice(1)) {
-      const [staff_id, name, gender, email, role, rank, phone, qualification, specialization, other_responsibilities] = line.split(',').map(s => s.trim());
-      if (staff_id && name && gender && email && role && rank && phone && qualification && specialization) {
+      const [
+        staff_id = '', 
+        name = '', 
+        gender = '', 
+        email = '', 
+        role = '', 
+        rank = '', 
+        phone = '', 
+        qualification = '', 
+        specialization = '', 
+        other_responsibilities = ''
+      ] = line.split(',').map(s => s.trim() || null);
+
+      // skip only records with no staff_id and no name
+      if (!staff_id && !name) continue
         
-        records.push({
-          staff_id,
-          name,
-          gender,
-          email,
-          role,
-          rank,
-          phone,
-          qualification,
-          specialization,
-          other_responsibilities,
-          department_id,
-        });
-      }
+      records.push({
+        staff_id,
+        name,
+        gender,
+        email,
+        role,
+        rank,
+        phone,
+        qualification,
+        specialization,
+        other_responsibilities,
+        department_id,
+      });
+      
     }
 
     if (records.length === 0) {
