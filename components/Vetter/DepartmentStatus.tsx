@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { useTable } from "@/lib/useTable";
 import { Button } from "../ui/button";
 
-const getStatusIcon = (status: string) => {
+export const getStatusIcon = (status: string) => {
   switch (status) {
     case "Allocated":
       return <CheckCircle className="h-4 w-4 text-green-500" />;

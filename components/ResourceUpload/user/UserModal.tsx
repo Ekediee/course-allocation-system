@@ -182,9 +182,13 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
             
         } else {
             toast({
-            variant: "destructive",
-            title: "❌ Batch Upload Failed",
-            description: data.error
+                variant: "destructive",
+                title: "❌ " + data.message,
+                description: (
+                    <p className="whitespace-pre-wrap">
+                    {data.error}
+                    </p>
+                )
             });
         }
         } catch (err) {

@@ -13,6 +13,12 @@ const config: Config = {
 			'half-transparent': 'rgba(0, 0, 0, 0.5)',
 		},
   		colors: {
+			weak: {
+				100: '#F6F8FA',
+			},
+			webblue: {
+				100: '#003399',
+			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

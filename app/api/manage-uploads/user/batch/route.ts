@@ -30,10 +30,11 @@ export async function POST(req: NextRequest) {
     // Assuming CSV format: name,gender,email,role,rank,phone,qualification,area_of_specialization,other_responsibilities,department_id
     // Skip header and process each line
     for (const line of lines.slice(1)) {
-      const [name, gender, email, role, rank, phone, qualification, specialization, other_responsibilities] = line.split(',').map(s => s.trim());
-      if (name && gender && email && role && rank && phone && qualification && specialization) {
+      const [staff_id, name, gender, email, role, rank, phone, qualification, specialization, other_responsibilities] = line.split(',').map(s => s.trim());
+      if (staff_id && name && gender && email && role && rank && phone && qualification && specialization) {
         
         records.push({
+          staff_id,
           name,
           gender,
           email,
@@ -62,22 +63,25 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({ users: records }),
     });
 
+    // parse body once
+    // let flaskData = {};
+    
     const flaskData = await flaskRes.json();
     
-    let errorData = null;
+    
+    // let errorData = null;
     if (!flaskRes.ok) {
-      try {
-        errorData = await flaskRes.json();
-      } catch {
-        errorData = {};
-      }
-
       // Check if token expired
-      const authError = handleAuthError(flaskRes, errorData);
+      const authError = handleAuthError(flaskRes, flaskData);
       if (authError) return authError; // auto-clears cookies
 
-      logger.error({ message: 'Batch user upload failed', error: errorData });
-      return NextResponse.json({ error: errorData.errors || flaskData.msg || 'Something went wrong' }, { status: flaskRes.status });
+      // backend may return { message, errors } or { error } etc.
+      console.log('Flask error response:', flaskData);
+
+      logger.error({ message: 'Batch user upload failed', status: flaskRes.status, body: flaskData });
+      
+      // logger.error({ message: 'Batch user upload failed', error: errorData });
+      return NextResponse.json({message: flaskData.message, error: flaskData.errors || 'Something went wrong' }, { status: flaskRes.status });
     }
 
     logger.info({ message: 'Batch user upload successful', count: records.length });

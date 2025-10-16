@@ -38,10 +38,10 @@ const VetterSideBar = () => {
             <Blocks className="h-5 w-5 mr-3" />
             <span>Dashboard</span>
           </Link>
-          {/* <Link href="/course-allocation/vet-allocation" className={` ${pathname.includes('course-allocation') ?  activeLink : normalLink }`}>
+          <Link href="/vetter/course-allocations" className={` ${pathname.includes('course-allocations') ?  activeLink : normalLink }`}>
             <BookOpen className="h-5 w-5 mr-3" />
-            <span>Course Allocation</span>
-          </Link> */}
+            <span>Course Allocations</span>
+          </Link>
           <Link href="/vetter/manage-uploads" className={` ${pathname.includes('manage-uploads') ?  activeLink : normalLink }`}>
             <Upload className="h-5 w-5 mr-3" />
             <span>Upload Resources</span>
