@@ -2,7 +2,7 @@
 import React from 'react'
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowDownWideNarrow, ChevronDown, Loader2 } from 'lucide-react';
+import { ArrowDownWideNarrow, ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import EmptyPage from './EmptyPage';
 import { useAppContext } from '@/contexts/ContextProvider'
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -10,6 +10,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import UserModal from './UserModal';
 import { Button } from "@/components/ui/button"
+import { useToast } from '@/hooks/use-toast';
+import { useTable } from '@/lib/useTable';
+import DeleteConfirmationModal from '../department/DeleteConfirmationModal';
 // import { Combobox } from '@/components/ui/combobox';
 
 const UserContent = () => {
@@ -19,14 +22,20 @@ const UserContent = () => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [itemsPerPage, setItemsPerPage] = React.useState(13);
     const [selectedDepartment, setSelectedDepartment] = React.useState('');
+    const [selectedUser, setSelectedUser] = React.useState<any>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+    const { toast } = useToast();
 
     const {
         fetchUsers,
         isUploading,
-        fetchDepartmentName
+        fetchDepartmentName,
+        role
     } = useAppContext()
 
     const queryClient = useQueryClient();
+    const canEdit = role === 'admin' || role === 'superadmin';
 
     const { data: userResult, isLoading, error } = useQuery<{ users: any[] }>({
         queryKey: ['users'],
@@ -40,34 +49,58 @@ const UserContent = () => {
 
     const userData = userResult?.users;
     
-    const filteredUsers = userData?.filter((user: any) =>
-        (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.role?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.rank?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.qualification?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.area_of_specialization?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (selectedDepartment ? user.department?.id === selectedDepartment : true)
-    );
-
-    const sortedUsers = filteredUsers?.sort((a: any, b: any) => {
-        if (sortColumn) {
-            const aValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], a) : a[sortColumn];
-            const bValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], b) : b[sortColumn];
-
-            if (aValue < bValue) {
-                return sortDirection === 'asc' ? -1 : 1;
-            }
-            if (aValue > bValue) {
-                return sortDirection === 'asc' ? 1 : -1;
-            }
-        }
-        return 0;
+    const { paginated: paginatedUsers, totalPages } = useTable({
+        data: userData ?? [],
+        searchTerm,
+        searchKeys: ['name', 'email', 'role', 'rank', 'department', 'qualification', 'area_of_specialization'],
+        sortColumn,
+        sortDirection: sortDirection as 'asc' | 'desc',
+        currentPage,
+        itemsPerPage,
     });
 
-    const totalPages = Math.ceil((sortedUsers?.length || 0) / itemsPerPage);
-    const paginatedUsers = sortedUsers?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const handleEdit = (user: any) => {
+        setSelectedUser(user);
+        setIsEditModalOpen(true);
+    };
+
+    const handleDelete = (user: any) => {
+        setSelectedUser(user);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (selectedUser) {
+            try {
+                const res = await fetch(`/api/manage-uploads/user?id=${selectedUser.id}`, {
+                    method: 'DELETE',
+                });
+
+                if (res.ok) {
+                    toast({
+                        variant: "success",
+                        title: "User Deleted",
+                        description: `User "${selectedUser.name}" has been deleted.`
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['users'] });
+                } else {
+                    const data = await res.json();
+                    toast({
+                        variant: "destructive",
+                        title: "Delete Failed",
+                        description: data.error || "An unknown error occurred."
+                    });
+                }
+            } catch (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Delete Failed",
+                    description: (error as Error).message
+                });
+            }
+            setIsDeleteModalOpen(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -149,16 +182,19 @@ const UserContent = () => {
                                     <TableCell >{user.department}</TableCell>
                                     <TableCell className="text-center">{user.qualification}</TableCell>
                                     <TableCell className="text-center">{user.specialization}</TableCell>
-                                    <TableCell className="text-center">{user.other_responsibilities ? user.other_responsibilities : "N/A"}</TableCell>
-                                    <TableCell className="text-center"></TableCell>
+                                    <TableCell className="text-center">{user.other_responsibilities ? user.other_responsibilities : ""}</TableCell>
+                                    <TableCell className="text-center">
+                                        <Button disabled={!canEdit} variant="outline" size="sm" onClick={() => handleEdit(user)}>Edit</Button>
+                                        <Button disabled={!canEdit} variant="destructive" size="sm" className="ml-2" onClick={() => handleDelete(user)}>Delete</Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                             </TableBody>
                             </Table>
                             <div className="flex justify-end items-center gap-2 mt-4">
-                                <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Previous</Button>
+                                <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}><ChevronLeft /> Prev</Button>
                                 <span>Page {currentPage} of {totalPages}</span>
-                                <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</Button>
+                                <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next <ChevronRight /></Button>
                             </div>
                         </div>
                     ) : (
@@ -173,6 +209,24 @@ const UserContent = () => {
                 </CardContent>
             </Card>
         </TabsContent>
+        {isEditModalOpen && (
+            <UserModal
+                btnName="Edit User"
+                user={selectedUser}
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onAddUser={() => queryClient.invalidateQueries({ queryKey: ['users'] })}
+            />
+        )}
+
+        {isDeleteModalOpen && (
+            <DeleteConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+                message={`Are you sure you want to delete the user "${selectedUser?.name}"?`}
+            />
+        )}
     </>
   )
 }

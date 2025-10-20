@@ -79,3 +79,82 @@ export const POST = async (req: any) => {
         return NextResponse.json({ error: 'Server error' }, { status: 500 });
     }
 }
+
+// PUT request to update a user
+export const PUT = async (req: any) => {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    const body = await req.json();
+    logger.info({ message: 'User update attempt', userId: id, user: body });
+    try {
+        const res = await fetch(getBackendApiUrl(`/api/v1/users/${id}`), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Cookie: req.headers.get('cookie') || '',
+            },
+            body: JSON.stringify(body),
+        });
+
+        let errorData = null;
+        if (!res.ok) {
+            try {
+              errorData = await res.json();
+            } catch {
+              errorData = {};
+            }
+
+            // Check if token expired
+            const authError = handleAuthError(res, errorData);
+            if (authError) return authError; // auto-clears cookies
+
+            logger.error({ message: 'User update failed', userId: id, user: body, error: errorData });
+            return NextResponse.json({ error: errorData.error || 'Failed to update user' }, { status: res.status });
+        }
+
+        const data = await res.json();
+        logger.info({ message: 'User update successful', user: data });
+        return NextResponse.json(data);
+    } catch (err) {
+        logger.error({ err }, 'User update error');
+        return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    }
+}
+
+// DELETE request to delete a user
+export const DELETE = async (req: any) => {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    logger.info({ message: 'User delete attempt', userId: id });
+    try {
+        const res = await fetch(getBackendApiUrl(`/api/v1/users/${id}`), {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Cookie: req.headers.get('cookie') || '',
+            },
+        });
+
+        let errorData = null;
+        if (!res.ok) {
+            try {
+              errorData = await res.json();
+            } catch {
+              errorData = {};
+            }
+
+            // Check if token expired
+            const authError = handleAuthError(res, errorData);
+            if (authError) return authError; // auto-clears cookies
+
+            logger.error({ message: 'User delete failed', userId: id, error: errorData });
+            return NextResponse.json({ error: errorData.error || 'Failed to delete user' }, { status: res.status });
+        }
+
+        logger.info({ message: 'User delete successful', userId: id });
+        return NextResponse.json({ msg: "User deleted successfully" });
+    } catch (err) {
+        logger.error({ err }, 'User delete error');
+        return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    }
+}

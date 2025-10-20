@@ -13,7 +13,7 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { Info, Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast"
 import { useAppContext } from '@/contexts/ContextProvider'
 import { Label } from "@/components/ui/label";
@@ -25,9 +25,12 @@ import { useQuery } from "@tanstack/react-query";
 type UserModalProps = {
   btnName: string;
   onAddUser?: () => void;
+  user?: any;
+  isOpen?: boolean;
+  onClose?: () => void;
 };
 
-const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
+const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, onClose}) => {
     const [name, setName] = useState('');
     const [gender, setGender] = useState('');
     const [email, setEmail] = useState('');
@@ -47,6 +50,21 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
     } = useAppContext();
 
     const { toast } = useToast()
+
+    useEffect(() => {
+        if (user) {
+            setName(user.name || '');
+            setGender(user.gender || '');
+            setEmail(user.email || '');
+            setRole(user.role || '');
+            setRank(user.rank || '');
+            setPhone(user.phone || '');
+            setQualification(user.qualification || '');
+            setAreaOfSpecialization(user.specialization || '');
+            setOtherResponsibilities(user.other_responsibilities || '');
+            setSelectedDepartment(user.department_id || '');
+        }
+    }, [user]);
     
     const handleCreateUser = async () => {
         if(!name || !gender || !email || !role || !rank || !phone || !qualification || !areaOfSpecialization || !selectedDepartment) {
@@ -71,9 +89,12 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
             department_id: selectedDepartment
         };
 
+        const url = user ? `/api/manage-uploads/user?id=${user.id}` : '/api/manage-uploads/user';
+        const method = user ? 'PUT' : 'POST';
+
         try {
-            const res = await fetch('/api/manage-uploads/user', {
-                method: 'POST',
+            const res = await fetch(url, {
+                method,
                 headers: {
                 'Content-Type': 'application/json',
                 },
@@ -94,7 +115,7 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
             if (onAddUser) onAddUser();
             toast({
                 variant: "success",
-                title: "User Creation Success",
+                title: user ? "User Updated Successfully" : "User Creation Success",
                 description: data.msg,
             });
 
@@ -109,11 +130,12 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
             setAreaOfSpecialization('');
             setOtherResponsibilities('');
             setSelectedDepartment('');
+            if (onClose) onClose();
 
         } catch (err) {
         toast({
             variant: "destructive",
-            title: "User Creation Failed",
+            title: user ? "User Update Failed" : "User Creation Failed",
             description: (err as Error).message,
             });
         }
@@ -208,28 +230,28 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
     
   return (
     <>
-        <Dialog>
-            <DialogTrigger asChild>
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            {!user && <DialogTrigger asChild>
                 <Button className="bg-blue-700 hover:bg-blue-400 text-white">
                 <Plus className="h-4 w-4" />
                 { btnName }
                 </Button>
-            </DialogTrigger>
+            </DialogTrigger>}
             <DialogContent className="md:max-w-[800px] w-full">
                 <DialogHeader>
                 <div className="flex items-center justify-center gap-2">
                     <Plus className="h-5 w-5 " />
-                    <DialogTitle className="">Add a User</DialogTitle>
+                    <DialogTitle className="">{user ? "Edit User" : "Add a User"}</DialogTitle>
                 </div>
                 <DialogDescription className="text-center">
-                    Fill in the form below to add a new user.
+                    Fill in the form below to {user ? "edit the user" : "add a new user"}.
                 </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-2 mt-4">
                     <div className="flex gap-2">
                         <div className="w-full">
                             <Label htmlFor="department">Select Department</Label>
-                            {!loadingDepartments && <ComboboxMain data={departments} onSelect={setSelectedDepartment} />}
+                            {!loadingDepartments && <ComboboxMain data={departments} onSelect={setSelectedDepartment} initialValue={selectedDepartment} />}
                         </div>
                         <div className="w-full">
                             <Label htmlFor="name">Name</Label>
@@ -274,17 +296,19 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
                         <Label htmlFor="other_responsibilities">Other Responsibilities (Optional)</Label>
                         <Input id="other_responsibilities" type="text" value={otherResponsibilities} onChange={(e) => setOtherResponsibilities(e.target.value)} />
                     </div>
-                    <Badge
-                    variant="secondary"
-                    className="bg-red-500 gap-3 mt-2 text-white dark:bg-blue-600"
-                    >
-                        <Info />
-                        OR Use button below to upload a CSV file for batch upload.
-                    </Badge>
-                    <div className="grid w-full max-w-sm items-center gap-3">
-                        <Label htmlFor="file">Batch Upload</Label>
-                        <Input id="file" type="file" accept=".csv" onChange={handleFileChange} onClick={() => setOpen(true)} />
-                    </div>
+                    {!user && <>
+                        <Badge
+                        variant="secondary"
+                        className="bg-red-500 gap-3 mt-2 text-white dark:bg-blue-600"
+                        >
+                            <Info />
+                            OR Use button below to upload a CSV file for batch upload.
+                        </Badge>
+                        <div className="grid w-full max-w-sm items-center gap-3">
+                            <Label htmlFor="file">Batch Upload</Label>
+                            <Input id="file" type="file" accept=".csv" onChange={handleFileChange} onClick={() => setOpen(true)} />
+                        </div>
+                    </>}
                     <div className='flex gap-2 justify-between mt-4'>
                         <DialogClose
                         className="w-full"
@@ -294,7 +318,7 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser}) => {
                         <DialogClose
                         className="w-full"
                         asChild>
-                        <Button className="w-full bg-blue-700 hover:bg-blue-400" onClick={open ? handleBatchUpload : handleCreateUser}>Create User</Button>
+                        <Button className="w-full bg-blue-700 hover:bg-blue-400" onClick={open ? handleBatchUpload : handleCreateUser}>{user ? "Update User" : "Create User"}</Button>
                         </DialogClose>
                     </div>
                 </div>
