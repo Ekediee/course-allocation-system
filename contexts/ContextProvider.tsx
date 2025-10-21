@@ -118,6 +118,11 @@ export type LevelType = {
   name: string;
 };
 
+type VetDepartment = {
+  department_id: number;
+  semester_id: number;
+};
+
 
 export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -155,6 +160,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [schoolData, setSchoolData] = useState<SchoolType | null>(null);
     const [bulletinData, setBulletinData] = useState<Bulletin | null>(null);
     const [levelData, setLevelData] = useState<LevelType | null>(null);
+    const [vetDepIDs, setVetDepIDs] = useState<VetDepartment | null>(null);
     
 
     useEffect(() => {
@@ -475,6 +481,26 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchDepAllocations = async (department: string, semester: string) => {
+      try {
+        const bullParams = {
+          department: department,
+          semester: semester,
+        }
+        const data = await apiFetch('/api/allocation/vet', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(bullParams),
+        });
+        return data
+      } catch (error) {
+        console.error('Failed to fetch special allocation courses:', error);
+        throw error;
+      }
+    };
+
     const fetchAllocationStatus = async (semester: string) => {
       try {
         // const semester_data = {
@@ -666,7 +692,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchProgramNameByDepartment, fetchLevels, specializationData, fetchSpecializations, 
                                 fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses,
                 fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments,
-                courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview
+                courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview,
+                setVetDepIDs, vetDepIDs, fetchDepAllocations
             }}
         >
             { children }

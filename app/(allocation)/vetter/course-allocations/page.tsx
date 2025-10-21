@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import DonutChart from '@/components/DonutChart';
-import { ArrowDownWideNarrow, ChevronLeft, ChevronRight, Hourglass, Search } from 'lucide-react';
+import { ArrowDownWideNarrow, ChevronLeft, ChevronRight, Hourglass, Router, Search } from 'lucide-react';
 import AllocationPercentage from '@/components/Vetter/AllocationPercentage';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery } from '@tanstack/react-query';
@@ -15,6 +15,7 @@ import { useTable } from '@/lib/useTable';
 import { useAppContext } from "@/contexts/ContextProvider";
 import { getStatusIcon } from '@/components/Vetter/DepartmentStatus';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type Department = {
     sn: number;
@@ -39,7 +40,8 @@ const CourseAllocationsPage = () => {
   };
 
   const {
-    fetchAllocatationStatusOverview
+    fetchAllocatationStatusOverview,
+    setVetDepIDs, vetDepIDs
   } = useAppContext()
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState('');
@@ -60,7 +62,7 @@ const CourseAllocationsPage = () => {
       setActiveTab(allocationStatus[0].id);
     }
   }, [allocationStatus]);
-
+  console.log("vetDepIDs:", vetDepIDs);
   // get currently selected semester
   const currentSemester = allocationStatus?.find(s => s.id === activeTab);
 
@@ -78,6 +80,18 @@ const CourseAllocationsPage = () => {
     setCurrentPage(1);
   }, [activeTab, searchTerm, sortColumn, sortDirection, itemsPerPage]);
 
+  const router = useRouter();
+
+  const handleVetAllocation = (department_id: any, semester_id: any) => {
+    
+    setVetDepIDs({
+      department_id: department_id,
+      semester_id: semester_id
+    });
+
+    router.push("/vetter/course-allocations/vet-allocation")
+  }
+  
   return (
     <div className="p-4 md:p-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -183,24 +197,12 @@ const CourseAllocationsPage = () => {
                           {getStatusIcon(dept.status)} {dept.status}
                         </TableCell>
                         <TableCell className="">
-                          <Badge variant="outline" >
-                              <Link 
-                                  href={{
-                                      pathname:"/course-allocation/allocate",
-                                  }} 
-                                  className="text-webblue-100 hover:text-blue-700 p-[3px]"
-                                  // onClick={() => setSelectedCourse({
-                                  //     courseId: course.id,
-                                  //     courseCode: course.code,
-                                  //     courseTitle: course.title,
-                                  //     semesterId: semester.id,
-                                  //     programId: program.id,
-                                  //     programName: program.name,
-                                  //     levelId: level.id,
-                                  // })}
-                              >
-                                  View Allocation
-                              </Link>
+                          <Badge
+                            variant="outline"
+                            className="cursor-pointer text-webblue-100 hover:text-blue-700 p-[3px]"
+                            onClick={() => handleVetAllocation(dept.department_id, activeTab)}
+                          >
+                            View Allocation
                           </Badge>
                         </TableCell>
                       </TableRow>

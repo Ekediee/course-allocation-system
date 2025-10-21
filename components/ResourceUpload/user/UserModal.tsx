@@ -67,10 +67,10 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
     }, [user]);
     
     const handleCreateUser = async () => {
-        if(!name || !gender || !email || !role || !rank || !phone || !qualification || !areaOfSpecialization || !selectedDepartment) {
+        if(!name || !gender || !role || !rank || !qualification || !selectedDepartment) {
             toast({
             variant: "destructive",
-            title: "User Creation Failed",
+            title: user ? "User Update Failed" : "User Creation Failed",
             description: "Please fill in all required fields"
             })
             return;
@@ -155,9 +155,12 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
         return;
         }
 
-        const isCsv = file.type === 'text/csv' || file.name.endsWith('.csv');
+        // const isXLSX = file.type === 'text/csv' || file.name.endsWith('.csv');
 
-        if (!isCsv) {
+        const isXLSX = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.name.toLowerCase().endsWith('.xlsx');
+
+
+        if (!isXLSX) {
         toast({
             variant: "destructive",
             title: "❌ Wrong File Type",

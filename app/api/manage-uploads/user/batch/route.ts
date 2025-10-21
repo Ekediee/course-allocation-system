@@ -2,6 +2,8 @@ import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
 import { handleAuthError } from '@/lib/server-only/auth-utils';
+import * as XLSX from 'xlsx';
+
 
 export async function POST(req: NextRequest) {
   logger.info({url: req.url, method: req.method, message: 'Batch user upload attempt' });
@@ -21,46 +23,68 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    const buffer = await file.arrayBuffer();
-    const text = Buffer.from(buffer).toString('utf8');
-    const lines = text.split('\n').filter(Boolean);
-    const records: any[] = [];
+    // const buffer = await file.arrayBuffer();
+    // const text = Buffer.from(buffer).toString('utf8');
+    // const lines = text.split('\n').filter(Boolean);
+    // const records: any[] = [];
     
     
-    // Assuming CSV format: name,gender,email,role,rank,phone,qualification,area_of_specialization,other_responsibilities,department_id
-    // Skip header and process each line
-    for (const line of lines.slice(1)) {
-      const [
-        staff_id = '', 
-        name = '', 
-        gender = '', 
-        email = '', 
-        role = '', 
-        rank = '', 
-        phone = '', 
-        qualification = '', 
-        specialization = '', 
-        other_responsibilities = ''
-      ] = line.split(',').map(s => s.trim() || null);
+    // // Assuming CSV format: name,gender,email,role,rank,phone,qualification,area_of_specialization,other_responsibilities,department_id
+    // // Skip header and process each line
+    // for (const line of lines.slice(1)) {
+    //   const [
+    //     staff_id = '', 
+    //     name = '', 
+    //     gender = '', 
+    //     email = '', 
+    //     role = '', 
+    //     rank = '', 
+    //     phone = '', 
+    //     qualification = '', 
+    //     specialization = '', 
+    //     other_responsibilities = ''
+    //   ] = line.split(',').map(s => s.trim() || null);
 
-      // skip only records with no staff_id and no name
-      if (!staff_id && !name) continue
+    //   // skip only records with no staff_id and no name
+    //   if (!staff_id && !name) continue
         
-      records.push({
-        staff_id,
-        name,
-        gender,
-        email,
-        role,
-        rank,
-        phone,
-        qualification,
-        specialization,
-        other_responsibilities,
-        department_id,
-      });
+    //   records.push({
+    //     staff_id,
+    //     name,
+    //     gender,
+    //     email,
+    //     role,
+    //     rank,
+    //     phone,
+    //     qualification,
+    //     specialization,
+    //     other_responsibilities,
+    //     department_id,
+    //   });
       
-    }
+    // }
+
+    const buffer = await file.arrayBuffer();
+
+    // Parse Excel workbook
+    const workbook = XLSX.read(buffer, { type: 'array' });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' }); // defval ensures empty cells become empty strings
+
+    const records = jsonData.map((row: any) => ({
+      staff_id: row.staff_id || row["Staff ID"] || '', // support header variations
+      name: row.name || row["Name"] || '',
+      gender: row.gender || row["Gender"] || '',
+      email: row.email || row["Email"] || '',
+      role: row.role || row["Role"] || '',
+      rank: row.rank || row["Rank"] || '',
+      phone: row.phone || row["Phone"] || '',
+      qualification: row.qualification || row["Qualification"] || '',
+      specialization: row.specialization || row["Area of Specialization"] || '',
+      other_responsibilities: row.other_responsibilities || row["Other Responsibilities"] || '',
+      department_id
+    })).filter((r) => r.name || r.staff_id); // skip empty rows
+
 
     if (records.length === 0) {
         logger.error({ message: 'Batch user upload failed', error: 'CSV file is empty or contains no valid data.' });
