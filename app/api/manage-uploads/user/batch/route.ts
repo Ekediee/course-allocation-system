@@ -72,16 +72,16 @@ export async function POST(req: NextRequest) {
     const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' }); // defval ensures empty cells become empty strings
 
     const records = jsonData.map((row: any) => ({
-      staff_id: row.staff_id || row["Staff ID"] || '', // support header variations
-      name: row.name || row["Name"] || '',
-      gender: row.gender || row["Gender"] || '',
-      email: row.email || row["Email"] || '',
-      role: row.role || row["Role"] || '',
-      rank: row.rank || row["Rank"] || '',
-      phone: row.phone || row["Phone"] || '',
-      qualification: row.qualification || row["Qualification"] || '',
-      specialization: row.specialization || row["Area of Specialization"] || '',
-      other_responsibilities: row.other_responsibilities || row["Other Responsibilities"] || '',
+      staff_id: row.staff_id || row["Staff ID"] || null, // support header variations
+      name: row.name || row["Name"] || null,
+      gender: row.gender || row["Gender"] || null,
+      email: row.email || row["Email"] || null,
+      role: row.role || row["Role"] || null,
+      rank: row.rank || row["Rank"] || null,
+      phone: row.phone || row["Phone"] || null,
+      qualification: row.qualification || row["Qualification"] || null,
+      specialization: row.specialization || row["Area of Specialization"] || null,
+      other_responsibilities: row.other_responsibilities || row["Other Responsibilities"] || null,
       department_id
     })).filter((r) => r.name || r.staff_id); // skip empty rows
 

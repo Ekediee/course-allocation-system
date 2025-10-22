@@ -362,11 +362,11 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
                     className="bg-red-500 gap-3 mt-2 text-white dark:bg-blue-600"
                 >
                     <Info />
-                    OR Use button below to upload a CSV file for batch upload.
+                    OR Use button below to upload an Excel file for batch upload.
                 </Badge>
                 <div className="grid w-full max-w-sm items-center gap-3">
                     <Label htmlFor="file">Batch Upload</Label>
-                    <Input id="file" type="file" accept=".csv" onChange={handleFileChange} onClick={() => setOpen(true)} />
+                    <Input id="file" type="file" accept=".xlsx" onChange={handleFileChange} onClick={() => setOpen(true)} />
                 </div>
                 <div className='flex gap-2 justify-between mt-4'>
                     <DialogClose  

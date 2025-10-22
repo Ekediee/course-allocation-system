@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { ComboboxMain, Items } from "@/components/ComboboxMain";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
+import { ROLES } from "@/components/AdminManagement/AdminManagementModal";
 
 type UserModalProps = {
   btnName: string;
@@ -30,12 +31,18 @@ type UserModalProps = {
   onClose?: () => void;
 };
 
+export const GENDER: Items[] = [
+    { id: "Male", name: "Male" },
+    { id: "Female", name: "Female" },
+]
+
 const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, onClose}) => {
     const [name, setName] = useState('');
     const [gender, setGender] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
     const [rank, setRank] = useState('');
+    const [staffid, setStaffId] = useState('');
     const [phone, setPhone] = useState('');
     const [qualification, setQualification] = useState('');
     const [areaOfSpecialization, setAreaOfSpecialization] = useState('');
@@ -58,6 +65,7 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
             setEmail(user.email || '');
             setRole(user.role || '');
             setRank(user.rank || '');
+            setStaffId(user.staff_id || '');
             setPhone(user.phone || '');
             setQualification(user.qualification || '');
             setAreaOfSpecialization(user.specialization || '');
@@ -82,6 +90,7 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
             email,
             role,
             rank,
+            staff_id: staffid,
             phone,
             qualification,
             specialization: areaOfSpecialization,
@@ -125,6 +134,7 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
             setEmail('');
             setRole('');
             setRank('');
+            setStaffId('');
             setPhone('');
             setQualification('');
             setAreaOfSpecialization('');
@@ -264,7 +274,7 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
                     <div className="flex gap-2">
                         <div className="w-full">
                             <Label htmlFor="gender">Gender</Label>
-                            <Input id="gender" type="text" value={gender} onChange={(e) => setGender(e.target.value)} />
+                            <ComboboxMain data={GENDER} onSelect={setGender} initialValue={gender} />
                         </div>
                         <div className="w-full">
                             <Label htmlFor="email">Email</Label>
@@ -274,7 +284,7 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
                     <div className="flex gap-2">
                         <div className="w-full">
                             <Label htmlFor="role">Role</Label>
-                            <Input id="role" type="text" value={role} onChange={(e) => setRole(e.target.value)} />
+                            <ComboboxMain data={ROLES} onSelect={setRole} initialValue={role} />
                         </div>
                         <div className="w-full">
                             <Label htmlFor="rank">Rank</Label>
@@ -291,9 +301,15 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
                             <Input id="qualification" type="text" value={qualification} onChange={(e) => setQualification(e.target.value)} />
                         </div>
                     </div>
-                    <div className="w-full">
-                        <Label htmlFor="area_of_specialization">Area of Specialization</Label>
-                        <Input id="area_of_specialization" type="text" value={areaOfSpecialization} onChange={(e) => setAreaOfSpecialization(e.target.value)} />
+                    <div className="flex gap-2">
+                        <div className="w-full">
+                            <Label htmlFor="area_of_specialization">Staff ID</Label>
+                            <Input id="area_of_specialization" type="text" value={staffid} onChange={(e) => setStaffId(e.target.value)} />
+                        </div>
+                        <div className="w-full">
+                            <Label htmlFor="area_of_specialization">Area of Specialization</Label>
+                            <Input id="area_of_specialization" type="text" value={areaOfSpecialization} onChange={(e) => setAreaOfSpecialization(e.target.value)} />
+                        </div>
                     </div>
                     <div className="w-full">
                         <Label htmlFor="other_responsibilities">Other Responsibilities (Optional)</Label>
@@ -305,11 +321,11 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
                         className="bg-red-500 gap-3 mt-2 text-white dark:bg-blue-600"
                         >
                             <Info />
-                            OR Use button below to upload a CSV file for batch upload.
+                            OR Use button below to upload an Excel file for batch upload.
                         </Badge>
                         <div className="grid w-full max-w-sm items-center gap-3">
                             <Label htmlFor="file">Batch Upload</Label>
-                            <Input id="file" type="file" accept=".csv" onChange={handleFileChange} onClick={() => setOpen(true)} />
+                            <Input id="file" type="file" accept=".xlsx" onChange={handleFileChange} onClick={() => setOpen(true)} />
                         </div>
                     </>}
                     <div className='flex gap-2 justify-between mt-4'>

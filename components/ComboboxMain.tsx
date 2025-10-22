@@ -16,7 +16,7 @@ type ComboboxDemoProps = {
   initialValue?: string;
 }
 
-export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data, onSelect}) => {
+export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data, onSelect, initialValue}) => {
   // const { setSelectedOption } = useAppContext();
 
   const handleChange = (option: any) => {
@@ -29,6 +29,7 @@ export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data, onSelect}) => {
       options={Array.isArray(data) ? data.map(item => ({ value: item.id, label: item.name })) : []}
       onChange={handleChange}
       placeholder="Select an Item"
+      // value={initialValue ? { value: initialValue, label: initialValue } : null}
       isSearchable
       className="text-black w-full"
     />

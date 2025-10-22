@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Loader2, SquarePen } from "lucide-react";
+import { ArrowLeft, CheckCircle, Loader2, SquarePen } from "lucide-react";
 import Link from 'next/link';
 import { useToast } from "@/hooks/use-toast";
 
@@ -198,10 +198,35 @@ const AllocationVet = ({allocationPage, url}: any) => {
                 <TabsContent key={semester.id} value={semester.id} className="space-y-6">
                 <Card>
                     <CardHeader>
-                    <CardTitle>{semester.name}</CardTitle>
-                    <CardDescription>
-                        Manage course allocations for all programs in {semester.name}
-                    </CardDescription>
+                        <div className="bg-gradient-to-r from-amber-200 to-amber-50 rounded-2xl p-4 md:p-6 mb-6">
+                            <div className="flex justify-between items-center">
+                                
+                                <h2 className="text-xl font-medium mb-5">
+                                    {semester.department_name} Department
+                                </h2>
+                    
+                                <div className="flex justify-end items-center gap-4">
+                                <Link 
+                                    href={{
+                                        pathname:"/vetter/course-allocations"
+                                    }} 
+                                >
+                                    <Button variant="outline" size="sm" className="gap-2">
+                                    <ArrowLeft size={16} />
+                                    Go back to list
+                                    </Button>
+                                </Link>
+                    
+                                <Button 
+                                    size="sm" 
+                                    className="bg-blue-700 hover:bg-blue-800"
+                                    onClick={() => {}}
+                                >
+                                    Mark as Vetted
+                                </Button>
+                                </div>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent>
                     {/* No programs message */}
