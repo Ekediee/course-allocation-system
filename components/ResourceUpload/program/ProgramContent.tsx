@@ -10,6 +10,7 @@ import { SchoolType } from '@/contexts/ContextProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import ProgramModal from './ProgramModal';
 import { Button } from '@/components/ui/button';
+import SearchTable from '@/components/SearchTable';
 
 const ProgramContent = () => {
     const {
@@ -108,9 +109,7 @@ const ProgramContent = () => {
             <Card className="m-4">
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
-                        <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            <input type="text" placeholder="Search..." className="border-0 focus:ring-0 w-96 p-2" onChange={(e) => setSearchTerm(e.target.value)} />
-                        </div>
+                        <SearchTable setSearchTerm={setSearchTerm} />
                         <div className="flex items-center gap-2">
                             <ProgramModal btnName="Add Program" onAddProgram={fetchPrograms}/>
                         </div>

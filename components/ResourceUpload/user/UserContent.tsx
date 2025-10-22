@@ -2,7 +2,7 @@
 import React from 'react'
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowDownWideNarrow, ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { ArrowDownWideNarrow, ChevronDown, ChevronLeft, ChevronRight, Loader2, Search } from 'lucide-react';
 import EmptyPage from './EmptyPage';
 import { useAppContext } from '@/contexts/ContextProvider'
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button"
 import { useToast } from '@/hooks/use-toast';
 import { useTable } from '@/lib/useTable';
 import DeleteConfirmationModal from '../department/DeleteConfirmationModal';
+import { Input } from '@/components/ui/input';
+import SearchTable from '@/components/SearchTable';
 // import { Combobox } from '@/components/ui/combobox';
 
 const UserContent = () => {
@@ -142,11 +144,7 @@ const UserContent = () => {
             <Card className="m-4">
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                                <input type="text" placeholder="Search..." className="border-0 focus:ring-0" onChange={(e) => setSearchTerm(e.target.value)} />
-                            </div>
-                        </div>
+                        <SearchTable setSearchTerm={setSearchTerm} />
                         <div className="flex items-center gap-2">
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />

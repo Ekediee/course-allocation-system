@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { useToast } from '@/hooks/use-toast';
 import { useTable } from '@/lib/useTable';
+import SearchTable from '@/components/SearchTable';
 
 type DepartmentProps = {
   isCalledFromAdmin: boolean;
@@ -181,9 +182,7 @@ const DepartmentContent: React.FC<DepartmentProps> = ({ isCalledFromAdmin }) => 
                 <Card className="m-4">
                     <CardContent>
                         <div className="flex justify-between items-center p-2 pt-4">
-                            <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                                <input type="text" placeholder="Search..." className="border-0 focus:ring-0 w-96 p-2" onChange={(e) => setSearchTerm(e.target.value)} />
-                            </div>
+                            <SearchTable setSearchTerm={setSearchTerm} />
                             <div className="flex items-center gap-2">
                                 <DepartmentModal btnName="Add Department" onDepartmentUpdate={isCalledFromAdmin ? fetchAdminDepartments : fetchDepartments} isCalledFromAdmin={isCalledFromAdmin}/>
                             </div>

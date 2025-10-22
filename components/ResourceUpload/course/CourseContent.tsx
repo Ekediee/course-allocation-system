@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import CourseModal from './CourseModal';
 import { Button } from "@/components/ui/button"
+import SearchTable from '@/components/SearchTable';
 
 const CourseContent = () => {
     const [searchTerm, setSearchTerm] = React.useState('');
@@ -100,9 +101,7 @@ const CourseContent = () => {
             <Card className="m-4">
                 <CardContent>
                     <div className="flex justify-between items-center p-2 pt-4">
-                        <div className="flex items-center p-2 pr-4 pl-4 rounded-lg bg-white shadow-md">
-                            <input type="text" placeholder="Search..." className="border-0 focus:ring-0" onChange={(e) => setSearchTerm(e.target.value)} />
-                        </div>
+                        <SearchTable setSearchTerm={setSearchTerm} />
                         <div className="flex items-center gap-2">
                             <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
