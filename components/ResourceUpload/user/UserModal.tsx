@@ -174,7 +174,7 @@ const UserModal: React.FC<UserModalProps> = ({btnName, onAddUser, user, isOpen, 
         toast({
             variant: "destructive",
             title: "❌ Wrong File Type",
-            description: 'Please upload a valid CSV file.'
+            description: 'Please upload a valid Excel file.'
         });
         setFile(null);
         return;

@@ -23,47 +23,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // const buffer = await file.arrayBuffer();
-    // const text = Buffer.from(buffer).toString('utf8');
-    // const lines = text.split('\n').filter(Boolean);
-    // const records: any[] = [];
-    
-    
-    // // Assuming CSV format: name,gender,email,role,rank,phone,qualification,area_of_specialization,other_responsibilities,department_id
-    // // Skip header and process each line
-    // for (const line of lines.slice(1)) {
-    //   const [
-    //     staff_id = '', 
-    //     name = '', 
-    //     gender = '', 
-    //     email = '', 
-    //     role = '', 
-    //     rank = '', 
-    //     phone = '', 
-    //     qualification = '', 
-    //     specialization = '', 
-    //     other_responsibilities = ''
-    //   ] = line.split(',').map(s => s.trim() || null);
-
-    //   // skip only records with no staff_id and no name
-    //   if (!staff_id && !name) continue
-        
-    //   records.push({
-    //     staff_id,
-    //     name,
-    //     gender,
-    //     email,
-    //     role,
-    //     rank,
-    //     phone,
-    //     qualification,
-    //     specialization,
-    //     other_responsibilities,
-    //     department_id,
-    //   });
-      
-    // }
-
     const buffer = await file.arrayBuffer();
 
     // Parse Excel workbook
@@ -87,8 +46,8 @@ export async function POST(req: NextRequest) {
 
 
     if (records.length === 0) {
-        logger.error({ message: 'Batch user upload failed', error: 'CSV file is empty or contains no valid data.' });
-        return NextResponse.json({ error: 'CSV file is empty or contains no valid data.' }, { status: 400 });
+        logger.error({ message: 'Batch user upload failed', error: 'Excel file is empty or contains no valid data.' });
+        return NextResponse.json({ error: 'Excel file is empty or contains no valid data.' }, { status: 400 });
     }
 
     const flaskRes = await fetch(getBackendApiUrl('/api/v1/users/batch'), {
@@ -111,9 +70,6 @@ export async function POST(req: NextRequest) {
       // Check if token expired
       const authError = handleAuthError(flaskRes, flaskData);
       if (authError) return authError; // auto-clears cookies
-
-      // backend may return { message, errors } or { error } etc.
-      console.log('Flask error response:', flaskData);
 
       logger.error({ message: 'Batch user upload failed', status: flaskRes.status, body: flaskData });
       

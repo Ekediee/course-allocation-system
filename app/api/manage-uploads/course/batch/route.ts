@@ -2,6 +2,7 @@ import { getBackendApiUrl } from '@/lib/api';
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
 import { handleAuthError } from '@/lib/server-only/auth-utils';
+import * as XLSX from 'xlsx';
 
 export async function POST(req: NextRequest) {
   logger.info({url: req.url, method: req.method, message: 'Batch course upload attempt' });
@@ -44,28 +45,22 @@ export async function POST(req: NextRequest) {
     }
 
     const buffer = await file.arrayBuffer();
-    const text = Buffer.from(buffer).toString('utf8');
+    
+    // Parse Excel workbook
+    const workbook = XLSX.read(buffer, { type: 'array' });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
-    const lines = text.split('\n').filter(Boolean);
-    const records: any[] = [];
-
-    // Assuming CSV format: CourseCode,CourseTitle,CourseUnit
-    // Skip header and process each line
-    for (const line of lines.slice(1)) {
-      const [code, title, unit] = line.split(',').map(s => s.trim());
-      if (code && title && unit) {
-        records.push({
-          code,
-          title,
-          unit: parseInt(unit),
-          bulletin_id,
-          program_id,
-          specialization_id,
-          semester_id,
-          level_id,
-        });
-      }
-    }
+    const records = jsonData.map((row: any) => ({
+      code: row.code || row["Code"] || null, // support header variations
+      title: row.title || row["Title"] || null,
+      unit: row.unit || row["Unit"] || null,
+      bulletin_id,
+      program_id,
+      specialization_id,
+      semester_id,
+      level_id,
+    })).filter((r) => r.code || r.title || r.unit); // filter out empty rows
 
     if (records.length === 0) {
         logger.error({ message: 'Batch course upload failed', error: 'CSV file is empty or contains no valid data.' });
@@ -85,18 +80,12 @@ export async function POST(req: NextRequest) {
     
     let errorData = null;
     if (!flaskRes.ok) {
-      try {
-        errorData = await flaskRes.json();
-      } catch {
-        errorData = {};
-      }
-
       // Check if token expired
       const authError = handleAuthError(flaskRes, errorData);
       if (authError) return authError; // auto-clears cookies
 
-      logger.error({ message: 'Batch course upload failed', error: errorData });
-      return NextResponse.json({ error: errorData.errors || errorData.msg || 'Something went wrong' }, { status: flaskRes.status });
+      logger.error({ message: 'Batch course upload failed', status: flaskRes.status, body: flaskData });
+      return NextResponse.json({message: flaskData.message, error: flaskData.errors || 'Something went wrong' }, { status: flaskRes.status });
     }
 
     logger.info({ message: 'Batch course upload successful', count: records.length });

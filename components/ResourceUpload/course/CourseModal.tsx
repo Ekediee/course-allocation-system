@@ -134,13 +134,13 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
         return;
         }
 
-        const isCsv = file.type === 'text/csv' || file.name.endsWith('.csv');
+        const isXLSX = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.name.toLowerCase().endsWith('.xlsx');
 
-        if (!isCsv) {
+        if (!isXLSX) {
         toast({
             variant: "destructive",
             title: "❌ Wrong File Type",
-            description: 'Please upload a valid CSV file.'
+            description: 'Please upload a valid Excel file.'
         });
         setFile(null);
         return;
@@ -188,9 +188,13 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
             
         } else {
             toast({
-            variant: "destructive",
-            title: "❌ Batch Upload Failed",
-            description: data.error
+                variant: "destructive",
+                title: "❌ " + data.message,
+                description: (
+                    <p className="whitespace-pre-wrap">
+                    {data.error}
+                    </p>
+                )
             });
         }
         } catch (err) {
