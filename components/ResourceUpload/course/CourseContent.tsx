@@ -10,6 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import CourseModal from './CourseModal';
 import { Button } from "@/components/ui/button"
 import SearchTable from '@/components/SearchTable';
+import { useToast } from '@/hooks/use-toast';
+import DeleteConfirmationModal from '../department/DeleteConfirmationModal';
 
 const CourseContent = () => {
     const [searchTerm, setSearchTerm] = React.useState('');
@@ -17,13 +19,19 @@ const CourseContent = () => {
     const [sortDirection, setSortDirection] = React.useState('asc');
     const [currentPage, setCurrentPage] = React.useState(1);
     const [itemsPerPage, setItemsPerPage] = React.useState(13);
+    const [selectedCourse, setSelectedCourse] = React.useState<any>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+    const { toast } = useToast();
 
     const {
         fetchCourses,
         isUploading,
+        role
     } = useAppContext()
 
     const queryClient = useQueryClient();
+    const canEdit = role === 'admin' || role === 'superadmin' || role === 'vetter';
 
     const { data: courseResult, isLoading, error } = useQuery<{ courses: any[] }>({
         queryKey: ['courses'],
@@ -59,7 +67,49 @@ const CourseContent = () => {
     const totalPages = Math.ceil((sortedCourses?.length || 0) / itemsPerPage);
     const paginatedCourses = sortedCourses?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-    
+    const handleEdit = (course: any) => {
+        
+        setSelectedCourse(course);
+        setIsEditModalOpen(true);
+    };
+
+    const handleDelete = (course: any) => {
+        setSelectedCourse(course);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (selectedCourse) {
+            try {
+                const res = await fetch(`/api/manage-uploads/course?id=${selectedCourse.program_course_id}`, {
+                    method: 'DELETE',
+                });
+
+                if (res.ok) {
+                    toast({
+                        variant: "success",
+                        title: "Course Disconnected",
+                        description: `Course "${selectedCourse.title}" has been disconnect from the program "${selectedCourse.program.name}".`
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['courses'] });
+                } else {
+                    const data = await res.json();
+                    toast({
+                        variant: "destructive",
+                        title: "Delete Failed",
+                        description: data.error || "An unknown error occurred."
+                    });
+                }
+            } catch (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Delete Failed",
+                    description: (error as Error).message
+                });
+            }
+            setIsDeleteModalOpen(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -125,8 +175,8 @@ const CourseContent = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                            {paginatedCourses.map((course:any) => (
-                                <TableRow key={course.id}>
+                            {paginatedCourses.map((course:any, index) => (
+                                <TableRow key={index}>
                                     <TableCell >{course.code}</TableCell>
                                     <TableCell >{course.title}</TableCell>
                                     <TableCell >
@@ -144,7 +194,10 @@ const CourseContent = () => {
                                     <TableCell className="text-center">
                                         {course.unit}
                                     </TableCell>
-                                    <TableCell className="text-center"></TableCell>
+                                    <TableCell className="text-center">
+                                        <Button disabled={!canEdit} variant="outline" size="sm" onClick={() => handleEdit(course)}>Edit</Button>
+                                        <Button disabled={!canEdit} variant="destructive" size="sm" className="ml-2" onClick={() => handleDelete(course)}>Delete</Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                             </TableBody>
@@ -167,6 +220,24 @@ const CourseContent = () => {
                 </CardContent>
             </Card>
         </TabsContent>
+        {isEditModalOpen && (
+            <CourseModal
+                btnName="Edit Course"
+                course={selectedCourse}
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onAddCourse={() => queryClient.invalidateQueries({ queryKey: ['courses'] })}
+            />
+        )}
+
+        {isDeleteModalOpen && (
+            <DeleteConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+                message={`Are you sure you want to delete the course "${selectedCourse?.title}"?`}
+            />
+        )}
     </>
   )
 }

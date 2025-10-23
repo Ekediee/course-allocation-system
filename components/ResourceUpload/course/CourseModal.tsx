@@ -12,7 +12,7 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { Info, Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast"
 import { useAppContext } from '@/contexts/ContextProvider'
 import { Label } from "@/components/ui/label";
@@ -24,9 +24,12 @@ import { useQuery } from "@tanstack/react-query";
 type CourseModalProps = {
   btnName: string;
   onAddCourse?: () => void;
+  course?: any;
+  isOpen?: boolean;
+  onClose?: () => void;
 };
 
-const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
+const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, isOpen, onClose}) => {
     const [courseCode, setCourseCode] = useState('');
     const [courseTitle, setCourseTitle] = useState('');
     const [courseUnit, setCourseUnit] = useState('');
@@ -56,8 +59,24 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
     const [selectedCourseType, setSelectedCourseType] = useState('');
 
     const { toast } = useToast()
+
+    useEffect(() => {
+        if (course) {
+            setCourseCode(course.code);
+            setCourseTitle(course.title);
+            setCourseUnit(course?.unit?.toString());
+            setSelectedBulletin(course.bulletin?.id);
+            setSelectedSchool(course.program?.department?.school?.id);
+            setSelectedDepartment(course.program?.department?.id);
+            setSelectedProgram(course.program?.id);
+            setSelectedSpecialization(course.specialization?.id);
+            setSelectedSemester(course.semester?.id);
+            setSelectedLevel(course.level?.id);
+            setSelectedCourseType(course.course_type?.id);
+        }
+    }, [course]);
     
-    const handleCreateCourse = async () => {
+    const handleSaveCourse = async () => {
         if(!courseCode || !courseTitle || !courseUnit || !selectedProgram || !selectedLevel || !selectedSemester || !selectedBulletin) {
             toast({
             variant: "destructive",
@@ -79,9 +98,12 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
             course_type_id: selectedCourseType
         };
 
+        const url = course ? `/api/manage-uploads/course?id=${course.program_course_id}` : '/api/manage-uploads/course';
+        const method = course ? 'PUT' : 'POST';
+
         try {
-            const res = await fetch('/api/manage-uploads/course', {
-                method: 'POST',
+            const res = await fetch(url, {
+                method,
                 headers: {
                 'Content-Type': 'application/json',
                 },
@@ -102,19 +124,22 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
             if (onAddCourse) onAddCourse();
             toast({
                 variant: "success",
-                title: "Course Upload Success",
+                title: course ? "Course Updated Successfully" : "Course Upload Success",
                 description: data.msg,
             });
 
-            setCourseCode('');
-            setCourseTitle('');
-            setCourseUnit('');
-            setSelectedSpecialization('');
+            if (!course) {
+                setCourseCode('');
+                setCourseTitle('');
+                setCourseUnit('');
+                setSelectedSpecialization('');
+            }
+            if (onClose) onClose();
 
         } catch (err) {
         toast({
             variant: "destructive",
-            title: "Course Upload Failed",
+            title: course ? "Course Update Failed" : "Course Upload Failed",
             description: (err as Error).message,
             });
         }
@@ -255,7 +280,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
     
   return (
     <>
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogTrigger asChild>
                 <Button className="bg-blue-700 hover:bg-blue-400 text-white">
                 <Plus className="h-4 w-4" />
@@ -266,10 +291,10 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
                 <DialogHeader>
                 <div className="flex items-center justify-center gap-2">
                     <Plus className="h-5 w-5 " />
-                    <DialogTitle className="">Add a Course</DialogTitle>
+                    <DialogTitle className="">{course ? "Edit Course" : "Add a Course"}</DialogTitle>
                 </div>
                 <DialogDescription className="text-center">
-                    Fill in the form below to add a new course.
+                    Fill in the form below to {course ? "edit the" : "add a new"} course.
                 </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-2 mt-4">
@@ -376,12 +401,12 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse}) => {
                     <DialogClose  
                     className="w-full"
                     asChild>
-                    <Button variant="outline" className="w-full">Cancel</Button>
+                    <Button variant="outline" className="w-full" onClick={onClose}>Cancel</Button>
                     </DialogClose>
                     <DialogClose  
                     className="w-full"
                     asChild>
-                    <Button className="w-full bg-blue-700 hover:bg-blue-400" onClick={open ? handleBatchUpload : handleCreateCourse}>Create Course</Button>
+                    <Button className="w-full bg-blue-700 hover:bg-blue-400" onClick={open ? handleBatchUpload : handleSaveCourse}>{course ? "Save Changes" : "Create Course"}</Button>
                     </DialogClose>
                 </div>
                 </div>
