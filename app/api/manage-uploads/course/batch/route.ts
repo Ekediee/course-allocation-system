@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
     const specializationId = formData.get('specialization_id');
     const semesterId = formData.get('semester_id');
     const levelId = formData.get('level_id');
+    const courseTypeId = formData.get('course_type_id');
 
     // Validate required fields
     if (bulletinId === null) {
@@ -37,6 +38,7 @@ export async function POST(req: NextRequest) {
     const program_id: number = Number(programId);
     const semester_id: number = Number(semesterId);
     const level_id: number = Number(levelId);
+    const course_type_id: number = Number(courseTypeId);
     const specialization_id: number | null = specializationId ? Number(specializationId) : null;
 
     if (!file || !(file instanceof File)) {
@@ -60,6 +62,7 @@ export async function POST(req: NextRequest) {
       specialization_id,
       semester_id,
       level_id,
+      course_type_id
     })).filter((r) => r.code || r.title || r.unit); // filter out empty rows
 
     if (records.length === 0) {

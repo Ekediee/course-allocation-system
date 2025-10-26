@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import SearchTable from '@/components/SearchTable';
 import { useToast } from '@/hooks/use-toast';
 import DeleteConfirmationModal from '../department/DeleteConfirmationModal';
+import { useTable } from '@/lib/useTable';
 
 const CourseContent = () => {
     const [searchTerm, setSearchTerm] = React.useState('');
@@ -40,32 +41,42 @@ const CourseContent = () => {
 
     const courseData = courseResult?.courses;
 
-    const filteredCourses = courseData?.filter((course: any) =>
-        course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.program?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.specialization?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.bulletin?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.level?.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // const filteredCourses = courseData?.filter((course: any) =>
+    //     course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     course.program?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     course.specialization?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     course.bulletin?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     course.level?.name.toLowerCase().includes(searchTerm.toLowerCase())
+    // );
 
-    const sortedCourses = filteredCourses?.sort((a: any, b: any) => {
-        if (sortColumn) {
-            const aValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], a) : a[sortColumn];
-            const bValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], b) : b[sortColumn];
+    // const sortedCourses = filteredCourses?.sort((a: any, b: any) => {
+    //     if (sortColumn) {
+    //         const aValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], a) : a[sortColumn];
+    //         const bValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], b) : b[sortColumn];
 
-            if (aValue < bValue) {
-                return sortDirection === 'asc' ? -1 : 1;
-            }
-            if (aValue > bValue) {
-                return sortDirection === 'asc' ? 1 : -1;
-            }
-        }
-        return 0;
+    //         if (aValue < bValue) {
+    //             return sortDirection === 'asc' ? -1 : 1;
+    //         }
+    //         if (aValue > bValue) {
+    //             return sortDirection === 'asc' ? 1 : -1;
+    //         }
+    //     }
+    //     return 0;
+    // });
+
+    // const totalPages = Math.ceil((sortedCourses?.length || 0) / itemsPerPage);
+    // const paginatedCourses = sortedCourses?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    const { paginated: paginatedCourses, totalPages } = useTable({
+        data: courseData ?? [],
+        searchTerm,
+        searchKeys: ['code', 'title', 'unit', 'course_type', 'program.name', 'specialization.name', 'bulletin.name', 'level.name'],
+        sortColumn,
+        sortDirection: sortDirection as 'asc' | 'desc',
+        currentPage,
+        itemsPerPage,
     });
-
-    const totalPages = Math.ceil((sortedCourses?.length || 0) / itemsPerPage);
-    const paginatedCourses = sortedCourses?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const handleEdit = (course: any) => {
         
@@ -164,13 +175,54 @@ const CourseContent = () => {
                             <Table>
                             <TableHeader>
                                 <TableRow>
-                                <TableHead onClick={() => { setSortColumn('code'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Course Code</TableHead>
-                                <TableHead onClick={() => { setSortColumn('title'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Course Title</TableHead>
-                                <TableHead onClick={() => { setSortColumn('program.name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Program</TableHead>
-                                <TableHead onClick={() => { setSortColumn('specialization.name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Specialization</TableHead>
-                                <TableHead className="text-center" onClick={() => { setSortColumn('bulletin.name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Bulletin</TableHead>
-                                <TableHead className="text-center" onClick={() => { setSortColumn('level.name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Level</TableHead>
-                                <TableHead className="text-center" onClick={() => { setSortColumn('unit'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>Unit</TableHead>
+                                <TableHead className="cursor-pointer" onClick={() => { setSortColumn('code'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                        <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                        Course Code
+                                    </div>
+                                </TableHead>
+                                <TableHead className='cursor-pointer' onClick={() => { setSortColumn('title'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                        <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                        Course Title
+                                    </div>
+                                </TableHead>
+                                <TableHead className="text-center cursor-pointer" onClick={() => { setSortColumn('unit'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                        <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                        Unit
+                                    </div>
+                                </TableHead>
+                                <TableHead className="text-center cursor-pointer" onClick={() => { setSortColumn('course_type'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                        <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                        Course Type
+                                    </div>
+                                </TableHead>
+                                <TableHead className='cursor-pointer' onClick={() => { setSortColumn('program.name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                        <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                        Program
+                                    </div>
+                                </TableHead>
+                                <TableHead className='cursor-pointer' onClick={() => { setSortColumn('specialization.name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                        <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                        Specialization
+                                    </div>
+                                </TableHead>
+                                <TableHead className="text-center cursor-pointer" onClick={() => { setSortColumn('bulletin.name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                        <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                        Bulletin
+                                    </div>
+                                </TableHead>
+                                <TableHead className="text-center cursor-pointer" onClick={() => { setSortColumn('level.name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                                    <div className="flex items-center">
+                                        <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                                        Level
+                                    </div>
+                                </TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -179,6 +231,12 @@ const CourseContent = () => {
                                 <TableRow key={index}>
                                     <TableCell >{course.code}</TableCell>
                                     <TableCell >{course.title}</TableCell>
+                                    <TableCell className="text-center">
+                                        {course.unit}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        {course.course_type.name}
+                                    </TableCell>
                                     <TableCell >
                                         {course.program?.name}
                                     </TableCell>
@@ -190,9 +248,6 @@ const CourseContent = () => {
                                     </TableCell>
                                     <TableCell className="text-center">
                                         {course.level?.name}
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        {course.unit}
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Button disabled={!canEdit} variant="outline" size="sm" onClick={() => handleEdit(course)}>Edit</Button>
