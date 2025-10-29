@@ -161,6 +161,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [bulletinData, setBulletinData] = useState<Bulletin | null>(null);
     const [levelData, setLevelData] = useState<LevelType | null>(null);
     const [vetDepIDs, setVetDepIDs] = useState<VetDepartment | null>(null);
+    const [viewDepIDs, setViewDepIDs] = useState<VetDepartment | null>(null);
     
 
     useEffect(() => {
@@ -501,6 +502,26 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchDepCourses = async (department: string, semester: string) => {
+      try {
+        const courseParams = {
+          department: department,
+          semester: semester,
+        }
+        const data = await apiFetch('/api/manage-uploads/course/vet', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(courseParams),
+        });
+        return data
+      } catch (error) {
+        console.error('Failed to fetch departments courses:', error);
+        throw error;
+      }
+    };
+
     const fetchAllocationStatus = async (semester: string) => {
       try {
         // const semester_data = {
@@ -667,6 +688,16 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchDepartmentsForCourses = async () => {
+      try {
+          const data = await apiFetch('/api/manage-uploads/department/hods');
+          
+          return data
+      } catch (error) {
+          console.error('Failed to fetch allocation status overview:', error);
+      }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -693,7 +724,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                                 fetchSpecializationName, fetchSpecializationNameByProgram, showSpecCombo, fetchCourses,
                 fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments,
                 courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview,
-                setVetDepIDs, vetDepIDs, fetchDepAllocations
+                setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
+                fetchDepCourses
             }}
         >
             { children }

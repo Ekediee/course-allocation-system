@@ -24,47 +24,40 @@ type Department = {
     status: string;
 }
 
-type AllocationStatus = {
+type DepartmentsHODs = {
     id: string;
     name: string;
     departments: Department[];
 }
 
-const CourseAllocationsPage = () => {
-  // Mock data - replace with actual data fetching
-  const stats = {
-    totalPrograms: 29,
-    totalCourses: 987,
-    departmentsSubmitted: 15,
-    programsInProgress: 16,
-  };
+const CoursesByDepartment = () => {
 
   const {
-    fetchAllocatationStatusOverview,
-    setVetDepIDs, vetDepIDs
+    fetchDepartmentsForCourses,
+    setViewDepIDs
   } = useAppContext()
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(14);
 
   // check allocation submission status
-  const { data: allocationStatus, isLoading } = useQuery<AllocationStatus[]>({
+  const { data: departments_hods, isLoading } = useQuery<DepartmentsHODs[]>({
       queryKey: ['allocation_status'],
-      queryFn: fetchAllocatationStatusOverview,
+      queryFn: fetchDepartmentsForCourses,
   });
 
   const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (allocationStatus && allocationStatus.length > 0) {
-      setActiveTab(allocationStatus[0].id);
+    if (departments_hods && departments_hods.length > 0) {
+      setActiveTab(departments_hods[0].id);
     }
-  }, [allocationStatus]);
-  console.log("vetDepIDs:", vetDepIDs);
+  }, [departments_hods]);
+  
   // get currently selected semester
-  const currentSemester = allocationStatus?.find(s => s.id === activeTab);
+  const currentSemester = departments_hods?.find(s => s.id === activeTab);
 
   const { paginated, totalPages } = useTable({
     data: currentSemester?.departments ?? [],
@@ -82,70 +75,32 @@ const CourseAllocationsPage = () => {
 
   const router = useRouter();
 
-  const handleVetAllocation = (department_id: any, semester_id: any) => {
+  const handleViewCourses = (department_id: any, semester_id: any) => {
     
-    setVetDepIDs({
+    setViewDepIDs({
       department_id: department_id,
       semester_id: semester_id
     });
 
-    router.push("/vetter/course-allocations/vet-allocation")
+    router.push("/vetter//manage-uploads/courses-by-department/vet-courses-by-department");
   }
+
+
   
   return (
     <div className="p-4 md:p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        
-        {/* Allocation Progress stats */}
-        <AllocationPercentage />
-
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-weak-100">
-            <CardHeader>
-              <CardTitle>Total Programs Allocated</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{stats.totalPrograms}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-weak-100">
-            <CardHeader>
-              <CardTitle>Total Courses Allocated</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{stats.totalCourses}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-weak-100">
-            <CardHeader>
-              <CardTitle>Departments Submitted Allocations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{stats.departmentsSubmitted}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-weak-100">
-            <CardHeader>
-              <CardTitle>Programs Allocation in Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{stats.programsInProgress}</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
 
       {/* Department Allocation Status Table */}
       <Card className="p-4 col-span-2">
         <div className="flex items-center justify-between mb-4">
           {isLoading ? (
             <div>Loading...</div>
-          ) : allocationStatus && allocationStatus.length > 0 && activeTab ? (
+          ) : departments_hods && departments_hods.length > 0 && activeTab ? (
           <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full h-full">
             <TabsList className='flex justify-between'>
               <div className='flex items-center gap-10'>
                 <div>
-                  {allocationStatus?.map((semester: AllocationStatus) => (
+                  {departments_hods?.map((semester: DepartmentsHODs) => (
                     <TabsTrigger key={semester.id} value={semester.id} className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20">
                         {semester.name.split(" ")[0]}
                     </TabsTrigger>
@@ -158,7 +113,7 @@ const CourseAllocationsPage = () => {
               </div>
               <div></div>
             </TabsList>
-            {allocationStatus?.map((semester: AllocationStatus) => (
+            {departments_hods?.map((semester: DepartmentsHODs) => (
               <TabsContent key={semester.id} value={semester.id} className="h-full">
                 <Table className="w-full h-full">
                   <TableHeader>
@@ -176,12 +131,6 @@ const CourseAllocationsPage = () => {
                           HOD
                         </div>
                       </TableHead>
-                      <TableHead className="cursor-pointer" onClick={() => { setSortColumn('status'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
-                        <div className="flex items-center">
-                          <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
-                          Status
-                        </div>
-                      </TableHead>
                       <TableHead className="">
                           Action
                       </TableHead>
@@ -193,17 +142,13 @@ const CourseAllocationsPage = () => {
                         {/* <TableCell className="font-medium">{dept.sn}</TableCell> */}
                         <TableCell>{dept.department_name}</TableCell>
                         <TableCell>{dept.hod_name}</TableCell>
-                        <TableCell className="flex items-center gap-2">
-                          {getStatusIcon(dept.status)} {dept.status}
-                        </TableCell>
                         <TableCell className="">
                           <Button
                             variant="outline"
                             className="text-webblue-100 hover:text-blue-700"
-                            onClick={() => handleVetAllocation(dept.department_id, activeTab)}
-                            disabled={dept.status !== "Allocated"}
+                            onClick={() => handleViewCourses(dept.department_id, activeTab)}
                           >
-                            View Allocation
+                            View Courses
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -230,4 +175,4 @@ const CourseAllocationsPage = () => {
   );
 };
 
-export default CourseAllocationsPage;
+export default CoursesByDepartment;

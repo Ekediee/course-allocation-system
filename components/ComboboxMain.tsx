@@ -24,12 +24,23 @@ export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data, onSelect, initi
     
   };
 
+  // Find the selected option object based on initialValue
+  const selectedOption = React.useMemo(() => {
+    if (initialValue && Array.isArray(data)) {
+      const foundItem = data.find(item => item.id === initialValue);
+      if (foundItem) {
+        return { value: foundItem.id, label: foundItem.name };
+      }
+    }
+    return null;
+  }, [initialValue, data]);
+
   return (
     <Select
       options={Array.isArray(data) ? data.map(item => ({ value: item.id, label: item.name })) : []}
       onChange={handleChange}
       placeholder="Select an Item"
-      // value={initialValue ? { value: initialValue, label: initialValue } : null}
+      value={selectedOption}
       isSearchable
       className="text-black w-full"
     />

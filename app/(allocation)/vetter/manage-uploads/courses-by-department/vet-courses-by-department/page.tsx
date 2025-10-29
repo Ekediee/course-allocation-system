@@ -3,15 +3,15 @@ import { useAppContext } from '@/contexts/ContextProvider'
 import React, { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { Semester } from "@/data/constants";
-import AllocationVet from '@/components/Allocations/AllocationVet';
+import CoursesVet from '@/components/ResourceUpload/course/CourseVet';
 
-const VetAllocation = () => {
+const VetCourses = () => {
       
   return (
     <>
-        <AllocationVet />
+        <CoursesVet />
     </>
   )
 }
 
-export default VetAllocation
+export default VetCourses

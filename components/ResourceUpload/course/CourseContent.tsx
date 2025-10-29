@@ -13,8 +13,11 @@ import SearchTable from '@/components/SearchTable';
 import { useToast } from '@/hooks/use-toast';
 import DeleteConfirmationModal from '../department/DeleteConfirmationModal';
 import { useTable } from '@/lib/useTable';
+import { useRouter } from 'next/navigation';
 
 const CourseContent = () => {
+    const router = useRouter();
+
     const [searchTerm, setSearchTerm] = React.useState('');
     const [sortColumn, setSortColumn] = React.useState('');
     const [sortDirection, setSortDirection] = React.useState('asc');
@@ -40,33 +43,6 @@ const CourseContent = () => {
     })
 
     const courseData = courseResult?.courses;
-
-    // const filteredCourses = courseData?.filter((course: any) =>
-    //     course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //     course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //     course.program?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //     course.specialization?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //     course.bulletin?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //     course.level?.name.toLowerCase().includes(searchTerm.toLowerCase())
-    // );
-
-    // const sortedCourses = filteredCourses?.sort((a: any, b: any) => {
-    //     if (sortColumn) {
-    //         const aValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], a) : a[sortColumn];
-    //         const bValue = sortColumn.includes('.') ? sortColumn.split('.').reduce((obj, key) => obj?.[key], b) : b[sortColumn];
-
-    //         if (aValue < bValue) {
-    //             return sortDirection === 'asc' ? -1 : 1;
-    //         }
-    //         if (aValue > bValue) {
-    //             return sortDirection === 'asc' ? 1 : -1;
-    //         }
-    //     }
-    //     return 0;
-    // });
-
-    // const totalPages = Math.ceil((sortedCourses?.length || 0) / itemsPerPage);
-    // const paginatedCourses = sortedCourses?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const { paginated: paginatedCourses, totalPages } = useTable({
         data: courseData ?? [],
@@ -122,6 +98,16 @@ const CourseContent = () => {
         }
     };
 
+    const handleViewDepartment = () => {
+    
+        // setVetDepIDs({
+        // department_id: department_id,
+        // semester_id: semester_id
+        // });
+
+        router.push("/vetter/manage-uploads/courses-by-department");
+    }
+
     if (isLoading) {
         return (
             <div className="p-8">
@@ -164,9 +150,7 @@ const CourseContent = () => {
                     <div className="flex justify-between items-center p-2 pt-4">
                         <SearchTable setSearchTerm={setSearchTerm} />
                         <div className="flex items-center gap-2">
-                            <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
-                                <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
-                            </div>
+                            <Button variant="outline" className="text-webblue-100 hover:text-blue-700" onClick={() => handleViewDepartment()}>View by Department</Button>
                             <CourseModal btnName="Add Course" onAddCourse={() => queryClient.invalidateQueries({ queryKey: ['courses'] })}/>
                         </div>
                     </div>

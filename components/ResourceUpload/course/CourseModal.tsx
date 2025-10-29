@@ -65,16 +65,45 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
             setCourseCode(course.code);
             setCourseTitle(course.title);
             setCourseUnit(course?.unit?.toString());
-            setSelectedBulletin(course.bulletin?.id);
-            setSelectedSchool(course.program?.department?.school?.id);
-            setSelectedDepartment(course.program?.department?.id);
-            setSelectedProgram(course.program?.id);
-            setSelectedSpecialization(course.specialization?.id);
-            setSelectedSemester(course.semester?.id);
-            setSelectedLevel(course.level?.id);
-            setSelectedCourseType(course.course_type?.id);
+            setSelectedBulletin(course.bulletin?.id || '');
+            setSelectedSchool(course.program?.department?.school?.id || '');
+            setSelectedDepartment(course.program?.department?.id || '');
+            setSelectedProgram(course.program?.id || '');
+            setSelectedSpecialization(course.specialization?.id || '');
+            setSelectedSemester(course.semester?.id || '');
+            setSelectedLevel(course.level?.id || '');
+            setSelectedCourseType(course.course_type?.id || '');
+        }else {
+            // Reset fields when adding a new course
+            setCourseCode('');
+            setCourseTitle('');
+            setCourseUnit('');
+            setSelectedBulletin('');
+            setSelectedSchool('');
+            setSelectedDepartment('');
+            setSelectedProgram('');
+            setSelectedSpecialization('');
+            setSelectedSemester('');
+            setSelectedLevel('');
+            setSelectedCourseType('');
         }
     }, [course]);
+    
+    useEffect(() => {
+        if (!isOpen && !course) { // Only reset if dialog is closing AND it's not an edit session
+            setCourseCode('');
+            setCourseTitle('');
+            setCourseUnit('');
+            setSelectedBulletin('');
+            setSelectedSchool('');
+            setSelectedDepartment('');
+            setSelectedProgram('');
+            setSelectedSpecialization('');
+            setSelectedSemester('');
+            setSelectedLevel('');
+            setSelectedCourseType('');
+        }
+    }, [isOpen, course]);
     
     const handleSaveCourse = async () => {
         if(!courseCode || !courseTitle || !courseUnit || !selectedProgram || !selectedLevel || !selectedSemester || !selectedBulletin) {
@@ -128,12 +157,12 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
                 description: data.msg,
             });
 
-            if (!course) {
-                setCourseCode('');
-                setCourseTitle('');
-                setCourseUnit('');
-                setSelectedSpecialization('');
-            }
+            // if (!course) {
+            //     setCourseCode('');
+            //     setCourseTitle('');
+            //     setCourseUnit('');
+            //     setSelectedSpecialization('');
+            // }
             if (onClose) onClose();
 
         } catch (err) {
@@ -187,12 +216,12 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('bulletin_id', selectedBulletin);
-        formData.append('program_id', selectedProgram);
-        formData.append('specialization_id', selectedSpecialization);
-        formData.append('semester_id', selectedSemester);
-        formData.append('level_id', selectedLevel);
-        formData.append('course_type_id', selectedCourseType);
+        formData.append('bulletin_id', selectedBulletin || '');
+        formData.append('program_id', selectedProgram || '');
+        formData.append('specialization_id', selectedSpecialization || '');
+        formData.append('semester_id', selectedSemester || '');
+        formData.append('level_id', selectedLevel || '');
+        formData.append('course_type_id', selectedCourseType || '');
 
         try {
         
@@ -302,16 +331,16 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
                     <div className="flex gap-2">
                         <div className="w-full">
                             <Label htmlFor="bulletin">Bulletin</Label>
-                            {!loadingBulletins && <ComboboxMain data={bulletins} onSelect={setSelectedBulletin} />}
+                            {!loadingBulletins && <ComboboxMain data={bulletins} onSelect={setSelectedBulletin} initialValue={selectedBulletin} />}
                         </div>
                         <div className="w-full">
                             <Label htmlFor="school">Select School</Label>
                             {!loadingSchools && <ComboboxMain data={schools} onSelect={(value) => {
                                 setSelectedSchool(value);
-                                setSelectedDepartment('');
-                                setSelectedProgram('');
-                                setSelectedSpecialization('');
-                            }} />}
+                                // setSelectedDepartment('');
+                                // setSelectedProgram('');
+                                // setSelectedSpecialization('');
+                            }} initialValue={selectedSchool} />}
                         </div>
                     </div>
                     <div className="flex gap-2">
@@ -319,35 +348,35 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
                             {showDeptCombo && <><Label htmlFor="department">Select Department</Label>
                             <ComboboxMain data={departments} onSelect={(value) => {
                                 setSelectedDepartment(value);
-                                setSelectedProgram('');
-                                setSelectedSpecialization('');
-                            }} /></>}
+                                // setSelectedProgram('');
+                                // setSelectedSpecialization('');
+                            }} initialValue={selectedDepartment} /></>}
                         </div>
                         <div className="w-full">
                             {showProgCombo && <><Label htmlFor="program">Select Program</Label>
                             <ComboboxMain data={programs} onSelect={(value) => {
                                 setSelectedProgram(value);
-                                setSelectedSpecialization('');
-                            }} /></>}
+                                // setSelectedSpecialization('');
+                            }} initialValue={selectedProgram} /></>}
                         </div>
                     </div>
                     <div className="flex gap-2">
                         <div className="w-full">
                             {showSpecCombo && <><Label htmlFor="specialization">Select Specialization (Optional)</Label>
-                            <ComboboxMain data={specializations} onSelect={setSelectedSpecialization} /></>}
+                            <ComboboxMain data={specializations} onSelect={setSelectedSpecialization} initialValue={selectedSpecialization} /></>}
                         </div>
                         <div className="w-full">
                             {showSpecCombo && <><Label htmlFor="semester">Select Semester</Label>
-                            <ComboboxMain data={semesters} onSelect={setSelectedSemester} /></>}
+                            <ComboboxMain data={semesters} onSelect={setSelectedSemester} initialValue={selectedSemester} /></>}
                         </div>
                     </div>
                     <div className="w-full">
                         {showSpecCombo && <><Label htmlFor="level">Select Level</Label>
-                        <ComboboxMain data={levels} onSelect={setSelectedLevel} /></>}
+                        <ComboboxMain data={levels} onSelect={setSelectedLevel} initialValue={selectedLevel} /></>}
                     </div>
                     <div className="w-full">
                         {showSpecCombo && <><Label htmlFor="courseType">Select Course Type</Label>
-                        <ComboboxMain data={courseTypes} onSelect={setSelectedCourseType} /></>}
+                        <ComboboxMain data={courseTypes} onSelect={setSelectedCourseType} initialValue={selectedCourseType} /></>}
                     </div>
                     <div className="flex gap-2 mt-2">
                         <div className="w-full">  
