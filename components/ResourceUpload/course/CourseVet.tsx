@@ -199,12 +199,12 @@ const CoursesVet = ({allocationPage, url}: any) => {
                     {/* No programs message */}
                     {semester.programs?.length === 0 ? (
                         <div className="p-4 text-center text-muted-foreground">
-                        No programs available for this semester
+                            No program data available for this semester
                         </div>
                     ) : (
                         /* Second layer: Program Tabs */
                         <Tabs 
-                            defaultValue={activeProgramMap[semester.id] || semester.programs[0]?.id} 
+                            value={activeProgramMap[semester.id] || semester.programs[0]?.id} 
                             onValueChange={(value) => handleProgramChange(semester.id, value)}
                             className="w-full"
                         >
@@ -226,7 +226,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
                                 </div>
                             ) : (
                                 /* Third layer: Level Tabs */
-                                <Tabs defaultValue={program.levels[0]?.id} className="w-full">
+                                <Tabs value={program.levels[0]?.id} className="w-full">
                                 <div className="md:flex justify-between bg-gray-100 md:h-10">
                                 <TabsList className="grid grid-cols-4 md:flex md:justify-start md:h-10 md:grid-cols-4 gap-2 mb-2">
                                     {program.levels.map((level: Level) => (
