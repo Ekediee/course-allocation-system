@@ -237,7 +237,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
                         <div className="bg-gradient-to-r from-amber-200 to-amber-50 rounded-2xl p-4 md:p-6 mb-6">
                             <div className="flex justify-between items-center">
                                 
-                                <h2 className="text-xl font-medium mb-5">
+                                <h2 className="text-xl font-medium">
                                     {semester.department_name} Department
                                 </h2>
                                 

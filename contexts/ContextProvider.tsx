@@ -488,7 +488,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
           department: department,
           semester: semester,
         }
-        const data = await apiFetch('/api/allocation/vet', {
+        const data = await apiFetch('/api/allocation/get-by-department', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

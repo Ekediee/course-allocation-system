@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import DonutChart from '@/components/DonutChart';
-import { ArrowDownWideNarrow, ChevronLeft, ChevronRight, Hourglass, Router, Search } from 'lucide-react';
+import { ArrowDownWideNarrow, ChevronLeft, ChevronRight, Hourglass, Router, Search, XCircle } from 'lucide-react';
 import AllocationPercentage from '@/components/Vetter/AllocationPercentage';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery } from '@tanstack/react-query';
@@ -179,11 +179,14 @@ const CourseAllocationsPage = () => {
                       <TableHead className="cursor-pointer" onClick={() => { setSortColumn('status'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
                         <div className="flex items-center">
                           <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
-                          Status
+                          Allocation Status
                         </div>
                       </TableHead>
                       <TableHead className="">
-                          Action
+                          View
+                      </TableHead>
+                      <TableHead className="">
+                        Vetting Status
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -205,6 +208,17 @@ const CourseAllocationsPage = () => {
                           >
                             View Allocation
                           </Button>
+                        </TableCell>
+                        <TableCell className="flex items-center gap-2">
+                          {dept.vet_status === "Vetted" ? (
+                            <Badge className="text-white flex items-center gap-2 p-2 font-bold">
+                              {getStatusIcon(dept.vet_status)} {dept.vet_status}
+                            </Badge>
+                          ) : (
+                            <Badge variant='outline' className="text-gray-500 flex items-center gap-2 p-1">
+                              <XCircle className="h-4 w-4 text-red-300" /> {dept.vet_status}
+                            </Badge>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}

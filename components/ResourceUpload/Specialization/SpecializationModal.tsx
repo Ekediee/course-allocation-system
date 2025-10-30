@@ -221,10 +221,10 @@ const SpecializationModal: React.FC<SpecializationModalProps> = ({btnName, onAdd
                     {!isLoadingDepartments && <ComboboxMain data={departments} onSelect={(value) => {
                         setSelectedDepartment(value)
                         setSelectedProgram("")
-                    }}/>}
+                    }} initialValue={selectedDepartment} />}
 
                     <Label htmlFor="program" className="mt-2">Select Program</Label>
-                    {!isLoadingPrograms && <ComboboxMain data={programs} onSelect={setSelectedProgram}/>}
+                    {!isLoadingPrograms && <ComboboxMain data={programs} onSelect={setSelectedProgram} initialValue={selectedProgram} />}
 
                     <Label htmlFor="specialization" className="mt-2">Specialization Name</Label>
                     <input

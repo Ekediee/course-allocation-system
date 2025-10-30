@@ -19,9 +19,13 @@ export const getStatusIcon = (status: string) => {
   switch (status) {
     case "Allocated":
       return <CheckCircle className="h-4 w-4 text-green-500" />;
+    case "Vetted":
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
     case "Still Allocating":
       return <Hourglass className="h-4 w-4 text-yellow-500" />;
     case "Not Started":
+      return <XCircle className="h-4 w-4 text-red-500" />;
+    case "Not Vetted":
       return <XCircle className="h-4 w-4 text-red-500" />;
     default:
       return null;

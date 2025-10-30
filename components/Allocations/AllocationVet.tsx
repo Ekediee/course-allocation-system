@@ -33,23 +33,12 @@ const AllocationVet = ({allocationPage, url}: any) => {
     } = useAppContext()
     const [activeSemester, setActiveSemester] = useState<string>('');
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
-
-    // check allocation submission status
-    // const { data: allocationStatus } = useQuery<AllocationStatus>({
-    //     queryKey: ['allocation_status', activeSemester],
-    //     queryFn: () => fetchAllocationStatus(activeSemester),
-    //     enabled: !!activeSemester,
-    // });
     
     // Use a single query result based on allocationPage
     const { data: semesters, isLoading, error } = useQuery<Semester[]>({
         queryKey: ['depcourses'], 
         queryFn: () => fetchDepAllocations(vetDepIDs?.department_id, vetDepIDs?.semester_id),
     });
-    
-    // const semesterdata: Semester | undefined = semesters?.find(
-    //     (sem: Semester) => sem.id === semesters[0].id
-    // );
     
     // Set default active program for each semester when data is loaded
     useEffect(() => {
@@ -84,27 +73,28 @@ const AllocationVet = ({allocationPage, url}: any) => {
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
-    const handleSubmit = async () => {
+    const handleVetAllocation = async (semester_id: string, department_id: string) => {
         // console.log("Submitting semester allocation... ", activeSemester);
 
-        const submi_allocation_data = {
-            semester_id: activeSemester,
+        const vet_allocation_data = {
+            semester_id: semester_id,
+            department_id: department_id
         };
 
         try {
-            const res = await fetch('/api/allocation/submit', {
+            const res = await fetch('/api/allocation/vet', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(submi_allocation_data),
+                body: JSON.stringify(vet_allocation_data),
             });
 
             if (res.status.toString().startsWith("40")) {
                 const data = await res.json();
                 toast({
                     variant: "destructive",
-                    title: "Something is wrong",
+                    title: data.title,
                     description: data.error
                 });
                 return;
@@ -115,10 +105,10 @@ const AllocationVet = ({allocationPage, url}: any) => {
                 
                 toast({
                     variant: "success",
-                    title: "Allocation Submitted Successfully",
+                    title: "Allocation vetted Successfully",
                     description: data.message,
                 });
-                await queryClient.invalidateQueries({ queryKey: ['allocation_status', activeSemester] });
+                await queryClient.invalidateQueries({ queryKey: ['vetting_status', activeSemester, department_id] });
             }
         } catch (err) {
         toast({
@@ -220,7 +210,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                 <Button 
                                     size="sm" 
                                     className="bg-blue-700 hover:bg-blue-800"
-                                    onClick={() => {}}
+                                    onClick={() => handleVetAllocation(semester.id, semester.department_id)}
                                 >
                                     Mark as Vetted
                                 </Button>
