@@ -20,7 +20,8 @@ import {
     AlertCircle,
     Menu,
     X,
-    Upload
+    Upload,
+    TableOfContents
   } from "lucide-react";
   import { activeLink, normalLink } from '@/data/constants';
   import { useAppContext } from '@/contexts/ContextProvider';
@@ -45,6 +46,10 @@ const VetterSideBar = () => {
           <Link href="/vetter/manage-uploads" className={` ${pathname.includes('manage-uploads') ?  activeLink : normalLink }`}>
             <Upload className="h-5 w-5 mr-3" />
             <span>Upload Resources</span>
+          </Link>
+          <Link href="/vetter/courses-by-department" className={` ${pathname.includes('courses-by-department') ?  activeLink : normalLink }`}>
+            <TableOfContents className="h-5 w-5 mr-3" />
+            <span>View Courses</span>
           </Link>
           {role === 'superadmin' &&
             <Link href="/vetter/admin-management" className={` ${pathname.includes('admin-management') ?  activeLink : normalLink }`}>

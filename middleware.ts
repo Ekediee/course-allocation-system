@@ -36,8 +36,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if ((url.pathname.startsWith('/vetter/manage-uploads') ||
-      url.pathname.startsWith('/vetter/manage-uploads') || 
+  if ((url.pathname.startsWith('/vetter') || 
       url.pathname.startsWith('/dashboard/vetter')) && 
       (role !== 'vetter' && role !== 'superadmin')
     ) {

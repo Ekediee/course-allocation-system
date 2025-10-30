@@ -37,6 +37,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
     } = useAppContext()
     const [activeSemester, setActiveSemester] = useState<string>('');
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
+    const [activeLevelMap, setActiveLevelMap] = useState<Record<string, string>>({});
     const [selectedBulletin, setSelectedBulletin] = useState('');
 
     const { data: bulletins = [], isLoading: loadingBulletins } = useQuery<Items[]>({
@@ -57,16 +58,29 @@ const CoursesVet = ({allocationPage, url}: any) => {
             setActiveSemester(defaultSemesterId); // Initialize active semester
 
             const defaultProgramMap: Record<string, string> = {};
+            const defaultLevelMap: Record<string, string> = {};
+
             semesters.forEach((b: Bulletin) => {
                  const firstSem = b.semester?.[0];
-                if (firstSem && firstSem.programs.length > 0) {
-                    defaultProgramMap[firstSem.id] = firstSem.programs[0].id;
+
+                if (firstSem) {
+                    // Set default program for the semester
+                    if (firstSem.programs.length > 0) {
+                        defaultProgramMap[firstSem.id] = firstSem.programs[0].id;
+                    }
+                    // Loop through EACH program to set its default level
+                    firstSem.programs.forEach((program: Program) => {
+                        if (program.levels.length > 0) {
+                            defaultLevelMap[program.id] = program.levels[0].id;
+                        }
+                    });
                 }
             });
             setActiveProgramMap(defaultProgramMap);
+            setActiveLevelMap(defaultLevelMap);
         }
 
-        setPageHeader(allocationPage)
+        // setPageHeader(allocationPage)
         
         setSelectedBulletin(bulletins?.[1]?.id ?? "");
     }, [semesters, bulletins, allocationPage, setPageHeader]);
@@ -79,6 +93,13 @@ const CoursesVet = ({allocationPage, url}: any) => {
         setActiveProgramMap(prev => ({
             ...prev,
             [semesterId]: programId
+        }));
+    };
+
+    const handleLevelChange = (programId: string, levelId: string) => {
+        setActiveLevelMap(prev => ({
+            ...prev,
+            [programId]: levelId
         }));
     };
 
@@ -146,20 +167,21 @@ const CoursesVet = ({allocationPage, url}: any) => {
     <>
         {/* First layer: Semester Tabs */}
         <Tabs value={activeSemester} onValueChange={handleSemesterChange} className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b h-10 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-20">
+            <TabsList className="w-full justify-between rounded-none border-b h-10 p-0 pr-[65px] bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-20">
                 {courses?.map((semester: Semester) => (
                 <TabsTrigger key={semester.id} value={semester.id} className="rounded-none h-10 border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20">
                     {semester.name}
                 </TabsTrigger>
                 ))}
                 
-                <div className={` w-[250px] ${courses.length == 0 ? "ml-[778px]" : "ml-[640px]"} `}>
+                {/* <div className={` w-[250px] ${courses.length == 0 ? "ml-[778px]" : "ml-[640px]"} `}> */}
+                <div className='w-[250px] '>
                     <div className="flex items-center gap-4">
                         <span className="font-bold">Bulletin:</span>
                         <ComboboxMain data={bulletins} onSelect={setSelectedBulletin} initialValue={selectedBulletin} />
                     </div>
                 </div>
-                <div></div>
+                {/* <div></div> */}
             </TabsList>
 
             {/* Semester Content */}
@@ -183,12 +205,12 @@ const CoursesVet = ({allocationPage, url}: any) => {
                                 <div className="flex justify-end items-center gap-4">
                                 <Link 
                                     href={{
-                                        pathname:"/vetter/manage-uploads"
+                                        pathname:"/vetter/courses-by-department"
                                     }} 
                                 >
                                     <Button variant="outline" size="sm" className="gap-2">
                                     <ArrowLeft size={16} />
-                                    Go back to list
+                                    Go back
                                     </Button>
                                 </Link>
                                 </div>
@@ -226,7 +248,11 @@ const CoursesVet = ({allocationPage, url}: any) => {
                                 </div>
                             ) : (
                                 /* Third layer: Level Tabs */
-                                <Tabs value={program.levels[0]?.id} className="w-full">
+                                <Tabs 
+                                    value={activeLevelMap[program.id] || program.levels[0]?.id} 
+                                    className="w-full"
+                                    onValueChange={(value) => handleLevelChange(program.id, value)}
+                                >
                                 <div className="md:flex justify-between bg-gray-100 md:h-10">
                                 <TabsList className="grid grid-cols-4 md:flex md:justify-start md:h-10 md:grid-cols-4 gap-2 mb-2">
                                     {program.levels.map((level: Level) => (

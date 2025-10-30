@@ -82,7 +82,7 @@ const CoursesByDepartment = () => {
       semester_id: semester_id
     });
 
-    router.push("/vetter//manage-uploads/courses-by-department/vet-courses-by-department");
+    router.push("/vetter/courses-by-department/vet-courses-by-department");
   }
 
 

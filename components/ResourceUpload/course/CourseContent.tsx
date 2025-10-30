@@ -105,7 +105,7 @@ const CourseContent = () => {
         // semester_id: semester_id
         // });
 
-        router.push("/vetter/manage-uploads/courses-by-department");
+        router.push("/vetter/courses-by-department");
     }
 
     if (isLoading) {
