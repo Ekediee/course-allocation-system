@@ -85,6 +85,45 @@ const CoursesVet = ({allocationPage, url}: any) => {
         setSelectedBulletin(bulletins?.[1]?.id ?? "");
     }, [semesters, bulletins, allocationPage, setPageHeader]);
 
+    // This runs when selectedBulletin or semesters changes
+    useEffect(() => {
+        // Don't run if we don't have the necessary data yet
+        if (!selectedBulletin || !Array.isArray(semesters)) {
+            return;
+        }
+
+        // Find the data for the currently selected bulletin
+        const currentBulletinData = semesters.find(item => item.id === selectedBulletin);
+        if (!currentBulletinData) return;
+
+        // Find the first semester in that bulletin's data
+        const firstSemester = currentBulletinData.semester?.[0];
+        if (!firstSemester) return;
+
+        // Set the active semester to this first semester
+        setActiveSemester(firstSemester.id);
+
+        // Find the first program in that semester
+        const firstProgram = firstSemester.programs?.[0];
+        if (firstProgram) {
+            // Update the active program map for this semester
+            setActiveProgramMap(prev => ({
+                ...prev,
+                [firstSemester.id]: firstProgram.id
+            }));
+
+            // Find the first level in that program
+            const firstLevel = firstProgram.levels?.[0];
+            if (firstLevel) {
+                // Update the active level map for this program
+                setActiveLevelMap(prev => ({
+                    ...prev,
+                    [firstProgram.id]: firstLevel.id
+                }));
+            }
+        }
+    }, [selectedBulletin, semesters]);
+
     const handleSemesterChange = (semesterId: string) => {
         setActiveSemester(semesterId);
     };
