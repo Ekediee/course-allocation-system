@@ -176,11 +176,11 @@ const AllocateComponent = () => {
         title: "Lecturer Allocated:",
         description: resdata.message
       })
-    }else if(resdata.status == "error") {
+    }else if(resdata.error.status == "error") {
       toast({
         variant: "destructive",
         title: "Allocation Failed",
-        description: resdata.message
+        description: resdata.error.message
       })
     } 
 

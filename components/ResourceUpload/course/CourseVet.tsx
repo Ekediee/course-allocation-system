@@ -9,7 +9,7 @@ import { ArrowLeft, CheckCircle, Loader2, SquarePen } from "lucide-react";
 import Link from 'next/link';
 import { useToast } from "@/hooks/use-toast";
 
-import { Semester, Program, Course, Level } from "@/data/constants";
+// import { Semester, Program, Course } from "@/data/constants";
 import { useAppContext } from '@/contexts/ContextProvider'
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,51 @@ export interface Bulletin {
   semester: Semester[];
 }
 
+interface Specialization {
+  id: string | 'general'; // ID can be a number (as string) or the special 'general' string
+  name: string;
+  courses: Course[];
+}
+  
+interface Level {
+  id: string;
+  name: string;
+  specializations: Specialization[];
+}
+
+// Types for our data
+interface Course {
+  id: string;
+  code: string;
+  title: string;
+  unit: number;
+  isAllocated: boolean;
+  allocatedTo?: string;
+  programCourseId?: string;
+}
+
+interface Program {
+  id: string;
+  name: string;
+  levels: Level[];
+}
+
+interface Semester {
+  sessionId: string;
+  sessionName: string;
+  id: string;
+  name: string;
+  programs: Program[];
+}
+
+interface Lecturer {
+  id: number;
+  staff_id: string;
+  name: string;
+  rank: string;
+  qualification: string;
+  phone: string;
+}
 
 const CoursesVet = ({allocationPage, url}: any) => {
     const {setPageHeader, 
@@ -39,6 +84,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
     const [activeLevelMap, setActiveLevelMap] = useState<Record<string, string>>({});
     const [selectedBulletin, setSelectedBulletin] = useState('');
+    const [activeSpecializationMap, setActiveSpecializationMap] = useState<Record<string, string>>({});
 
     const { data: bulletins = [], isLoading: loadingBulletins } = useQuery<Items[]>({
         queryKey: ["bulletins"],
@@ -59,6 +105,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
 
             const defaultProgramMap: Record<string, string> = {};
             const defaultLevelMap: Record<string, string> = {};
+            const defaultSpecializationMap: Record<string, string> = {};
 
             semesters.forEach((b: Bulletin) => {
                  const firstSem = b.semester?.[0];
@@ -72,12 +119,19 @@ const CoursesVet = ({allocationPage, url}: any) => {
                     firstSem.programs.forEach((program: Program) => {
                         if (program.levels.length > 0) {
                             defaultLevelMap[program.id] = program.levels[0].id;
+
+                            // Drill down to set the default specialization
+                            const firstLevel = program.levels[0];
+                            if (firstLevel.specializations.length > 0) {
+                                defaultSpecializationMap[firstLevel.id] = firstLevel.specializations[0].id; // <-- ADD THIS
+                            }
                         }
                     });
                 }
             });
             setActiveProgramMap(defaultProgramMap);
             setActiveLevelMap(defaultLevelMap);
+            setActiveSpecializationMap(defaultSpecializationMap);
         }
 
         // setPageHeader(allocationPage)
@@ -120,6 +174,15 @@ const CoursesVet = ({allocationPage, url}: any) => {
                     ...prev,
                     [firstProgram.id]: firstLevel.id
                 }));
+
+                // Drill down to set the default specialization
+                const firstSpecialization = firstLevel.specializations?.[0];
+                if (firstSpecialization) {
+                    setActiveSpecializationMap(prev => ({ // <-- ADD THIS BLOCK
+                        ...prev,
+                        [firstLevel.id]: firstSpecialization.id
+                    }));
+                }
             }
         }
     }, [selectedBulletin, semesters]);
@@ -139,6 +202,13 @@ const CoursesVet = ({allocationPage, url}: any) => {
         setActiveLevelMap(prev => ({
             ...prev,
             [programId]: levelId
+        }));
+    };
+
+    const handleSpecializationChange = (levelId: string, specializationId: string) => {
+        setActiveSpecializationMap(prev => ({
+            ...prev,
+            [levelId]: specializationId,
         }));
     };
 
@@ -318,40 +388,76 @@ const CoursesVet = ({allocationPage, url}: any) => {
                                 {/* Level Content - Course Table */}
                                 {program.levels.map((level: Level) => (
                                     <TabsContent key={level.id} value={level.id}>
-                                    {level.courses.length === 0 ? (
-                                        <div className="p-4 text-center text-muted-foreground">
-                                        No courses available for this level
-                                        </div>
-                                    ) : (
-                                        <div className="overflow-x-auto">
-                                        <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                            <TableHead>Course Code</TableHead>
-                                            <TableHead>Course Title</TableHead>
-                                            <TableHead>Unit</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {level.courses.map((course: Course) => (
-                                            <TableRow key={course.id}>
-                                                <TableCell >{course.code}</TableCell>
-                                                <TableCell>{course.title}</TableCell>
-                                                <TableCell>{course.unit}</TableCell>
+                                        {level.specializations.length === 0 ? (
+                                            <div className="p-4 text-center text-muted-foreground">
+                                                No courses available for this level
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {/* Fourth layer: Specialization Tabs */}
+                                                <Tabs
+                                                    value={activeSpecializationMap[level.id] || level.specializations[0]?.id}
+                                                    onValueChange={(value) => handleSpecializationChange(level.id, value)}
+                                                    className="w-full"
+                                                >
+                                                    <TabsList className="grid grid-cols-2 md:flex md:flex-wrap md:justify-start gap-2 mb-3 md:mb-4 h-auto">
+                                                        {level.specializations.map((spec: Specialization) => (
+                                                            <TabsTrigger
+                                                                key={spec.id}
+                                                                value={spec.id}
+                                                                className="bg-white px-4 py-2 text-sm data-[state=active]:bg-blue-600 data-[state=active]:text-white h-auto"
+                                                            >
+                                                                {spec.name}
+                                                            </TabsTrigger>
+                                                        ))}
+                                                    </TabsList>
+
+                                                    {/* Specialization Content - The Final Course Table */}
+                                                    {level.specializations.map((spec: Specialization) => (
+                                                        <TabsContent key={spec.id} value={spec.id}>
+                                                            <div className="overflow-x-auto border rounded-lg">
+                                                                <Table>
+                                                                    <TableHeader>
+                                                                        <TableRow>
+                                                                            <TableHead className="w-1/5">Course Code</TableHead>
+                                                                            <TableHead className="w-3/5">Course Title</TableHead>
+                                                                            <TableHead className="w-1/5">Unit</TableHead>
+                                                                        </TableRow>
+                                                                    </TableHeader>
+                                                                    <TableBody>
+                                                                        {spec.courses.map((course: Course) => (
+                                                                            <TableRow key={course.id}>
+                                                                                <TableCell>{course.code}</TableCell>
+                                                                                <TableCell>{course.title}</TableCell>
+                                                                                <TableCell>{course.unit}</TableCell>
+                                                                            </TableRow>
+                                                                        ))}
+                                                                        {/* Total Row for this Specialization */}
+                                                                        <TableRow className="bg-gray-400">
+                                                                            <TableCell className=" font-bold"></TableCell>
+                                                                            <TableCell colSpan={1} className=" font-bold">Total</TableCell>
+                                                                            <TableCell colSpan={2} className="font-bold">
+                                                                                {spec.courses.reduce((total, course) => total + course.unit, 0)}
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        </TabsContent>
+                                                    ))}
+                                                </Tabs>
                                                 
-                                            </TableRow>
-                                            ))}
-                                            <TableRow className="bg-gray-400">
-                                                <TableCell className=" font-bold"></TableCell>
-                                                <TableCell colSpan={1} className=" font-bold">Total</TableCell>
-                                                <TableCell colSpan={2} className="font-bold">
-                                                    {level.courses.reduce((total, course) => total + course.unit, 0)}
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                        </Table>
-                                        </div>
-                                    )}
+                                                {/* Grand Total Row for the Entire Level */}
+                                                {/* <div className="mt-4 p-4 bg-slate-200 rounded-lg flex justify-end font-bold text-lg">
+                                                    <span>Total Units for {level.name}: </span>
+                                                    <span className="ml-4 w-20 text-left">
+                                                        {level.specializations
+                                                            .flatMap(spec => spec.courses)
+                                                            .reduce((total, course) => total + course.unit, 0)}
+                                                    </span>
+                                                </div> */}
+                                            </>
+                                        )}
                                     </TabsContent>
                                 ))}
                                 </Tabs>
