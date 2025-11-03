@@ -62,7 +62,7 @@ const CourseAllocationsPage = () => {
       setActiveTab(allocationStatus[0].id);
     }
   }, [allocationStatus]);
-  console.log("vetDepIDs:", vetDepIDs);
+  
   // get currently selected semester
   const currentSemester = allocationStatus?.find(s => s.id === activeTab);
 

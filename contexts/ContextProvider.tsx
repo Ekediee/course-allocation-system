@@ -304,6 +304,11 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       return data;
     };
 
+    const fetchAllLecturers = async () => {
+      const data = await apiFetch(`/api/lecturers/all`);
+      return data;
+    };
+
     const fetchSemesterDataDE = async () => {
       const apiUrl = process.env.NEXT_PUBLIC_DE_ALLOCATION_API;
       if (!apiUrl) throw new Error('NEXT_PUBLIC_DE_ALLOCATION_API is not set');
@@ -725,7 +730,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments,
                 courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview,
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
-                fetchDepCourses
+                fetchDepCourses, fetchAllLecturers
             }}
         >
             { children }

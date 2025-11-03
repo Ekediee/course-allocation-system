@@ -30,12 +30,12 @@ interface GroupCardProps {
 
 const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardProps) => {
     const {setPageHeader, 
-        fetchLecturers
+        fetchAllLecturers
     } = useAppContext();
 
     const queryResult = useQuery<Lecturer[]>({
         queryKey: ['lecturers'],
-        queryFn: fetchLecturers
+        queryFn: fetchAllLecturers
     });
 
     const { data: lecturers, isLoading, error } = queryResult;
