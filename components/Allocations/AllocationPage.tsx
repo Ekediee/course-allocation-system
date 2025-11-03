@@ -81,7 +81,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
     const handleSemesterChange = (semesterId: string) => {
         setActiveSemester(semesterId);
     };
-    console.log("Active Semester:", activeSemester);
+    
     const handleProgramChange = (semesterId: string, programId: string) => {
         setActiveProgramMap(prev => ({
             ...prev,
@@ -226,7 +226,12 @@ const AllocationPage = ({allocationPage, url}: any) => {
                         >
                             <TabsList className="grid grid-cols-2 md:flex md:justify-start h-20 md:h-10 gap-2 mb-3 md:mb-4">
                                 {semester.programs.map((program: Program) => (
-                                <TabsTrigger key={program.id} value={program.id} className="bg-white md:w-56 md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white">
+                                <TabsTrigger 
+                                    key={program.id} 
+                                    value={program.id}
+                                    title={program.name} 
+                                    className="bg-white md:w-56 md:h-8 truncate data-[state=active]:bg-blue-700 data-[state=active]:text-white"
+                                >
                                     {program.name}
                                 </TabsTrigger>
                                 ))}
