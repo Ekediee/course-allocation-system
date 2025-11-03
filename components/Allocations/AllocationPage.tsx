@@ -230,7 +230,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                     key={program.id} 
                                     value={program.id}
                                     title={program.name} 
-                                    className="bg-white md:w-56 md:h-8 truncate data-[state=active]:bg-blue-700 data-[state=active]:text-white"
+                                    className="bg-white md:w-[500px] md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white"
                                 >
                                     {program.name}
                                 </TabsTrigger>
@@ -289,7 +289,6 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                         <Table>
                                         <TableHeader>
                                             <TableRow>
-                                            <TableHead>SN</TableHead>
                                             <TableHead>Course Code</TableHead>
                                             <TableHead>Course Title</TableHead>
                                             <TableHead>Unit</TableHead>
@@ -301,7 +300,6 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                         <TableBody>
                                             {level.courses.map((course: Course) => (
                                             <TableRow key={course.id}>
-                                                <TableCell className="font-medium">{course.id}</TableCell>
                                                 <TableCell >{course.code}</TableCell>
                                                 <TableCell>{course.title}</TableCell>
                                                 <TableCell>{course.unit}</TableCell>

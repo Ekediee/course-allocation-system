@@ -266,7 +266,7 @@ const CourseAllocationReport = () => {
                 key={String(program.id)}
                 value={String(program.id)}
                 title={program.name}
-                className="capitalize bg-white md:w-56 md:h-8 truncate data-[state=active]:bg-blue-700 data-[state=active]:text-white"
+                className="capitalize bg-white md:w-[500px] md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white"
               >
                 {program.name}
               </TabsTrigger>
