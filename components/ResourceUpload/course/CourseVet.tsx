@@ -275,7 +275,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
                                     key={program.id} 
                                     value={program.id}
                                     title={program.name} 
-                                    className="bg-white md:w-[260px] md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white"
+                                    className="bg-white md:w-[274px] md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white"
                                 >
                                     {program.name}
                                 </TabsTrigger>
