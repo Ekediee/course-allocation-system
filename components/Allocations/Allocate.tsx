@@ -27,29 +27,75 @@ const AllocateComponent = () => {
     token 
   } = useAppContext()
 
-  const isEditMode = !!selectedCourse?.allocatedTo;
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+
+  const isEditMode = !!selectedCourse?.isAllocated;
+
+  // useEffect(() => {
+  //   if (selectedCourse) {
+  //       if (isEditMode) {
+  //           // Reallocation: pre-fill with existing data
+  //           setGroups([
+  //               {
+  //                   id: 0,
+  //                   name: 'Group A',
+  //                   lecturer: selectedCourse.allocatedTo,
+  //                   classSize: '', // User needs to re-enter this
+  //                   classHours: '-',
+  //               }
+  //           ]);
+  //       } else {
+  //           // New allocation: reset to a single default group
+  //           setGroups([
+  //               { id: 0, name: "Group A", lecturer: "", classSize: "", classHours: "-" },
+  //           ]);
+  //       }
+  //   }
+  // }, [selectedCourse, setGroups, isEditMode]);
 
   useEffect(() => {
-    if (selectedCourse) {
-        if (isEditMode) {
-            // Reallocation: pre-fill with existing data
-            setGroups([
-                {
-                    id: 0,
-                    name: 'Group A',
-                    lecturer: selectedCourse.allocatedTo,
-                    classSize: '', // User needs to re-enter this
-                    classHours: '-',
+    if (!selectedCourse) return;
+
+    if (isEditMode) {
+        
+        const fetchAllocationDetails = async () => {
+            setIsLoadingDetails(true);
+            try {
+                
+                const res = await fetch(`/api/allocation/details?program_course_id=${selectedCourse.programCourseId}&semester_id=${selectedCourse.semesterId}`);
+                const resdata = await res.json();
+
+                if (resdata.status === 'success' && resdata.data.length > 0) {
+                    // Map the fetched details to the 'groups' state format
+                    const existingGroups = resdata.data.map((alloc:any, index:any) => ({
+                        id: index,
+                        name: alloc.groupName,
+                        lecturer: alloc.lecturer, // Or lecturer ID if your Combobox uses IDs
+                        classSize: alloc.classSize.toString(),
+                        classHours: "-",
+                    }));
+                    setGroups(existingGroups);
+                } else {
+                    // Handle case where no details are found (maybe reset to default)
+                    setGroups([{ id: 0, name: "Group A", lecturer: "", classSize: "", classHours: "-" }]);
                 }
-            ]);
-        } else {
-            // New allocation: reset to a single default group
-            setGroups([
-                { id: 0, name: "Group A", lecturer: "", classSize: "", classHours: "-" },
-            ]);
-        }
+            } catch (error) {
+                console.error("Failed to fetch allocation details:", error);
+                toast({ variant: "destructive", title: "Error", description: "Could not load existing allocation details." });
+            } finally {
+                setIsLoadingDetails(false);
+            }
+        };
+
+        fetchAllocationDetails();
+
+    } else {
+        // Reset to a single default group for a new allocation
+        setGroups([
+          { id: 0, name: "Group A", lecturer: "", classSize: "", classHours: "-" },
+        ]);
     }
-  }, [selectedCourse, setGroups, isEditMode]);
+  }, [selectedCourse, setGroups, isEditMode, toast, token]);
   
 
   const handleAddGroup = () => {

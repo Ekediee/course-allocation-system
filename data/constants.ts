@@ -6,6 +6,7 @@ export interface Course {
   unit: number;
   isAllocated: boolean;
   allocatedTo?: string;
+  programCourseId?: string;
 }
   
 export interface Level {

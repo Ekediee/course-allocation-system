@@ -352,6 +352,8 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                                                 programName: program.name,
                                                                 levelId: level.id,
                                                                 allocatedTo: course.allocatedTo,
+                                                                isAllocated: course.isAllocated,
+                                                                programCourseId: course.programCourseId,
                                                             })}
                                                         >
                                                             <SquarePen className="cursor-pointer text-blue-500 hover:text-blue-700" />

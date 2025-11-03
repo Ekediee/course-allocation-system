@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import jsPDF from "jspdf";
@@ -323,62 +324,63 @@ const CourseAllocationReport = () => {
                 </p>
               </div>
 
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-100 p-2 rounded">
-                    <th className="text-left">SN</th>
-                    <th className="text-left">Code</th>
-                    <th className="text-left">Title</th>
-                    <th className="text-left">Unit</th>
-                    <th className="text-left">Lecturer</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="w-full text-sm">
+                <TableHeader>
+                  <TableRow className="bg-gray-100 p-2 rounded">
+                    <TableHead className="text-left">SN</TableHead>
+                    <TableHead className="text-left">Code</TableHead>
+                    <TableHead className="text-left">Title</TableHead>
+                    <TableHead className="text-left">Unit</TableHead>
+                    <TableHead className="text-left">Lecturer</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {general.length > 0 && (
                     <>
-                      <tr>
-                        <td colSpan={5} className="font-semibold mt-4 bg-gray-200 p-2 rounded">
+                      <TableRow>
+                        <TableCell colSpan={5} className="font-semibold mt-4 bg-gray-200 p-2 rounded">
                           GENERAL COURSES
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                       {general.map((course, index) => (
-                        <tr key={course.id}>
-                          <td>{index + 1}</td>
-                          <td>{course.code}</td>
-                          <td>{course.title}</td>
-                          <td>{course.unit}</td>
-                          <td>{course.allocatedTo}</td>
-                        </tr>
+                        <TableRow key={course.id}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>{course.code}</TableCell>
+                          <TableCell>{course.title}</TableCell>
+                          <TableCell>{course.unit}</TableCell>
+                          <TableCell>{course.allocatedTo}</TableCell>
+                        </TableRow>
                       ))}
                     </>
                   )}
                   {core.length > 0 && (
                     <>
-                      <tr>
-                        <td colSpan={5} className="font-semibold mt-4 bg-gray-200 p-2 rounded">
+                      <TableRow>
+                        <TableCell colSpan={5} className="font-semibold mt-4 bg-gray-200 p-2 rounded">
                           CORE COURSES
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                       {core.map((course, index) => (
-                        <tr key={course.id}>
-                          <td>{index + general.length + 1}</td>
-                          <td>{course.code}</td>
-                          <td>{course.title}</td>
-                          <td>{course.unit}</td>
-                          <td>{course.allocatedTo}</td>
-                        </tr>
+                        <TableRow key={course.id}>
+                          <TableCell>{index + general.length + 1}</TableCell>
+                          <TableCell>{course.code}</TableCell>
+                          <TableCell>{course.title}</TableCell>
+                          <TableCell>{course.unit}</TableCell>
+                          <TableCell>{course.allocatedTo}</TableCell>
+                        </TableRow>
                       ))}
+                      <TableRow className="bg-gray-400">
+                          <TableCell className=" font-bold"></TableCell>
+                          <TableCell colSpan={1} className=" font-bold">Total</TableCell>
+                          <TableCell className=" font-bold"></TableCell>
+                          <TableCell colSpan={3} className="font-bold">
+                              {totalUnits}
+                          </TableCell>
+                      </TableRow>
                     </>
                   )}
-                </tbody>
-              </table>
-
-              <div className="flex mt-4 justify-between font-semibold text-lg bg-gray-900 text-white p-2 rounded">
-                <div className="w-full text-center pr-[70px]">Total</div>
-                <div className="w-full text-center pr-[40px]">
-                  {totalUnits}
-                </div>
-              </div>
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>
