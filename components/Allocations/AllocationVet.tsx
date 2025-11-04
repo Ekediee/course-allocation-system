@@ -43,13 +43,13 @@ const AllocationVet = ({allocationPage, url}: any) => {
     // Set default active program for each semester when data is loaded
     useEffect(() => {
         if (semesters && semesters.length > 0) {
-            const defaultSemesterId = semesters[0].id;
+            const defaultSemesterId = semesters[0]?.id;
             setActiveSemester(defaultSemesterId); // Initialize active semester
 
             const defaultProgramMap: Record<string, string> = {};
             semesters.forEach((semester: Semester) => {
                 if (semester.programs.length > 0) {
-                    defaultProgramMap[semester.id] = semester.programs[0].id;
+                    defaultProgramMap[semester.id] = semester?.programs[0]?.id;
                 }
             });
             setActiveProgramMap(defaultProgramMap);

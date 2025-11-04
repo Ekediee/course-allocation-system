@@ -113,17 +113,17 @@ const CoursesVet = ({allocationPage, url}: any) => {
                 if (firstSem) {
                     // Set default program for the semester
                     if (firstSem.programs.length > 0) {
-                        defaultProgramMap[firstSem.id] = firstSem.programs[0].id;
+                        defaultProgramMap[firstSem.id] = firstSem?.programs[0].id;
                     }
                     // Loop through EACH program to set its default level
                     firstSem.programs.forEach((program: Program) => {
                         if (program.levels.length > 0) {
-                            defaultLevelMap[program.id] = program.levels[0].id;
+                            defaultLevelMap[program.id] = program?.levels[0]?.id;
 
                             // Drill down to set the default specialization
-                            const firstLevel = program.levels[0];
-                            if (firstLevel.specializations.length > 0) {
-                                defaultSpecializationMap[firstLevel.id] = firstLevel.specializations[0].id; // <-- ADD THIS
+                            const firstLevel = program?.levels[0];
+                            if (firstLevel?.specializations.length > 0) {
+                                defaultSpecializationMap[firstLevel.id] = firstLevel?.specializations[0]?.id;
                             }
                         }
                     });
@@ -147,18 +147,18 @@ const CoursesVet = ({allocationPage, url}: any) => {
         }
 
         // Find the data for the currently selected bulletin
-        const currentBulletinData = semesters.find(item => item.id === selectedBulletin);
+        const currentBulletinData = semesters?.find(item => item.id === selectedBulletin);
         if (!currentBulletinData) return;
 
         // Find the first semester in that bulletin's data
-        const firstSemester = currentBulletinData.semester?.[0];
+        const firstSemester = currentBulletinData?.semester?.[0];
         if (!firstSemester) return;
 
         // Set the active semester to this first semester
-        setActiveSemester(firstSemester.id);
+        setActiveSemester(firstSemester?.id);
 
         // Find the first program in that semester
-        const firstProgram = firstSemester.programs?.[0];
+        const firstProgram = firstSemester?.programs?.[0];
         if (firstProgram) {
             // Update the active program map for this semester
             setActiveProgramMap(prev => ({
@@ -167,7 +167,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
             }));
 
             // Find the first level in that program
-            const firstLevel = firstProgram.levels?.[0];
+            const firstLevel = firstProgram?.levels?.[0];
             if (firstLevel) {
                 // Update the active level map for this program
                 setActiveLevelMap(prev => ({
@@ -176,7 +176,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
                 }));
 
                 // Drill down to set the default specialization
-                const firstSpecialization = firstLevel.specializations?.[0];
+                const firstSpecialization = firstLevel?.specializations?.[0];
                 if (firstSpecialization) {
                     setActiveSpecializationMap(prev => ({ // <-- ADD THIS BLOCK
                         ...prev,
