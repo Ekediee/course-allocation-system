@@ -14,20 +14,42 @@ import { Semester } from "@/data/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CourseAllocationReport = () => {
-  const { fetchSemesterData, prevPath, fetchSemesterDataDE } = useAppContext();
+  const { fetchSemesterData, prevPath, fetchSemesterDataDE, fetchSemesterDataPrint } = useAppContext();
   const searchParams = useSearchParams();
   const semesterId = searchParams.get('semester');
+  const departmentId = searchParams.get('department');
 
-  const queryResult =
-    prevPath === "/course-allocation"
-      ? useQuery<Semester[]>({
-          queryKey: ["semesters"],
-          queryFn: fetchSemesterData,
-        })
-      : useQuery<Semester[]>({
-          queryKey: ["semesters"],
-          queryFn: fetchSemesterDataDE,
-        });
+  // const queryResult =
+  //   prevPath === "/course-allocation"
+  //     ? useQuery<Semester[]>({
+  //         queryKey: ["semesters"],
+  //         queryFn: fetchSemesterData,
+  //       })
+  //     : useQuery<Semester[]>({
+  //         queryKey: ["semesters"],
+  //         queryFn: fetchSemesterDataDE,
+  //       });
+
+  let queryFunction;
+  let queryKey;
+  let isEnabled = true;
+
+  if (prevPath === "/course-allocation") {
+    queryFunction = fetchSemesterData;
+    queryKey = ["semesters", "hod"];
+  } else if (prevPath === "/vetter/course-allocations/vet-allocation") {
+    queryFunction = () => fetchSemesterDataPrint(departmentId);
+    queryKey = ["semesters", "admin", departmentId];
+    isEnabled = !!departmentId;
+  } else {
+    queryFunction = fetchSemesterDataDE;
+    queryKey = ["semesters", "de"]; 
+  }
+
+  const queryResult = useQuery<Semester[]>({
+    queryKey: queryKey,
+    queryFn: queryFunction,
+  });
 
   const { data: allocation_data, isLoading, error } = queryResult;
 
@@ -369,16 +391,24 @@ const CourseAllocationReport = () => {
                           <TableCell>{course.allocatedTo}</TableCell>
                         </TableRow>
                       ))}
-                      <TableRow className="bg-gray-400">
+                      {/* <TableRow className="bg-gray-400">
                           <TableCell className=" font-bold"></TableCell>
                           <TableCell colSpan={1} className=" font-bold">Total</TableCell>
                           <TableCell className=" font-bold"></TableCell>
                           <TableCell colSpan={3} className="font-bold">
                               {totalUnits}
                           </TableCell>
-                      </TableRow>
+                      </TableRow> */}
                     </>
                   )}
+                    <TableRow className="bg-gray-400">
+                      <TableCell className=" font-bold"></TableCell>
+                      <TableCell colSpan={1} className=" font-bold">Total</TableCell>
+                      <TableCell className=" font-bold"></TableCell>
+                      <TableCell colSpan={3} className="font-bold">
+                          {totalUnits}
+                      </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </div>

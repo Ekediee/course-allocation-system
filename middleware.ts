@@ -31,7 +31,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if ((url.pathname.startsWith('/dashboard/hod') || url.pathname.startsWith('/course-allocation') || url.pathname.startsWith('/special-allocation/')) && role !== 'hod') {
+  // Define the roles allowed to access HOD-level pages
+  const hodAccessRoles = ['hod', 'vetter', 'superadmin'];
+
+  if ((url.pathname.startsWith('/dashboard/hod') || 
+    url.pathname.startsWith('/course-allocation') || 
+    url.pathname.startsWith('/special-allocation/')) && 
+    !hodAccessRoles.includes(role || '')) {
     url.pathname = '/unauthorized';
     return NextResponse.redirect(url);
   }

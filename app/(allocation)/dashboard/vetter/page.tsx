@@ -35,7 +35,7 @@ const VetterDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 md:gap-6">
         {/* Left Section: Compliance Score and Allocation Percentage */}
         <div className="flex flex-col gap-4 lg:col-span-2">
-          <ComplianceScore />
+          {/* <ComplianceScore /> */}
           <AllocationPercentage />
         </div>
         {/* Right Section: Department Status and Request View */}

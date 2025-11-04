@@ -299,6 +299,28 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       return data;
     };
 
+    const fetchSemesterDataPrint = async (department_id: string) => {
+      try {
+        const selectedDepartment = {
+          department_id: department_id,
+        }
+        const data = await apiFetch('/api/allocation/print', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(selectedDepartment),
+        });
+         
+        return data
+      } catch (error) {
+          console.error('Failed to fetch departments data:', error);
+      }
+
+      // const data = await apiFetch(`/api/allocation`);
+      // return data;
+    };
+
     const fetchLecturers = async () => {
       const data = await apiFetch(`/api/lecturers`);
       return data;
@@ -730,7 +752,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments,
                 courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview,
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
-                fetchDepCourses, fetchAllLecturers
+                fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint
             }}
         >
             { children }

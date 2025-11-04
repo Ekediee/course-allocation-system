@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Hourglass, XCircle, CheckCircle, FileText, Users, Blocks } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 const VetterStats = () => {
   return (
@@ -7,10 +8,14 @@ const VetterStats = () => {
         <Card className="bg-green-50">
             <CardContent className="p-3 md:p-10">
             <div className="flex items-center justify-between mb-2 md:mb-3">
-                <p className="text-gray-600 text-sm">Allocated Courses</p>
+                <p className="text-gray-600 text-sm">HOD Compliance Score</p>
                   <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-amber-400" />
             </div>
-            <p className="text-2xl md:text-4xl font-bold">0</p>
+            <div className="flex items-center justify-between mb-2">
+                <p className="text-sm">Average</p>
+                <p className="text-sm font-medium">78%</p>
+            </div>
+            <Progress value={78} className="w-full " />
             </CardContent>
         </Card>
 

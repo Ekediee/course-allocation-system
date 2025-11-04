@@ -93,8 +93,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
     const queryClient = useQueryClient();
 
     const handleSubmit = async () => {
-        // console.log("Submitting semester allocation... ", activeSemester);
-
+        
         const submi_allocation_data = {
             semester_id: activeSemester,
         };
@@ -270,7 +269,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                 </TabsList>
                                 {allocateCourse === null ? "" : (<p>{allocateCourse?.code} - {allocateCourse?.title} {allocateCourse?.unit} - {allocateCourse?.allocatedTo}</p>)}
                                 <div className="flex justify-between space-x-2 mb-4">
-                                    {semesterdata && (
+                                    {(semesterdata && allocationStatus?.is_submitted) && (
                                         <PrintLink semester={semester} />
                                     )}
                                     {(semesterdata && !allocationStatus?.is_submitted) && <AllocateLecturerModal semester={semester} onSubmit={handleSubmit} />}

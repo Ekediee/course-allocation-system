@@ -126,20 +126,20 @@ const BulletinModal: React.FC<BulletinModalProps> = ({btnName, onAddBulletin}) =
           </DialogHeader>
           {/* Modal body content here */}
           <div className="flex flex-col gap-2 mt-4">
-            <div className="flex text-center gap-2 ">
+            <div className="flex items-center gap-2">
               <input
                 type="text"
                 placeholder="From year"
-                className="border p-2 rounded"
+                className="border p-2 rounded w-full"
                 value={fromYear}
                 onChange={(e) => setFromYear(e.target.value)}
                 required
               />
-              -
+              <span className="font-semibold">-</span>
               <input
                 type="text"
                 placeholder="To year"
-                className="border pl-2  rounded"
+                className="border p-2 rounded w-full"
                 value={toYear}
                 onChange={(e) => setToYear(e.target.value)}
                 required

@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import AllocateLecturerModal from "@/components/Allocations/SubmitAllocationModal";
 import PrintLink from "../PrintLink";
+import { useRouter } from "next/navigation"
 
 type AllocationStatus = {
     is_submitted: boolean;
@@ -24,8 +25,9 @@ type AllocationStatus = {
 
 const AllocationVet = ({allocationPage, url}: any) => {
     const {setPageHeader, 
-        setPageHeaderPeriod, 
-        setSelectedCourse, 
+        setPageHeaderPeriod,
+        setPrevPath, 
+        role, 
         allocateCourse, 
         isLevelFullyAllocated,
         vetDepIDs,
@@ -33,6 +35,8 @@ const AllocationVet = ({allocationPage, url}: any) => {
     } = useAppContext()
     const [activeSemester, setActiveSemester] = useState<string>('');
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
+
+    const router = useRouter();
     
     // Use a single query result based on allocationPage
     const { data: semesters, isLoading, error } = useQuery<Semester[]>({
@@ -58,7 +62,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
         setPageHeader(allocationPage)
         // setPageHeaderPeriod("First 24/25.3");
     }, [semesters, allocationPage, setPageHeader]);
-
+    
     const handleSemesterChange = (semesterId: string) => {
         setActiveSemester(semesterId);
     };
@@ -74,8 +78,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
     const queryClient = useQueryClient();
 
     const handleVetAllocation = async (semester_id: string, department_id: string) => {
-        // console.log("Submitting semester allocation... ", activeSemester);
-
+        
         const vet_allocation_data = {
             semester_id: semester_id,
             department_id: department_id
@@ -117,6 +120,65 @@ const AllocationVet = ({allocationPage, url}: any) => {
             description: (err as Error).message,
             });
         }
+
+        router.push('/vetter/course-allocations');
+    };
+
+    const handleUnblockAllocation = async (semester_id: string, department_id: string) => {
+        
+        const unblock_allocation_data = {
+            semester_id: semester_id,
+            department_id: department_id
+        };
+
+        try {
+            const res = await fetch('/api/allocation/unblock', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(unblock_allocation_data),
+            });
+
+            if (res.status.toString().startsWith("40")) {
+                const data = await res.json();
+                toast({
+                    variant: "destructive",
+                    title: data.title,
+                    description: data.error
+                });
+                return;
+            }
+
+            if (res.ok) {
+                const data = await res.json();
+                
+                toast({
+                    variant: "success",
+                    title: "Allocation unblocked Successfully",
+                    description: data.message,
+                });
+                await queryClient.invalidateQueries({ queryKey: ['unblock_status', activeSemester, department_id] });
+            }
+        } catch (err) {
+        toast({
+            variant: "destructive",
+            title: "Allocation Unblocking Failed",
+            description: (err as Error).message,
+            });
+        }
+
+        router.push('/vetter/course-allocations');
+    };
+
+    const handlePrintAllocation = async (semester_id: string, department_id: string) => {
+        
+        setPrevPath("/vetter/course-allocations/vet-allocation")
+
+        const url = `/course-allocation/reports?semester=${semester_id}&department=${department_id}`;
+  
+        // Pass the complete string to router.push
+        router.push(url);
     };
 
     if (isLoading) {
@@ -184,8 +246,8 @@ const AllocationVet = ({allocationPage, url}: any) => {
 
             {/* Semester Content */}
             <div className="p-4">
-            {semesters?.map((semester:any) => (
-                <TabsContent key={semester.id} value={semester.id} className="space-y-6">
+            {semesters?.map((semester:any, index) => (
+                <TabsContent key={index} value={semester.id} className="space-y-6">
                 <Card>
                     <CardHeader>
                         <div className="bg-gradient-to-r from-amber-200 to-amber-50 rounded-2xl p-4 md:p-6 mb-6">
@@ -206,14 +268,36 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                     Go back to list
                                     </Button>
                                 </Link>
-                    
-                                <Button 
-                                    size="sm" 
-                                    className="bg-blue-700 hover:bg-blue-800"
-                                    onClick={() => handleVetAllocation(semester.id, semester.department_id)}
-                                >
-                                    Mark as Vetted
-                                </Button>
+                                {(semester.submitted && role === 'superadmin') && (
+                                    <Button 
+                                        size="sm" 
+                                        className="bg-blue-700 hover:bg-blue-800"
+                                        onClick={() => handleUnblockAllocation(semester.id, semester.department_id)}
+                                    >
+                                        Unblock Allocation
+                                    </Button>
+                                )}
+                                
+                                {!semester.vetted && (
+                                    <Button 
+                                        size="sm" 
+                                        className="bg-blue-700 hover:bg-blue-800"
+                                        onClick={() => handleVetAllocation(semester.id, semester.department_id)}
+                                    >
+                                        Mark as Vetted
+                                    </Button>
+                                )}
+
+                                {semester.vetted && (
+                                    <Button 
+                                        variant='outline'
+                                        size="sm" 
+                                        className=""
+                                        onClick={() => handlePrintAllocation(semester.id, semester.department_id)}
+                                    >
+                                        Print
+                                    </Button>
+                                )}
                                 </div>
                             </div>
                         </div>
@@ -232,8 +316,8 @@ const AllocationVet = ({allocationPage, url}: any) => {
                             className="w-full"
                         >
                             <TabsList className="grid grid-cols-2 md:flex md:justify-start h-20 md:h-10 gap-2 mb-3 md:mb-4">
-                                {semester?.programs.map((program: Program) => (
-                                <TabsTrigger key={program.id} value={program.id} className="bg-white md:w-[274px] md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white">
+                                {semester?.programs.map((program: Program, index:any) => (
+                                <TabsTrigger key={index} value={program.id} className="bg-white md:w-[274px] md:h-8 data-[state=active]:bg-blue-700 data-[state=active]:text-white">
                                     {program.name}
                                 </TabsTrigger>
                                 ))}
@@ -298,8 +382,8 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {level.courses.map((course: Course) => (
-                                            <TableRow key={course.id}>
+                                            {level.courses.map((course: Course, index) => (
+                                            <TableRow key={index}>
                                                 <TableCell >{course.code}</TableCell>
                                                 <TableCell>{course.title}</TableCell>
                                                 <TableCell>{course.unit}</TableCell>

@@ -81,7 +81,7 @@ const CourseAllocationsPage = () => {
   }, [activeTab, searchTerm, sortColumn, sortDirection, itemsPerPage]);
 
   const router = useRouter();
-
+  
   const handleVetAllocation = (department_id: any, semester_id: any) => {
     
     setVetDepIDs({
@@ -204,7 +204,7 @@ const CourseAllocationsPage = () => {
                             variant="outline"
                             className="text-webblue-100 hover:text-blue-700"
                             onClick={() => handleVetAllocation(dept.department_id, activeTab)}
-                            disabled={dept.status !== "Allocated"}
+                            disabled={!dept.submitted}
                           >
                             View Allocation
                           </Button>

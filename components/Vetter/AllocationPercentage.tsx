@@ -37,8 +37,8 @@ const AllocationPercentage = () => {
 
       <h4 className="text-md font-semibold mb-4">Allocations by percentage</h4>
 
-      <div className="flex flex-col items-center space-y-4">
-        <MultiSegmentDonutChart data={data} size={150} strokeWidth={40} />
+      <div className="flex flex-col items-center mt-[50px] space-y-4">
+        <MultiSegmentDonutChart data={data} size={250} strokeWidth={50} />
         <div className="flex flex-col space-y-2 w-full">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
