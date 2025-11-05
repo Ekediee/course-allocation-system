@@ -129,8 +129,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [allocatedCourses, setAllocatedCourses] = useState(0);
     const [departmentalLecturers, setDepartmentalLecturers] = useState(43);
     const [totalCourses, setTotalCourses] = useState(56);
-    const [pageHeader, setPageHeader] = useState<string>("Dashboard");
-    const [pageHeaderPeriod, setPageHeaderPeriod] = useState<string>("Summer 24/25.3");
+    const [pageHeader, setPageHeader] = useState<string>("Manage Course Allocation");
+    const [pageHeaderPeriod, setPageHeaderPeriod] = useState<string>("");
     const [prevPath, setPrevPath] = useState<string>("/course-allocation");
     const [selectedCourse, setSelectedCourse] = useState<CourseSelect | null>(null);
     const [allocateCourse, setAllocateCourse] = useState<AllocatedCourse | null>(null);
