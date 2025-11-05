@@ -67,7 +67,7 @@ const Login = () => {
         const title =
           res.status === 401 ? 'Invalid credentials' :
           res.status === 403 ? 'Access denied' :
-          res.status === 400 ? 'Bad Request' :
+          res.status === 400 ? 'Invalid credentials' :
           'Login failed';
 
         toast({
