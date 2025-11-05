@@ -31,7 +31,7 @@ export const POST = async (req: Request) => {
       if (authError) return authError; // auto-clears cookies
 
       logger.error({ message: 'Course creation failed', course: reqBody, error: errorData });
-      return NextResponse.json({ error: errorData.msg || 'Failed to create course' }, { status: res.status });
+      return NextResponse.json({ title: 'Course creation failed', error: errorData.error || 'Failed to create course' }, { status: res.status });
     }
 
     const data = await res.json();
