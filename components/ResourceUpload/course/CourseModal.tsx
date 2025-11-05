@@ -143,7 +143,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
                 const data = await res.json();
                 toast({
                     variant: "destructive",
-                    title: "Something is wrong",
+                    title: data.title,
                     description: data.error || "An unknown error occurred."
                 });
                 return;

@@ -111,7 +111,7 @@ export const PUT = async (req: Request) => {
             if (authError) return authError;
 
             logger.error({ message: `Course update failed for id: ${id}`, course: reqBody, error: errorData });
-            return NextResponse.json({ error: errorData.error || 'Failed to update course' }, { status: res.status });
+            return NextResponse.json({ title: 'Course update failed', error: errorData.error || 'Failed to update course' }, { status: res.status });
         }
 
         const data = await res.json();
