@@ -18,7 +18,7 @@ const AllocationProgress = () => {
 
     const allocationProgress = overallAllocationProgress(allocation_data)
   return (
-    <Card className="mb-4 md:mb-6 md:h-[194px] md:items-center md:flex">
+    <Card className="mb-4 md:mb-6 md:h-[194px] md:items-center md:flex pl-8">
         <CardContent className="p-4 md:p-6">
             <div className="flex flex-col md:flex-row items-center">
             {/* <div className="relative h-20 w-20 md:h-24 md:w-24 mb-4 md:mb-0">
@@ -49,8 +49,17 @@ const AllocationProgress = () => {
             </div> */}
             <DonutChart value={allocationProgress[0].allocationRate} size={120} />
             <div className="md:ml-6 text-center md:text-left">
-                <h3 className="text-lg font-medium">Allocation is incomplete</h3>
-                <p className="text-gray-500 text-sm md:text-base">You have courses that are yet to be allocated, kindly see the breakdown below</p>
+                {allocationProgress[0].allocationRate === 100 ? (
+                    <div>
+                    <h3 className="text-lg font-medium">Allocation Completed</h3>
+                    <p className="text-gray-500 text-sm md:text-base">You have successfully completed your course allocation, ensure to submit</p>
+                    </div>
+                ) : (
+                    <div>
+                    <h3 className="text-lg font-medium">Allocation is incomplete</h3>
+                    <p className="text-gray-500 text-sm md:text-base">You have courses that are yet to be allocated, kindly see the breakdown below</p>
+                    </div>
+                )}
             </div>
             </div>
         </CardContent>

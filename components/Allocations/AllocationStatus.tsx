@@ -4,7 +4,7 @@ import AllocationProgressTable from './AllocationProgressTable'
 
 const AllocationStatus = () => {
   return (
-    <div className="lg:col-span-2">
+    <div className="flex-col justify-center items-center lg:col-span-2">
         {/* Allocation Progress */}
         <AllocationProgress />
 

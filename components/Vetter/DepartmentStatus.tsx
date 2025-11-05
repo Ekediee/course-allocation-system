@@ -87,7 +87,7 @@ const DepartmentStatus = () => {
   }, [activeTab, searchTerm, sortColumn, sortDirection, itemsPerPage]);
       
   return (
-    <Card className="p-4 col-span-2 h-full">
+    <Card className="p-4 col-span-2 h-full w-full">
       <div className="flex font-bold mb-2">Allocation Status By Department - Most recent 10</div>
       <div className="flex items-center justify-between mb-4">
         {isLoading ? (
@@ -102,7 +102,7 @@ const DepartmentStatus = () => {
               ))}
           </TabsList>
           {allocationStatus?.map((semester: AllocationStatus) => (
-            <TabsContent key={semester.id} value={semester.id} className="h-full">
+            <TabsContent key={semester.id} value={semester.id} className="h-full w-full">
               <Table className="w-full h-full">
                 <TableHeader>
                   <TableRow>

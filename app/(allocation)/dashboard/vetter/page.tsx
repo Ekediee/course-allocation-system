@@ -40,13 +40,13 @@ const VetterDashboard = () => {
         </div>
         {/* Right Section: Department Status and Request View */}
         <div className="flex flex-col gap-4 lg:col-span-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-full">
-            <div className="md:col-span-2 flex flex-col">
+          <div className="flex  h-full w-full">
+            {/* <div className="md:col-span-2 flex flex-col  grid grid-cols-1 md:grid-cols-4 gap-4"> */}
               <DepartmentStatus />
-            </div>
-            <div className="md:col-span-2 flex flex-col">
+            {/* </div> */}
+            {/* <div className="md:col-span-2 flex flex-col">
               <RequestView />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
