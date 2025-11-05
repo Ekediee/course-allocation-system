@@ -26,8 +26,8 @@ export const POST = async (req: any) => {
       }
 
       // Check if token expired
-      const authError = handleAuthError(res, errorData);
-      if (authError) return authError; // auto-clears cookies
+      // const authError = handleAuthError(res, errorData);
+      // if (authError) return authError;
 
       logger.error({ message: 'UMIS login failed', umisId: reqBody.umisid, error: errorData });
       return NextResponse.json({ error: errorData.msg || 'Login Failed' }, { status: res.status });
