@@ -164,6 +164,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [viewDepIDs, setViewDepIDs] = useState<VetDepartment | null>(null);
 
     const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+    const [isInMaintenace, setIsInMaintenace] = React.useState(false);
     
 
     useEffect(() => {
@@ -178,30 +179,36 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       if (mail) setEmail(mail);
     }, []);
 
+    useEffect(() => {
+      // This function fetches the latest status from the backend
+      const checkMaintenanceStatus = async () => {
+        try {
+          const response = await fetch('/api/maintenance-status');
+          if (response.ok) {
+            const data = await response.json();
+            // Update the global state. This will cause all components to re-render if the value changes.
+            setIsInMaintenace(data.isMaintenanceMode);
+          }
+        } catch (error) {
+          console.error("Failed to fetch maintenance status:", error);
+        }
+      };
+
+      checkMaintenanceStatus(); // Check immediately on app load
+      const intervalId = setInterval(checkMaintenanceStatus, 30000); // Check again every 30 seconds
+
+      // Cleanup function to stop the interval when the app is closed
+      return () => clearInterval(intervalId);
+    }, []); // The empty array [] means this runs only once.
+
 
     const login = (name: string, role: string, department: string, email: string) => {
       
-      // localStorage.setItem('access_token', token);
-      // Cookies.set('name', name, { path: '/' });
-      // Cookies.set('role', role, { path: '/' });
-      // Cookies.set('department', department, { path: '/' });
-      // Cookies.set('email', email, { path: '/' });
       setRole(role);
       setName(name);
       setEmail(email);
       setDepartment(department);
     };
-
-    // const logout = () => {
-    //   Cookies.remove('name');
-    //   Cookies.remove('role');
-    //   Cookies.remove('email');
-    //   Cookies.remove('department');
-    //   setEmail(null);
-    //   setRole(null);
-    //   setName(null);
-    //   setDepartment(null);
-    // };
 
     const computeAllocationProgress = (allocationData: Semester[]): AllocationStat[] => {
       const stats: AllocationStat[] = [];
@@ -737,6 +744,32 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const toggleMaintenanceMode = async () => {
+      const newStatus = !isInMaintenace; // The state we want to set
+      
+      try {
+        // Call the API endpoint that changes the setting
+        const response = await fetch('/api/maintenance-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enable: newStatus }),
+        });
+
+        if (!response.ok) {
+          // Show an error toast if the API call fails
+          console.error("Failed to update maintenance mode");
+          return;
+        }
+        
+        // If the API call is successful, update our local state immediately.
+        setIsInMaintenace(newStatus);
+        // You can add a success toast here
+        
+      } catch (error) {
+        console.error("Error toggling maintenance mode:", error);
+      }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -764,7 +797,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments,
                 courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview,
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
-                fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen
+                fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen,
+                isInMaintenace, setIsInMaintenace, toggleMaintenanceMode
             }}
         >
             { children }

@@ -9,8 +9,16 @@ import VetterStats from '@/components/Vetter/VetterStats'
 import ComplianceScore from '@/components/Vetter/ComplianceScore'
 import AllocationPercentage from '@/components/Vetter/AllocationPercentage'
 import DepartmentStatus from '@/components/Vetter/DepartmentStatus'
+import { useAppContext } from '@/contexts/ContextProvider'
 
 const VetterDashboard = () => {
+  const {
+      toggleMaintenanceMode,
+      isInMaintenace,
+      role, 
+      email
+    } = useAppContext()
+    
   return (
     <div className="p-4 md:p-6 overflow-y-auto">
       
@@ -23,6 +31,13 @@ const VetterDashboard = () => {
             <p className="text-lg font-bold">2024/2025</p>
           </div>
         </Card>
+        {(role === 'superadmin' && email === 'ague@babcock.edu.ng') && (
+          <Button className="bg-blue-600 p-6 text-white font-bold hover:bg-blue-700"
+            onClick={toggleMaintenanceMode}
+          >
+            {isInMaintenace ? "Deactivate Maintenance" : "Activate Maintenance"}
+          </Button>
+        )}
         <Button className="bg-blue-600 p-6 text-white font-bold hover:bg-blue-700">
           Generate Summary Report
         </Button>

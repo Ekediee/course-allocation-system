@@ -34,6 +34,7 @@ const Login = () => {
     setUsername,
     password,
     setPassword,
+    isInMaintenace,
     login
   } = useAppContext()
 
@@ -133,74 +134,81 @@ const Login = () => {
             <h2 className="text-2xl font-bold">Login with UMIS Credentials</h2>
             <p className="text-gray-600">Enter your details to login.</p>
           </div>
-
           {/* Login Form */}
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-4">
-              <Label htmlFor="umisid" className="flex items-center mb-2">
-                UMIS ID<span className="text-blue-500 ml-1">*</span>
-              </Label>
-              <Input
-                id="umisid"
-                // type="text"
-                placeholder="enter your umis id"
-                className="h-12"
-                // value={username} 
-                // onChange={(e) => setUsername(e.target.value)}
-                // required
-                {...register('umisid')}
-              />
-              {errors.umisid && <p className="text-red-600 text-sm">{errors.umisid.message}</p>}
-            </div>
-            
-            <div className="mb-4">
-              <Label htmlFor="password" className="flex items-center mb-2">
-                Password<span className="text-blue-500 ml-1">*</span>
-              </Label>
-              <div className="relative">
+          {isInMaintenace ? (
+            <>
+              <div className="mb-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+                <p>The system is currently under maintenance. Please try again later.</p>
+              </div>
+            </>
+          ) : (
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="mb-4">
+                <Label htmlFor="umisid" className="flex items-center mb-2">
+                  UMIS ID<span className="text-blue-500 ml-1">*</span>
+                </Label>
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••••"
-                  className="h-12 pr-10"
-                  // value={password}
-                  // onChange={(e) => setPassword(e.target.value)}
+                  id="umisid"
+                  // type="text"
+                  placeholder="enter your umis id"
+                  className="h-12"
+                  // value={username} 
+                  // onChange={(e) => setUsername(e.target.value)}
                   // required
-                  {...register('password')}
+                  {...register('umisid')}
                 />
-                <button 
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                >
-                  {showPassword ? 
-                    <EyeOffIcon className="h-5 w-5" /> : 
-                    <EyeIcon className="h-5 w-5" />
-                  }
-                </button>
+                {errors.umisid && <p className="text-red-600 text-sm">{errors.umisid.message}</p>}
               </div>
-              {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
-            </div>
-            
-            {/* <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
-                <label
-                  htmlFor="remember"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Keep me logged in
-                </label>
+              
+              <div className="mb-4">
+                <Label htmlFor="password" className="flex items-center mb-2">
+                  Password<span className="text-blue-500 ml-1">*</span>
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••••"
+                    className="h-12 pr-10"
+                    // value={password}
+                    // onChange={(e) => setPassword(e.target.value)}
+                    // required
+                    {...register('password')}
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                  >
+                    {showPassword ? 
+                      <EyeOffIcon className="h-5 w-5" /> : 
+                      <EyeIcon className="h-5 w-5" />
+                    }
+                  </button>
+                </div>
+                {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
               </div>
-              <a href="#" className="text-sm font-medium text-blue-600 hover:underline">
-                Forgot password?
-              </a>
-            </div> */}
-            
-            <Button disabled={isSubmitting} type="submit" className="w-full h-12 bg-blue-800 hover:bg-blue-900">
-              {isSubmitting ? 'Logging in...' : 'Login'}
-            </Button>
-          </form>
+              
+              {/* <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="remember" />
+                  <label
+                    htmlFor="remember"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Keep me logged in
+                  </label>
+                </div>
+                <a href="#" className="text-sm font-medium text-blue-600 hover:underline">
+                  Forgot password?
+                </a>
+              </div> */}
+              
+              <Button disabled={isSubmitting} type="submit" className="w-full h-12 bg-blue-800 hover:bg-blue-900">
+                {isSubmitting ? 'Logging in...' : 'Login'}
+              </Button>
+            </form>
+          )}
           <div className="flex justify-center items-center mt-6 gap-2">
             <p className="text-sm text-gray-600">Admin User?</p>
             <Link href="/admin/login" className="flex justify-center item-center text-sm text-blue-600 hover:underline inline-block">
