@@ -48,6 +48,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
         showDeptCombo,
         showProgCombo,
         showSpecCombo,
+        isEditModalOpen
     } = useAppContext();
     const [selectedBulletin, setSelectedBulletin] = useState('');
     const [selectedSchool, setSelectedSchool] = useState('');
@@ -310,12 +311,14 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
   return (
     <>
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogTrigger asChild>
-                <Button className="bg-blue-700 hover:bg-blue-400 text-white">
-                <Plus className="h-4 w-4" />
-                { btnName }
-                </Button>
-            </DialogTrigger>
+            {isEditModalOpen === false && (
+                <DialogTrigger asChild>
+                    <Button className="bg-blue-700 hover:bg-blue-400 text-white">
+                    <Plus className="h-4 w-4" />
+                    { btnName }
+                    </Button>
+                </DialogTrigger>
+            )}
             <DialogContent className="md:max-w-[800px] w-full max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                 <div className="flex items-center justify-center gap-2">

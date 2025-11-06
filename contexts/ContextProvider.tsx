@@ -162,6 +162,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [levelData, setLevelData] = useState<LevelType | null>(null);
     const [vetDepIDs, setVetDepIDs] = useState<VetDepartment | null>(null);
     const [viewDepIDs, setViewDepIDs] = useState<VetDepartment | null>(null);
+
+    const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
     
 
     useEffect(() => {
@@ -681,6 +683,16 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchCoursesMain = async () => {
+      try {
+          const data = await apiFetch('/api/manage-uploads/course/main');
+          
+          return data
+      } catch (error) {
+          console.error('Failed to fetch courses:', error);
+      }
+    };
+
     const fetchUsers = async () => {
       try {
           const data = await apiFetch('/api/manage-uploads/user');
@@ -752,7 +764,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchUsers, fetchAdminUsers, fetchSchoolNameAdmin, fetchAdminDepartments,
                 courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview,
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
-                fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint
+                fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen
             }}
         >
             { children }

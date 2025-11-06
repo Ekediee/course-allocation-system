@@ -51,6 +51,10 @@ const VetterSideBar = () => {
             <TableOfContents className="h-5 w-5 mr-3" />
             <span>View Courses</span>
           </Link>
+          <Link href="/vetter/manage-courses" className={` ${pathname.includes('manage-courses') ?  activeLink : normalLink }`}>
+            <TableOfContents className="h-5 w-5 mr-3" />
+            <span>Manage Courses</span>
+          </Link>
           {role === 'superadmin' &&
             <Link href="/vetter/admin-management" className={` ${pathname.includes('admin-management') ?  activeLink : normalLink }`}>
               <Users className="h-5 w-5 mr-3" />

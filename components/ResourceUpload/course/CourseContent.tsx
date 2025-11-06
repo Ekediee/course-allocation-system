@@ -24,14 +24,16 @@ const CourseContent = () => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [itemsPerPage, setItemsPerPage] = React.useState(13);
     const [selectedCourse, setSelectedCourse] = React.useState<any>(null);
-    const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+    
     const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
     const { toast } = useToast();
 
     const {
         fetchCourses,
         isUploading,
-        role
+        role,
+        isEditModalOpen, 
+        setIsEditModalOpen
     } = useAppContext()
 
     const queryClient = useQueryClient();
