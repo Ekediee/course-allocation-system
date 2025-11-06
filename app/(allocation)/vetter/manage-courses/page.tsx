@@ -1,5 +1,6 @@
 "use client"
 import CourseMainModal from '@/components/ResourceUpload/course/CourseMainModal';
+import SearchTable from '@/components/SearchTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton';
@@ -16,7 +17,7 @@ const ManageCourses = () => {
     const [sortColumn, setSortColumn] = React.useState('');
     const [sortDirection, setSortDirection] = React.useState('asc');
     const [currentPage, setCurrentPage] = React.useState(1);
-    const [itemsPerPage, setItemsPerPage] = React.useState(13);
+    const [itemsPerPage, setItemsPerPage] = React.useState(10);
     const [selectedCourse, setSelectedCourse] = React.useState<any>(null);
     const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
@@ -88,7 +89,8 @@ const ManageCourses = () => {
             </CardHeader>
             <CardContent>
                 <div className="overflow-x-auto">
-                    <Table>
+                    <SearchTable setSearchTerm={setSearchTerm} />
+                    <Table className='mt-2'>
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="cursor-pointer" onClick={() => { setSortColumn('code'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
