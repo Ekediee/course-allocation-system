@@ -32,7 +32,7 @@ const VetterDashboard = () => {
           </div>
         </Card>
         {(role === 'superadmin' && email === 'ague@babcock.edu.ng') && (
-          <Button className="bg-blue-600 p-6 text-white font-bold hover:bg-blue-700"
+          <Button variant={isInMaintenace ? "destructive" : "default"} className="p-6 font-bold"
             onClick={toggleMaintenanceMode}
           >
             {isInMaintenace ? "Deactivate Maintenance" : "Activate Maintenance"}
