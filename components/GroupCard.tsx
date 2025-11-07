@@ -21,7 +21,7 @@ interface GroupCardProps {
     name: string;
     lecturer: string;
     classSize: string;
-    classHours: string;
+    classOption: string;
   };
   onDelete?: (id: number) => void;
   onUpdate: (id: number, field: string, value: string) => void;
@@ -30,7 +30,9 @@ interface GroupCardProps {
 
 const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardProps) => {
     const {setPageHeader, 
-        fetchAllLecturers
+        fetchAllLecturers,
+        fetchClassOptions,
+        utoken, uid
     } = useAppContext();
 
     const queryResult = useQuery<Lecturer[]>({
@@ -38,7 +40,14 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
         queryFn: fetchAllLecturers
     });
 
-    const { data: lecturers, isLoading, error } = queryResult;
+    const { data: lecturers, isLoading: lecturersLoading } = queryResult;
+
+    const classOptionQueryResult = useQuery<Lecturer[]>({
+        queryKey: ['classOption'],
+        queryFn: fetchClassOptions
+    });
+
+    const { data: class_options, isLoading: classOptionLoading } = classOptionQueryResult;
     
     return (
         <Card className="mb-6 relative group">
@@ -59,7 +68,7 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
           <CardContent className="p-4 ">
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+                <div className='flex flex-col gap-2'>
                   {/* <label htmlFor={`lecturer-${group.id}`} className="text-sm font-medium block mb-1.5">
                     Lecturer's Name
                   </label> */}
@@ -69,6 +78,14 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
                     data={lecturers ?? []}
                     placeholder='Select a lecturer'
                     label="Lecturer's Name"
+                  />
+
+                  <Combobox
+                    value={group.classOption}
+                    onChange={(val) => onUpdate(group.id, 'classOption', val)}
+                    data={class_options ?? []}
+                    placeholder='Select a class option'
+                    label="Class Option"
                   />
                   {/* <Select 
                     value={group.lecturer}

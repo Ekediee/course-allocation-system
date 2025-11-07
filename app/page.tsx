@@ -32,8 +32,6 @@ const Login = () => {
   const {
     username,
     setUsername,
-    password,
-    setPassword,
     isInMaintenace,
     login
   } = useAppContext()
@@ -81,7 +79,6 @@ const Login = () => {
         const data = await res.json();
 
         login(data.user.name, data.user.role, data.user.department, data.user.email);
-
         
         // Redirect based on role
         switch (data.user.role) {

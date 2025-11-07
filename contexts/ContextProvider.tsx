@@ -140,6 +140,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         name: "Group A",
         lecturer: "",
         classSize: "",
+        classOption: "",
       },
     ]);
     const [selectedBulletin, setSelectedBulletin] = useState<string>('');
@@ -153,6 +154,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [role, setRole] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
+    const [utoken, setUToken] = useState<string | null>(null);
+    const [uid, setUId] = useState<string | null>(null);
     const [department, setDepartment] = useState<string | null>(null);
     const [logoutMenuOpen, setLogoutMenuOpen] = useState(false);
     const [sessionData, setSessionData] = useState<Academic_Session | null>(null);
@@ -172,11 +175,15 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       const nameFromCookie = Cookies.get('name');
       const dept = Cookies.get('department') || 'Department';
       const mail = Cookies.get('email');
+      const utoken = Cookies.get('utoken');
+      const uid = Cookies.get('uid');
     
       if (roleFromCookie) setRole(roleFromCookie);
       if (nameFromCookie) setName(nameFromCookie);
       if (dept) setDepartment(dept);
       if (mail) setEmail(mail);
+      if (utoken) setUToken(utoken);
+      if (uid) setUId(uid);
     }, []);
 
     useEffect(() => {
@@ -337,6 +344,18 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const fetchAllLecturers = async () => {
       const data = await apiFetch(`/api/lecturers/all`);
+      return data;
+    };
+
+    const fetchClassOptions = async () => {
+      // const data = await apiFetch(`/api/allocation/class-options`);
+      const data = await apiFetch('/api/allocation/class-options', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({utoken, uid}),
+      });
       return data;
     };
 
@@ -798,7 +817,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview,
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
                 fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen,
-                isInMaintenace, setIsInMaintenace, toggleMaintenanceMode
+                isInMaintenace, setIsInMaintenace, toggleMaintenanceMode, fetchClassOptions, utoken, uid, setUToken, setUId
             }}
         >
             { children }

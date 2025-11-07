@@ -24,7 +24,8 @@ const AllocateComponent = () => {
     updateCourse, 
     setAllocateCourse,
     groups, setGroups,
-    token 
+    token,
+    utoken, uid 
   } = useAppContext()
 
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
@@ -72,12 +73,12 @@ const AllocateComponent = () => {
                         name: alloc.groupName,
                         lecturer: alloc.lecturer, // Or lecturer ID if your Combobox uses IDs
                         classSize: alloc.classSize.toString(),
-                        classHours: "-",
+                        classOption: alloc.classOption,
                     }));
                     setGroups(existingGroups);
                 } else {
                     // Handle case where no details are found (maybe reset to default)
-                    setGroups([{ id: 0, name: "Group A", lecturer: "", classSize: "", classHours: "-" }]);
+                    setGroups([{ id: 0, name: "Group A", lecturer: "", classSize: "", classOption: "" }]);
                 }
             } catch (error) {
                 console.error("Failed to fetch allocation details:", error);
@@ -97,7 +98,8 @@ const AllocateComponent = () => {
     }
   }, [selectedCourse, setGroups, isEditMode, toast, token]);
   
-
+  // console.log('Utoken ', utoken);
+  // console.log('UId ', uid);
   const handleAddGroup = () => {
     const newId = groups.length;
     setGroups([
@@ -105,9 +107,9 @@ const AllocateComponent = () => {
       {
         id: newId,
         name: `Group ${String.fromCharCode(65 + newId)}`,
-        lecturer: "-",
-        classSize: "-",
-        classHours: "-",
+        lecturer: "",
+        classSize: "",
+        classOption: "",
       },
     ]);
   };
@@ -152,6 +154,7 @@ const AllocateComponent = () => {
           isAllocated: true,
           allocatedTo: group.lecturer,
           groupName: group.name,
+          class_option: group.classOption,
         });
       }
       
@@ -210,6 +213,7 @@ const AllocateComponent = () => {
           isAllocated: true,
           allocatedTo: group.lecturer,
           groupName: group.name,
+          class_option: group.classOption,
         });
       }
     });

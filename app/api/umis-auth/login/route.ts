@@ -44,9 +44,9 @@ export const POST = async (req: any) => {
     logger.info({ message: 'UMIS login successful', user });
     const response = NextResponse.json({
       user,
-      message: 'Login successful' 
+      message: 'Login successful', 
     });
-
+    
     response.cookies.set('access_token_cookie', data.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -68,6 +68,14 @@ export const POST = async (req: any) => {
       sameSite: 'lax',
     });
     response.cookies.set('email', user.email, {
+      path: '/',
+      sameSite: 'lax',
+    });
+    response.cookies.set('utoken', data.utoken, {
+      path: '/',
+      sameSite: 'lax',
+    });
+    response.cookies.set('uid', data.uid, {
       path: '/',
       sameSite: 'lax',
     });
