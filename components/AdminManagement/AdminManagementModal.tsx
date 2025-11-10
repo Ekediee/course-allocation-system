@@ -44,7 +44,7 @@ const AdminManagementModal: React.FC<AdminManagementModalProps> = ({btnName, onA
     const [file, setFile] = useState<File | null>(null);
 
     const { 
-        fetchDepartmentName,
+        fetchAdminDepartments,
         setIsUploading
     } = useAppContext();
 
@@ -205,7 +205,7 @@ const AdminManagementModal: React.FC<AdminManagementModalProps> = ({btnName, onA
 
     const { data: departments = [], isLoading: loadingDepartments } = useQuery<Items[]>({
         queryKey: ["departments"],
-        queryFn: fetchDepartmentName,
+        queryFn: fetchAdminDepartments,
     });
     
   return (
