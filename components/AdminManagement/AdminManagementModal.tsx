@@ -231,7 +231,7 @@ const AdminManagementModal: React.FC<AdminManagementModalProps> = ({btnName, onA
                     <div className="flex gap-2">
                         <div className="w-full">
                             <Label htmlFor="department">Select Department</Label>
-                            {!loadingDepartments && <ComboboxMain data={departments} onSelect={setSelectedDepartment} />}
+                            {!loadingDepartments && <ComboboxMain data={departments} onSelect={setSelectedDepartment} initialValue={selectedDepartment} />}
                         </div>
                         <div className="w-full">
                             <Label htmlFor="name">Name</Label>

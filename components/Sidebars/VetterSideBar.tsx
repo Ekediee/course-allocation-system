@@ -21,7 +21,9 @@ import {
     Menu,
     X,
     Upload,
-    TableOfContents
+    TableOfContents,
+    Settings2,
+    Settings
   } from "lucide-react";
   import { activeLink, normalLink } from '@/data/constants';
   import { useAppContext } from '@/contexts/ContextProvider';
@@ -33,7 +35,7 @@ const VetterSideBar = () => {
     const pathname = usePathname();
   return (
     <>
-        <div className="py-4 space-y-1 px-3">
+        <div className="py-4 space-y-1 px-3 pb-12">
           {/* <p className="px-4 text-xs font-medium text-gray-500 mb-2">NAV</p> */}
           <Link href="/dashboard/vetter" className={` ${pathname.includes('dashboard') ?  activeLink : normalLink }`}>
             <Blocks className="h-5 w-5 mr-3" />
@@ -61,8 +63,22 @@ const VetterSideBar = () => {
               <span>Admin Management</span>
             </Link>
           }
+          
         </div>
-    </>
+        {role === 'superadmin' &&
+          <div>
+            <div className="pt-4 pb-2 px-2 border-b border-gray-200">
+              <h3 className="flex items-center gap-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <Settings /> Settings
+              </h3>
+            </div>
+            <Link href="/system-settings" className={` ${pathname.includes('system-settings') ?  activeLink : normalLink }`}>
+              <Settings2 className="h-5 w-5 mr-3" />
+              <span>System Configs</span>
+            </Link>
+          </div>
+        }
+  </>
   )
 }
 

@@ -19,6 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from '@/components/ui/toaster';
 import CopyRight from "@/components/CopyRight";
+import InfoBanner from "@/components/InfoBanner";
 
 const schema = z.object({
   umisid: z.string().min(5, { message: 'Min 5 characters' }),
@@ -33,6 +34,7 @@ const Login = () => {
     username,
     setUsername,
     isInMaintenace,
+    isAllocationClosed,
     login
   } = useAppContext()
 
@@ -133,11 +135,15 @@ const Login = () => {
           </div>
           {/* Login Form */}
           {isInMaintenace ? (
-            <>
-              <div className="mb-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
-                <p>The system is currently under maintenance. Please try again later.</p>
-              </div>
-            </>
+            <InfoBanner 
+              message="The system is currently under maintenance. Please try again later."
+              color="yellow"
+            />
+          ) : isAllocationClosed ? (
+            <InfoBanner 
+              message="The course allocation period is closed. Contact the administrator for more information."
+              color="orange"
+            />
           ) : (
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">

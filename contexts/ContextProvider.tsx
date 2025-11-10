@@ -168,6 +168,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
     const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
     const [isInMaintenace, setIsInMaintenace] = React.useState(false);
+    const [isAllocationClosed, setIsAllocationClosed] = React.useState(false);
     
 
     useEffect(() => {
@@ -207,6 +208,27 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       // Cleanup function to stop the interval when the app is closed
       return () => clearInterval(intervalId);
     }, []); // The empty array [] means this runs only once.
+
+    useEffect(() => {
+      // This function fetches the latest status from the backend
+      const checkAllocationCloseStatus = async () => {
+        try {
+          const response = await fetch('/api/close-allocation-status');
+          if (response.ok) {
+            const data = await response.json();
+            
+            setIsAllocationClosed(data.isAllocationClosed);
+          }
+        } catch (error) {
+          console.error("Failed to fetch maintenance status:", error);
+        }
+      };
+
+      checkAllocationCloseStatus(); // Check immediately on app load
+      const intervalId = setInterval(checkAllocationCloseStatus, 30000); // Check again every 30 seconds
+
+      return () => clearInterval(intervalId);
+    }, []);
 
 
     const login = (name: string, role: string, department: string, email: string) => {
@@ -782,7 +804,31 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
         
         // If the API call is successful, update our local state immediately.
         setIsInMaintenace(newStatus);
-        // You can add a success toast here
+        // Add a success toast here
+        
+      } catch (error) {
+        console.error("Error toggling maintenance mode:", error);
+      }
+    };
+
+    const toggleCloseAllocationStatus = async () => {
+      const newStatus = !isAllocationClosed; // The state we want to set
+      
+      try {
+        // Call the API endpoint that changes the setting
+        const response = await fetch('/api/close-allocation-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enable: newStatus }),
+        });
+
+        if (!response.ok) {
+          console.error("Failed to update maintenance mode");
+          return;
+        }
+        
+        // If the API call is successful, update our local state immediately.
+        setIsAllocationClosed(newStatus);
         
       } catch (error) {
         console.error("Error toggling maintenance mode:", error);
@@ -817,7 +863,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 courseTypeData, fetchCourseTypes, levelData, fetchAllocationStatus, fetchAllocatationStatusOverview,
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
                 fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen,
-                isInMaintenace, setIsInMaintenace, toggleMaintenanceMode, fetchClassOptions, utoken, uid, setUToken, setUId
+                isInMaintenace, setIsInMaintenace, toggleMaintenanceMode, fetchClassOptions, utoken, uid, setUToken, setUId,
+                isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus
             }}
         >
             { children }

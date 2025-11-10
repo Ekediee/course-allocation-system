@@ -31,13 +31,13 @@ const VetterDashboard = () => {
             <p className="text-lg font-bold">2024/2025</p>
           </div>
         </Card>
-        {(role === 'superadmin' && email === 'ague@babcock.edu.ng') && (
+        {/* {(role === 'superadmin' && email === 'ague@babcock.edu.ng') && (
           <Button variant={isInMaintenace ? "destructive" : "default"} className="p-6 font-bold"
             onClick={toggleMaintenanceMode}
           >
             {isInMaintenace ? "Deactivate Maintenance" : "Activate Maintenance"}
           </Button>
-        )}
+        )} */}
         <Button className="bg-blue-600 p-6 text-white font-bold hover:bg-blue-700">
           Generate Summary Report
         </Button>
