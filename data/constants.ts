@@ -4,6 +4,7 @@ export interface Course {
   code: string;
   title: string;
   unit: number;
+  specialization: string;
   isAllocated: boolean;
   allocatedTo?: string;
   programCourseId?: string;

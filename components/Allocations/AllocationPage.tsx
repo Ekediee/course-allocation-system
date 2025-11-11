@@ -291,9 +291,10 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                             <TableHead>Course Code</TableHead>
                                             <TableHead>Course Title</TableHead>
                                             <TableHead>Unit</TableHead>
-                                            <TableHead className="text-center">Allocated To</TableHead>
-                                            <TableHead className="text-center">Action</TableHead>
-                                            <TableHead className="text-center">Edit</TableHead>
+                                            <TableHead >Specialization</TableHead>
+                                            <TableHead >Allocated To</TableHead>
+                                            <TableHead >Action</TableHead>
+                                            <TableHead >Edit</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -302,8 +303,9 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                                 <TableCell >{course.code}</TableCell>
                                                 <TableCell>{course.title}</TableCell>
                                                 <TableCell>{course.unit}</TableCell>
-                                                <TableCell className="text-center">{course.allocatedTo || "-"}</TableCell>
-                                                <TableCell className="text-center">
+                                                <TableCell >{course.specialization}</TableCell>
+                                                <TableCell >{course.allocatedTo || "-"}</TableCell>
+                                                <TableCell >
                                                 {course.isAllocated ? (
                                                     <Badge variant="outline" className="text-green-500">
                                                         Allocated
@@ -333,7 +335,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                                     </Badge>
                                                 )}
                                                 </TableCell>
-                                                <TableCell className="text-center">
+                                                <TableCell >
                                                     {(course.isAllocated && !allocationStatus?.is_submitted) ? (
                                                         <Link
                                                             href={{
