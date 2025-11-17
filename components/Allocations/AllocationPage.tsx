@@ -30,7 +30,8 @@ const AllocationPage = ({allocationPage, url}: any) => {
         isLevelFullyAllocated,
         fetchSemesterDataDE,
         fetchSemesterData,
-        fetchAllocationStatus
+        fetchAllocationStatus,
+        isAllocationClosed
     } = useAppContext()
     const [activeSemester, setActiveSemester] = useState<string>('');
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
@@ -311,54 +312,71 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                                         Allocated
                                                     </Badge>
                                                 ) : (
-                                                    <Badge variant="outline" >
-                                                        <Link 
-                                                            href={{
-                                                                pathname:"/course-allocation/allocate",
-                                                                query: {
-                                                                    from: url,
-                                                                },
-                                                            }} 
-                                                            className="text-blue-500 hover:text-blue-700"
-                                                            onClick={() => setSelectedCourse({
-                                                                courseId: course.id,
-                                                                courseCode: course.code,
-                                                                courseTitle: course.title,
-                                                                semesterId: semester.id,
-                                                                programId: program.id,
-                                                                programName: program.name,
-                                                                levelId: level.id,
-                                                            })}
+                                                    <>
+                                                    {isAllocationClosed ? (
+                                                        <Button variant="secondary" 
+                                                            className="text-gray-500" 
+                                                            disabled={isAllocationClosed}
                                                         >
                                                             Allocate Lecturer
-                                                        </Link>
-                                                    </Badge>
+                                                        </Button>
+                                                    ) : (
+                                                        <Badge variant="outline" >
+                                                            <Link 
+                                                                href={{
+                                                                    pathname:"/course-allocation/allocate",
+                                                                    query: {
+                                                                        from: url,
+                                                                    },
+                                                                }} 
+                                                                className="text-blue-500 hover:text-blue-700"
+                                                                onClick={() => setSelectedCourse({
+                                                                    courseId: course.id,
+                                                                    courseCode: course.code,
+                                                                    courseTitle: course.title,
+                                                                    semesterId: semester.id,
+                                                                    programId: program.id,
+                                                                    programName: program.name,
+                                                                    levelId: level.id,
+                                                                })}
+                                                            >
+                                                                Allocate Lecturer
+                                                            </Link>
+                                                        </Badge>
+                                                    )}
+                                                    </>
                                                 )}
                                                 </TableCell>
                                                 <TableCell >
                                                     {(course.isAllocated && !allocationStatus?.is_submitted) ? (
-                                                        <Link
-                                                            href={{
-                                                                pathname: "/course-allocation/allocate",
-                                                                query: {
-                                                                    from: url,
-                                                                },
-                                                            }}
-                                                            onClick={() => setSelectedCourse({
-                                                                courseId: course.id,
-                                                                courseCode: course.code,
-                                                                courseTitle: course.title,
-                                                                semesterId: semester.id,
-                                                                programId: program.id,
-                                                                programName: program.name,
-                                                                levelId: level.id,
-                                                                allocatedTo: course.allocatedTo,
-                                                                isAllocated: course.isAllocated,
-                                                                programCourseId: course.programCourseId,
-                                                            })}
-                                                        >
-                                                            <SquarePen className="cursor-pointer text-blue-500 hover:text-blue-700" />
-                                                        </Link>
+                                                        <>
+                                                            {isAllocationClosed ? (
+                                                                <SquarePen className="text-gray-300" />
+                                                            ) : (
+                                                                <Link
+                                                                    href={{
+                                                                        pathname: "/course-allocation/allocate",
+                                                                        query: {
+                                                                            from: url,
+                                                                        },
+                                                                    }}
+                                                                    onClick={() => setSelectedCourse({
+                                                                        courseId: course.id,
+                                                                        courseCode: course.code,
+                                                                        courseTitle: course.title,
+                                                                        semesterId: semester.id,
+                                                                        programId: program.id,
+                                                                        programName: program.name,
+                                                                        levelId: level.id,
+                                                                        allocatedTo: course.allocatedTo,
+                                                                        isAllocated: course.isAllocated,
+                                                                        programCourseId: course.programCourseId,
+                                                                    })}
+                                                                >
+                                                                    <SquarePen className="cursor-pointer text-blue-500 hover:text-blue-700" />
+                                                                </Link>
+                                                            )}
+                                                        </>
                                                     ) : (
                                                         <SquarePen className="text-gray-300" />
                                                     )}

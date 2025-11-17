@@ -16,6 +16,10 @@ import { useAppContext } from "@/contexts/ContextProvider";
 import { getStatusIcon } from '@/components/Vetter/DepartmentStatus';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Progress } from '@/components/ui/progress';
+import { ComboboxMain } from '@/components/ComboboxMain';
+import { int64 } from 'zod';
+import { MetricType } from '@/components/Vetter/VetterStats';
 
 type Department = {
     sn: number;
@@ -39,20 +43,33 @@ const CourseAllocationsPage = () => {
     programsInProgress: 16,
   };
 
+  const rowCount = [
+    {id: '10', name: '10'},
+    {id: '50', name: '50'},
+    {id: '100', name: '100'}
+  ]
+
   const {
     fetchAllocatationStatusOverview,
+    fetchAllocatationMetrics,
     setVetDepIDs, vetDepIDs
   } = useAppContext()
+
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [pageItems, setPageItems] = useState('10');
 
   // check allocation submission status
   const { data: allocationStatus, isLoading } = useQuery<AllocationStatus[]>({
       queryKey: ['allocation_status'],
       queryFn: fetchAllocatationStatusOverview,
+  });
+
+  const { data: metrics, isLoading: metricsLoading } = useQuery<MetricType>({
+      queryKey: ['metrics'],
+      queryFn: fetchAllocatationMetrics,
   });
 
   const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
@@ -65,6 +82,8 @@ const CourseAllocationsPage = () => {
   
   // get currently selected semester
   const currentSemester = allocationStatus?.find(s => s.id === activeTab);
+
+  let itemsPerPage = Number(pageItems)
 
   const { paginated, totalPages } = useTable({
     data: currentSemester?.departments ?? [],
@@ -102,34 +121,34 @@ const CourseAllocationsPage = () => {
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="bg-weak-100">
             <CardHeader>
-              <CardTitle>Total Programs Allocated</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{stats.totalPrograms}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-weak-100">
-            <CardHeader>
               <CardTitle>Total Courses Allocated</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{stats.totalCourses}</p>
+              <p className="text-4xl font-bold">{metrics?.allocated_courses}</p>
             </CardContent>
           </Card>
           <Card className="bg-weak-100">
             <CardHeader>
-              <CardTitle>Departments Submitted Allocations</CardTitle>
+              <CardTitle>Allocation in progress</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{stats.departmentsSubmitted}</p>
+              <p className="text-4xl font-bold">{metrics?.allocation_in_progress}</p>
             </CardContent>
           </Card>
           <Card className="bg-weak-100">
             <CardHeader>
-              <CardTitle>Programs Allocation in Progress</CardTitle>
+              <CardTitle>Allocation not started</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{stats.programsInProgress}</p>
+              <p className="text-4xl font-bold">{metrics?.allocation_not_started}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-weak-100">
+            <CardHeader>
+              <CardTitle>Completed allocations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold">{metrics?.allocation_submitted}</p>
             </CardContent>
           </Card>
         </div>
@@ -176,6 +195,24 @@ const CourseAllocationsPage = () => {
                           HOD
                         </div>
                       </TableHead>
+                      <TableHead className="cursor-pointer" onClick={() => { setSortColumn('hod_name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                        <div className="flex items-center">
+                          <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                          Total Courses
+                        </div>
+                      </TableHead>
+                      <TableHead className="cursor-pointer" onClick={() => { setSortColumn('hod_name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                        <div className="flex items-center">
+                          <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                          Allocated Courses
+                        </div>
+                      </TableHead>
+                      <TableHead className="cursor-pointer" onClick={() => { setSortColumn('hod_name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
+                        <div className="flex items-center">
+                          <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
+                          Allocation Rate
+                        </div>
+                      </TableHead>
                       <TableHead className="cursor-pointer" onClick={() => { setSortColumn('status'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}}>
                         <div className="flex items-center">
                           <ArrowDownWideNarrow className="h-4 w-4 mr-2" />
@@ -196,6 +233,16 @@ const CourseAllocationsPage = () => {
                         {/* <TableCell className="font-medium">{dept.sn}</TableCell> */}
                         <TableCell>{dept.department_name}</TableCell>
                         <TableCell>{dept.hod_name}</TableCell>
+                        <TableCell className="text-center">{dept.total_courses}</TableCell>
+                        <TableCell className="text-center">{dept.total_courses_allocated}</TableCell>
+                        <TableCell>
+                          <div className="col-span-3 pr-4">
+                            <div className="flex items-center gap-2">
+                              <Progress value={dept.allocation_rate} className="h-2" />
+                              <span className="text-xs md:text-sm text-gray-500">{dept.allocation_rate}%</span>
+                            </div>
+                          </div>
+                        </TableCell>
                         <TableCell className="flex items-center gap-2">
                           {getStatusIcon(dept.status)} {dept.status}
                         </TableCell>
@@ -225,10 +272,16 @@ const CourseAllocationsPage = () => {
                   </TableBody>
                 </Table>
                 {semester.id === activeTab && (
-                  <div className="flex justify-end items-center gap-2 mt-4">
-                    <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}> <ChevronLeft /> Prev</Button>
-                      <span>Page {currentPage} of {totalPages}</span>
-                    <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next <ChevronRight /></Button>
+                  <div className="flex justify-between items-center gap-2 mt-4">
+                    <div className='flex items-center gap-2'>
+                      <span>Rows</span>
+                      <ComboboxMain data={rowCount} onSelect={setPageItems} initialValue={pageItems} />
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}> <ChevronLeft /> Prev</Button>
+                        <span>Page {currentPage} of {totalPages}</span>
+                      <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next <ChevronRight /></Button>
+                    </div>
                   </div>
                 )}
               </TabsContent>

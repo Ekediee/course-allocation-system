@@ -43,6 +43,7 @@ export const ComboboxMain: React.FC<ComboboxDemoProps> = ({data, onSelect, initi
       value={selectedOption}
       isSearchable
       className="text-black w-full"
+      menuPlacement="auto"
     />
   );
 }

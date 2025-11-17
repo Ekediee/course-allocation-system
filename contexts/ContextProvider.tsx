@@ -775,6 +775,16 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchAllocatationMetrics = async () => {
+      try {
+          const data = await apiFetch('/api/allocation/metrics');
+          
+          return data
+      } catch (error) {
+          console.error('Failed to fetch allocation metrics:', error);
+      }
+    };
+
     const fetchDepartmentsForCourses = async () => {
       try {
           const data = await apiFetch('/api/manage-uploads/department/hods');
@@ -864,7 +874,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
                 fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen,
                 isInMaintenace, setIsInMaintenace, toggleMaintenanceMode, fetchClassOptions, utoken, uid, setUToken, setUId,
-                isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus
+                isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus, fetchAllocatationMetrics
             }}
         >
             { children }

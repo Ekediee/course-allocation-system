@@ -139,11 +139,6 @@ const Login = () => {
               message="The system is currently under maintenance. Please try again later."
               color="yellow"
             />
-          ) : isAllocationClosed ? (
-            <InfoBanner 
-              message="The course allocation period is closed. Contact the administrator for more information."
-              color="orange"
-            />
           ) : (
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">
