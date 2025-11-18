@@ -119,13 +119,25 @@ const CourseAllocationsPage = () => {
         <AllocationPercentage />
 
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-weak-100">
-            <CardHeader>
-              <CardTitle>Total Courses Allocated</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{metrics?.allocated_courses}</p>
-            </CardContent>
+          <Card className="bg-weak-100 relative">
+            <div className="flex justify-between">
+              <div className=''>
+              <CardHeader>
+                <CardTitle># Courses allocated</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold">{metrics?.allocated_courses}</p>
+              </CardContent>
+              </div>
+              <div className='absolute bottom-1 right-6 text-right'>
+              <CardHeader>
+                <CardTitle># Courses to allocate</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold">{metrics?.total_courses_to_allocate}</p>
+              </CardContent>
+              </div>
+            </div>
           </Card>
           <Card className="bg-weak-100">
             <CardHeader>
