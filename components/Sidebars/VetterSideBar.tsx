@@ -37,26 +37,36 @@ const VetterSideBar = () => {
     <>
         <div className="py-4 space-y-1 px-3 pb-12">
           {/* <p className="px-4 text-xs font-medium text-gray-500 mb-2">NAV</p> */}
-          <Link href="/dashboard/vetter" className={` ${pathname.includes('dashboard') ?  activeLink : normalLink }`}>
-            <Blocks className="h-5 w-5 mr-3" />
-            <span>Dashboard</span>
-          </Link>
-          <Link href="/vetter/course-allocations" className={` ${pathname.includes('course-allocations') ?  activeLink : normalLink }`}>
-            <BookOpen className="h-5 w-5 mr-3" />
-            <span>Course Allocations</span>
-          </Link>
-          <Link href="/vetter/manage-uploads" className={` ${pathname.includes('manage-uploads') ?  activeLink : normalLink }`}>
-            <Upload className="h-5 w-5 mr-3" />
-            <span>Upload Resources</span>
-          </Link>
-          <Link href="/vetter/courses-by-department" className={` ${pathname.includes('courses-by-department') ?  activeLink : normalLink }`}>
-            <TableOfContents className="h-5 w-5 mr-3" />
-            <span>View Courses</span>
-          </Link>
-          <Link href="/vetter/manage-courses" className={` ${pathname.includes('manage-courses') ?  activeLink : normalLink }`}>
-            <TableOfContents className="h-5 w-5 mr-3" />
-            <span>Manage Courses</span>
-          </Link>
+          {role !== 'admin' && (
+            <>
+              <Link href="/dashboard/vetter" className={` ${pathname.includes('dashboard') ?  activeLink : normalLink }`}>
+                <Blocks className="h-5 w-5 mr-3" />
+                <span>Dashboard</span>
+              </Link>
+              <Link href="/vetter/course-allocations" className={` ${pathname.includes('course-allocations') ?  activeLink : normalLink }`}>
+                <BookOpen className="h-5 w-5 mr-3" />
+                <span>Course Allocations</span>
+              </Link>
+              <Link href="/vetter/manage-uploads" className={` ${pathname.includes('manage-uploads') ?  activeLink : normalLink }`}>
+                <Upload className="h-5 w-5 mr-3" />
+                <span>Upload Resources</span>
+              </Link>
+              <Link href="/vetter/courses-by-department" className={` ${pathname.includes('courses-by-department') ?  activeLink : normalLink }`}>
+                <TableOfContents className="h-5 w-5 mr-3" />
+                <span>View Courses</span>
+              </Link>
+              <Link href="/vetter/manage-courses" className={` ${pathname.includes('manage-courses') ?  activeLink : normalLink }`}>
+                <TableOfContents className="h-5 w-5 mr-3" />
+                <span>Manage Courses</span>
+              </Link>
+            </>
+          )}
+          {role === 'admin' && 
+            <Link href="/vetter/course-allocations" className={` ${pathname.includes('course-allocations') ?  activeLink : normalLink }`}>
+                <BookOpen className="h-5 w-5 mr-3" />
+                <span>Course Allocations</span>
+            </Link>
+          }
           {role === 'superadmin' &&
             <Link href="/vetter/admin-management" className={` ${pathname.includes('admin-management') ?  activeLink : normalLink }`}>
               <Users className="h-5 w-5 mr-3" />

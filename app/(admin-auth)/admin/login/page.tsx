@@ -97,7 +97,7 @@ const Login = () => {
             router.replace('/dashboard/vetter');
             break;
           case 'admin':
-            router.replace('/dashboard/vetter');
+            router.replace('/vetter/course-allocations');
             break;
           default:
             router.replace('/');

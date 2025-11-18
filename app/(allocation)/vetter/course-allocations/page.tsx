@@ -232,12 +232,16 @@ const CourseAllocationsPage = () => {
                           Allocation Status
                         </div>
                       </TableHead>
-                      <TableHead className="">
-                          View
-                      </TableHead>
-                      <TableHead className="">
-                        Vetting Status
-                      </TableHead>
+                      {(role === "superadmin" || role === "vetter") && (
+                        <>
+                          <TableHead className="">
+                              View
+                          </TableHead>
+                          <TableHead className="">
+                            Vetting Status
+                          </TableHead>
+                        </>
+                      )}
                     </TableRow>
                   </TableHeader>
                   <TableBody className="w-full h-full">
