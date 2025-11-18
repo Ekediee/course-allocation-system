@@ -96,6 +96,9 @@ const Login = () => {
           case 'superadmin':
             router.replace('/dashboard/vetter');
             break;
+          case 'admin':
+            router.replace('/dashboard/vetter');
+            break;
           default:
             router.replace('/');
         }
