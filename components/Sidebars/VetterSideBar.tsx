@@ -33,6 +33,7 @@ const VetterSideBar = () => {
       role
     } = useAppContext()
     const pathname = usePathname();
+    
   return (
     <>
         <div className="py-4 space-y-1 px-3 pb-12">
