@@ -52,7 +52,8 @@ const CourseAllocationsPage = () => {
   const {
     fetchAllocatationStatusOverview,
     fetchAllocatationMetrics,
-    setVetDepIDs, vetDepIDs
+    setVetDepIDs, vetDepIDs,
+    role
   } = useAppContext()
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -141,7 +142,7 @@ const CourseAllocationsPage = () => {
           </Card>
           <Card className="bg-weak-100">
             <CardHeader>
-              <CardTitle>Allocation in progress</CardTitle>
+              <CardTitle># Departments allocating</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold">{metrics?.allocation_in_progress}</p>
@@ -149,7 +150,7 @@ const CourseAllocationsPage = () => {
           </Card>
           <Card className="bg-weak-100">
             <CardHeader>
-              <CardTitle>Allocation not started</CardTitle>
+              <CardTitle># Departments not started</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold">{metrics?.allocation_not_started}</p>
@@ -157,7 +158,7 @@ const CourseAllocationsPage = () => {
           </Card>
           <Card className="bg-weak-100">
             <CardHeader>
-              <CardTitle>Completed allocations</CardTitle>
+              <CardTitle># Departments completed allocations</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold">{metrics?.allocation_submitted}</p>
@@ -258,27 +259,31 @@ const CourseAllocationsPage = () => {
                         <TableCell className="flex items-center gap-2">
                           {getStatusIcon(dept.status)} {dept.status}
                         </TableCell>
-                        <TableCell className="">
-                          <Button
-                            variant="outline"
-                            className="text-webblue-100 hover:text-blue-700"
-                            onClick={() => handleVetAllocation(dept.department_id, activeTab)}
-                            disabled={!dept.submitted}
-                          >
-                            View Allocation
-                          </Button>
-                        </TableCell>
-                        <TableCell className="flex items-center gap-2">
-                          {dept.vet_status === "Vetted" ? (
-                            <Badge className="text-white flex items-center gap-2 p-2 font-bold">
-                              {getStatusIcon(dept.vet_status)} {dept.vet_status}
-                            </Badge>
-                          ) : (
-                            <Badge variant='outline' className="text-gray-500 flex items-center gap-2 p-1">
-                              <XCircle className="h-4 w-4 text-red-300" /> {dept.vet_status}
-                            </Badge>
-                          )}
-                        </TableCell>
+                        {(role === "superadmin" || role === "vetter") && (
+                          <>
+                            <TableCell className="">
+                              <Button
+                                variant="outline"
+                                className="text-webblue-100 hover:text-blue-700"
+                                onClick={() => handleVetAllocation(dept.department_id, activeTab)}
+                                disabled={!dept.submitted}
+                              >
+                                View Allocation
+                              </Button>
+                            </TableCell>
+                            <TableCell className="flex items-center gap-2">
+                              {dept.vet_status === "Vetted" ? (
+                                <Badge className="text-white flex items-center gap-2 p-2 font-bold">
+                                  {getStatusIcon(dept.vet_status)} {dept.vet_status}
+                                </Badge>
+                              ) : (
+                                <Badge variant='outline' className="text-gray-500 flex items-center gap-2 p-1">
+                                  <XCircle className="h-4 w-4 text-red-300" /> {dept.vet_status}
+                                </Badge>
+                              )}
+                            </TableCell>
+                          </>
+                        )}
                       </TableRow>
                     ))}
                   </TableBody>

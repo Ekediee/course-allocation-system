@@ -44,7 +44,7 @@ export function middleware(request: NextRequest) {
 
   if ((url.pathname.startsWith('/vetter') || 
       url.pathname.startsWith('/dashboard/vetter')) && 
-      (role !== 'vetter' && role !== 'superadmin')
+      (role !== 'vetter' && role !== 'superadmin' && role !== 'admin')
     ) {
     url.pathname = '/unauthorized';
     return NextResponse.redirect(url);
