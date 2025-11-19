@@ -25,6 +25,7 @@ import {
 import { useAppContext } from '../../contexts/ContextProvider'
 import HODSideBar from './HODSideBar';
 import VetterSideBar from './VetterSideBar';
+import LogOutMenu from '../LogOut';
 
 const Sidebar = () => {
     const {
@@ -87,10 +88,12 @@ const Sidebar = () => {
             </div>
             <p className="text-xs text-gray-500 truncate">{email}</p>
           </div>
-          <Button variant="ghost" size="icon" className="ml-auto" onClick={toggleLogoutMenu}>
+          {/* <Button variant="ghost" size="icon" className="ml-auto" onClick={toggleLogoutMenu}>
             <ChevronRight className="w-4 h-4" />
-          </Button>
+          </Button> */}
+          
         </div>
+        <LogOutMenu />
       </div>
     </>
   )

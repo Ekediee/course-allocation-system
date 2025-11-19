@@ -35,20 +35,20 @@ const LogOutMenu = () => {
   }
 
   return (
-    <div className="absolute bottom-4 left-[259px] flex flex-col gap-2 items-start text-sm bg-white p-4 rounded-lg shadow-lg w-48 z-50">
-      <Button
+    <div className="flex flex-col gap-2 items-start text-sm bg-white p-4 rounded-lg shadow-lg">
+      {/* <Button
         onClick={handleChangePassword}
         variant="ghost"
         className="w-full flex items-center gap-2 justify-start text-gray-700 border-b border-gray-200 pt-2"
       >
         <Key className="w-4 h-4" />
         Change Password
-      </Button>
+      </Button> */}
         
       <Button
         onClick={handleLogout}
         variant="ghost"
-        className="w-full flex items-center gap-2 justify-start text-red-600"
+        className="w-full flex items-center gap-2 justify-start text-red-600 border-t border-gray-200 pt-4 pb-4"
       >
         <LogOut className="w-4 h-4" />
         Logout
