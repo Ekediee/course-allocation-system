@@ -15,6 +15,7 @@ type Course = {
     code: string;
     title: string;
     unit: number;
+    specialization: string,
     isAllocated: boolean;
     allocatedTo?: string;
 };
@@ -95,6 +96,7 @@ const Allocate = () => {
                                 <TableHead>Course Code</TableHead>
                                 <TableHead>Course Title</TableHead>
                                 <TableHead>Unit</TableHead>
+                                <TableHead>Specialization</TableHead>
                                 <TableHead className="text-center">Allocated To</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
@@ -106,6 +108,7 @@ const Allocate = () => {
                                     <TableCell >{course.code}</TableCell>
                                     <TableCell>{course.title}</TableCell>
                                     <TableCell>{course.unit}</TableCell>
+                                    <TableCell>{course.specialization}</TableCell>
                                     <TableCell className="text-center">{course.allocatedTo || "-"}</TableCell>
                                     <TableCell className="text-center">
                                     {course.isAllocated ? (
