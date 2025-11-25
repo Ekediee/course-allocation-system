@@ -18,6 +18,7 @@ const AllocateComponent = () => {
   const router = useRouter()
   const searchParams = useSearchParams();
   const { 
+    department,
     selectedCourse,
     setSelectedCourse,
     selectedProgram, 
@@ -295,7 +296,7 @@ const AllocateComponent = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-blue-800">
             <h3 className="text-lg font-medium mb-2">Department:</h3>
-            <p className="text-lg">Computer Science</p>
+            <p className="text-lg">{department}</p>
           </div>
           
           <div className="text-blue-800">
