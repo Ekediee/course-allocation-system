@@ -271,6 +271,7 @@ const CourseAllocationsPage = () => {
                                 className="text-webblue-100 hover:text-blue-700"
                                 onClick={() => handleVetAllocation(dept.department_id, activeTab)}
                                 disabled={!dept.submitted}
+                                // disabled={role !== "superadmin" && !dept.submitted}
                               >
                                 View Allocation
                               </Button>

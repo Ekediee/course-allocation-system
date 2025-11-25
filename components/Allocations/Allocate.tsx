@@ -134,14 +134,20 @@ const AllocateComponent = () => {
   const handleConfirmAllocation = async () => {
 
     const data: any[] = [];
-
-    groups.forEach((group:any) => {      
+    const missingFields: any[] = [];
+    
+    groups.forEach((group:any) => { 
+      if (group.lecturer === "") missingFields.push("Lecturer");
+      if (group.classSize === "") missingFields.push("Class Size");
+      if (group.classOption === "") missingFields.push("Class Option");
       
-      if (group.lecturer === "" || group.classSize === "") {
+      if (missingFields.length > 0) {
+        const missingText = missingFields.join(", ");
         toast({
           variant: "destructive",
           title: "Allocation Failed",
-          description: "Please fill the allocation form to continue.",
+          description: `Please provide input for all fields\nThe following fields are missing input:\n\n${missingText}`,
+          className: "whitespace-pre-wrap",
         });
         return;
       }else {
@@ -194,13 +200,20 @@ const AllocateComponent = () => {
 
   const handleUpdateAllocation = async () => {
     const data: any[] = [];
+    const missingFields: any[] = [];
 
-    groups.forEach((group:any) => {      
-      if (group.lecturer === "" || group.classSize === "") {
+    groups.forEach((group:any) => {  
+      if (group.lecturer === "") missingFields.push("Lecturer");
+      if (group.classSize === "") missingFields.push("Class Size");
+      if (group.classOption === "") missingFields.push("Class Option");
+
+      if (missingFields.length > 0) {
+        const missingText = missingFields.join(", ");
         toast({
           variant: "destructive",
-          title: "Update Failed",
-          description: "Please fill the allocation form to continue.",
+          title: "Allocation Failed",
+          description: `Please provide input for all fields\nThe following fields are missing input:\n\n${missingText}`,
+          className: "whitespace-pre-wrap",
         });
         return;
       } else {

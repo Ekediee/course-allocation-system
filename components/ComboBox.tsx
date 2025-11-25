@@ -53,14 +53,14 @@ export const Combobox: React.FC<ComboboxProps> = ({
         </PopoverTrigger>
         <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
           <Command>
-            <CommandInput placeholder="Search lecturer..." className="h-9" />
+            <CommandInput placeholder="Search data..." className="h-9" />
             <CommandEmpty>No lecturer found.</CommandEmpty>
             <CommandList>
               <CommandGroup>
                 {data?.map((datavalue:any) => (
                   <CommandItem
                     key={datavalue.id}
-                    value={datavalue.id}
+                    value={datavalue.name}
                     onSelect={() => {
                       onChange(datavalue.name);
                       setOpen(false);
