@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { 
@@ -35,6 +35,8 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
         utoken, uid
     } = useAppContext();
 
+    const [classOption, setClassOption] = React.useState<any>(null);
+
     const queryResult = useQuery<Lecturer[]>({
         queryKey: ['lecturers'],
         queryFn: fetchAllLecturers
@@ -48,6 +50,34 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
     });
 
     const { data: class_options, isLoading: classOptionLoading } = classOptionQueryResult;
+
+    useEffect(() => {
+      // Only run if selectedCourse is missing (e.g., after refresh)
+      if (!class_options) {
+        const savedData = localStorage.getItem("class_option_persist_data");
+        if (savedData) {
+          try {
+            const parsedData = JSON.parse(savedData);
+            // Restore the course
+            setClassOption(parsedData);
+            // Note: If you have setters for Department or Program in context, call them here too.
+          } catch (error) {
+            console.error("Failed to restore data", error);
+          }
+        } else {
+          // If no data is found and no course is selected, redirect back to list
+          // This prevents the user from seeing an empty/broken page
+          // router.push('/course-allocation'); 
+        }
+      }
+    }, [class_options, setClassOption]);
+  
+    useEffect(() => {
+      if (class_options) {
+        setClassOption(class_options)
+        localStorage.setItem("class_option_persist_data", JSON.stringify(class_options));
+      }
+    }, [class_options]);
     
     return (
         <Card className="mb-6 relative group">
@@ -83,7 +113,7 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
                   <Combobox
                     value={group.classOption}
                     onChange={(val) => onUpdate(group.id, 'classOption', val)}
-                    data={class_options ?? []}
+                    data={classOption ?? []}
                     placeholder='Select a class option'
                     label="Class Option"
                   />

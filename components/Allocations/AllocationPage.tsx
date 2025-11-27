@@ -192,7 +192,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
     <>
         {/* First layer: Semester Tabs */}
         <Tabs defaultValue={semesters && semesters.length > 0 ? semesters[0].id : ""} onValueChange={handleSemesterChange} className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b h-8 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-20">
+            <TabsList className="w-full justify-start rounded-none border-b h-8 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[57px] z-20">
                 {semesters?.map((semester: Semester) => (
                 <TabsTrigger key={semester.id} value={semester.id} className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20">
                     {semester.name}

@@ -54,6 +54,32 @@ const AllocateComponent = () => {
   //       }
   //   }
   // }, [selectedCourse, setGroups, isEditMode]);
+  useEffect(() => {
+    // Only run if selectedCourse is missing (e.g., after refresh)
+    if (!selectedCourse) {
+      const savedData = localStorage.getItem("allocate_page_persist_data");
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData);
+          // Restore the course
+          setSelectedCourse(parsedData);
+          // Note: If you have setters for Department or Program in context, call them here too.
+        } catch (error) {
+          console.error("Failed to restore data", error);
+        }
+      } else {
+        // If no data is found and no course is selected, redirect back to list
+        // This prevents the user from seeing an empty/broken page
+        router.push('/course-allocation'); 
+      }
+    }
+  }, [selectedCourse, setSelectedCourse, router]);
+
+  useEffect(() => {
+    if (selectedCourse) {
+      localStorage.setItem("allocate_page_persist_data", JSON.stringify(selectedCourse));
+    }
+  }, [selectedCourse]);
 
   useEffect(() => {
     if (!selectedCourse) return;
@@ -194,6 +220,7 @@ const AllocateComponent = () => {
       })
     } 
 
+    localStorage.removeItem("allocate_page_persist_data");
     setSelectedCourse(null);
     
     router.push(`/${from}`);
@@ -259,6 +286,7 @@ const AllocateComponent = () => {
       })
     } 
 
+    localStorage.removeItem("allocate_page_persist_data");
     setSelectedCourse(null);
     router.push(`/${from}`);
   };
