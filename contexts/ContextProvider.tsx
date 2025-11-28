@@ -279,7 +279,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
       allocationData?.forEach((semester) => {
         const sem1 = allocationData && allocationData.length > 0 ? allocationData[0].id : "";
-        const sem2 = allocationData && allocationData.length > 0 ? allocationData[1].id : "";
+        const sem2 = allocationData && allocationData.length > 1 ? allocationData[1].id : "";
         if(semester.id === sem1 || semester.id === sem2) {
           semester.programs?.forEach((program) => {
             if(semester.id === sem2) {
