@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 type Course = {
     id: string;
@@ -41,6 +42,7 @@ const Allocate = () => {
         selectedProgram,
         selectedBulletin,
         selectedSemester,
+        isAllocationClosed
     } = useAppContext()
 
     
@@ -116,30 +118,41 @@ const Allocate = () => {
                                             Allocated
                                         </Badge>
                                     ) : (
-                                        <Badge variant="outline" >
-                                            <Link 
-                                                href={{
-                                                    pathname:"/course-allocation/allocate",
-                                                    query: {
-                                                        from: "special-allocation/bulletin/allocate",
-                                                    },
-                                                }} 
-                                                className="text-blue-500 hover:text-blue-700"
-                                                onClick={() => {
-                                                    const programName = department?.programs?.find((p: any) => p.id === selectedProgram)?.name || '';
-                                                    setSelectedCourse({
-                                                        courseId: course.id,
-                                                        courseCode: course.code,
-                                                        courseTitle: course.title,
-                                                        programId: selectedProgram,
-                                                        semesterId: selectedSemester,
-                                                        levelId: level.id
-                                                    })
-                                                }}
+                                        <>
+                                        {isAllocationClosed ? (
+                                            <Button variant="secondary" 
+                                                className="text-gray-500" 
+                                                disabled={isAllocationClosed}
                                             >
                                                 Allocate Lecturer
-                                            </Link>
-                                        </Badge>
+                                            </Button>
+                                        ) : (
+                                            <Badge variant="outline" >
+                                                <Link 
+                                                    href={{
+                                                        pathname:"/course-allocation/allocate",
+                                                        query: {
+                                                            from: "special-allocation/bulletin/allocate",
+                                                        },
+                                                    }} 
+                                                    className="text-blue-500 hover:text-blue-700"
+                                                    onClick={() => {
+                                                        const programName = department?.programs?.find((p: any) => p.id === selectedProgram)?.name || '';
+                                                        setSelectedCourse({
+                                                            courseId: course.id,
+                                                            courseCode: course.code,
+                                                            courseTitle: course.title,
+                                                            programId: selectedProgram,
+                                                            semesterId: selectedSemester,
+                                                            levelId: level.id
+                                                        })
+                                                    }}
+                                                >
+                                                    Allocate Lecturer
+                                                </Link>
+                                            </Badge>
+                                        )}
+                                        </>
                                     )}
                                     </TableCell>
                                 </TableRow>
