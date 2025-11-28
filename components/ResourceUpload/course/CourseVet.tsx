@@ -80,6 +80,10 @@ const CoursesVet = ({allocationPage, url}: any) => {
         fetchBulletinName,
         fetchDepCourses,
     } = useAppContext()
+
+    // If viewDepIDs is missing, we cannot fetch courses. Stop here.
+    const isContextMissing = !viewDepIDs?.department_id;
+    
     const [activeSemester, setActiveSemester] = useState<string>('');
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
     const [activeLevelMap, setActiveLevelMap] = useState<Record<string, string>>({});
@@ -100,7 +104,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
     // Set default active program for each semester when data is loaded
     useEffect(() => {
         if (semesters && semesters.length > 0) {
-            const defaultSemesterId = semesters[0]?.semester[0]?.id;
+            const defaultSemesterId = semesters[0]?.semester?.[0]?.id;
             setActiveSemester(defaultSemesterId); // Initialize active semester
 
             const defaultProgramMap: Record<string, string> = {};
@@ -113,17 +117,17 @@ const CoursesVet = ({allocationPage, url}: any) => {
                 if (firstSem) {
                     // Set default program for the semester
                     if (firstSem.programs.length > 0) {
-                        defaultProgramMap[firstSem.id] = firstSem?.programs[0].id;
+                        defaultProgramMap[firstSem.id] = firstSem?.programs?.[0].id;
                     }
                     // Loop through EACH program to set its default level
                     firstSem.programs.forEach((program: Program) => {
                         if (program.levels.length > 0) {
-                            defaultLevelMap[program.id] = program?.levels[0]?.id;
+                            defaultLevelMap[program.id] = program?.levels?.[0]?.id;
 
                             // Drill down to set the default specialization
-                            const firstLevel = program?.levels[0];
+                            const firstLevel = program?.levels?.[0];
                             if (firstLevel?.specializations.length > 0) {
-                                defaultSpecializationMap[firstLevel.id] = firstLevel?.specializations[0]?.id;
+                                defaultSpecializationMap[firstLevel.id] = firstLevel?.specializations?.[0]?.id;
                             }
                         }
                     });
@@ -254,6 +258,17 @@ const CoursesVet = ({allocationPage, url}: any) => {
                         </div>
                     </CardContent>
                 </Card>
+            </div>
+        );
+    }
+
+    if (isContextMissing) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
+                <p className="text-lg text-gray-600">No department selected.</p>
+                <Link href="/vetter/courses-by-department">
+                    <Button>Go Back to Selection</Button>
+                </Link>
             </div>
         );
     }
