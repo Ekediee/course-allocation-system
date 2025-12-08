@@ -270,42 +270,94 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       return stats;
     };
 
+    // const overallAllocationProgress = (allocationData: Semester[]): OverallAllocationStat[] => {
+    //   const stats: OverallAllocationStat[] = [];
+
+    //   let totalCourses = 0;
+    //   let allocatedCourses = 0;
+    //   let totalPrograms = 0;
+
+    //   allocationData?.forEach((semester) => {
+    //     const sem1 = allocationData && allocationData.length > 0 ? allocationData[0].id : "";
+    //     const sem2 = allocationData && allocationData.length > 1 ? allocationData[1].id : "";
+    //     if(semester.id === sem1 || semester.id === sem2) {
+    //       semester.programs?.forEach((program) => {
+    //         if(semester.id === sem2) {
+    //           totalPrograms += 1;
+    //         }
+            
+    //         program.levels.forEach((level) => {
+    //           level.courses.forEach((course) => {
+    //             totalCourses += 1;
+    //             if (course.isAllocated) {
+    //               allocatedCourses += 1;
+    //             }
+    //           });
+    //         });
+
+            
+    //       });
+    //     }
+    //   });
+
+    //   stats.push({
+    //     totalPrograms,
+    //     unallocatedCourses: totalCourses - allocatedCourses,
+    //     allocatedCourses,
+    //     allocationRate: totalCourses > 0 ? parseFloat(((allocatedCourses / totalCourses) * 100).toFixed(1)) : 0,
+    //   });
+
+    //   return stats;
+    // };
+
     const overallAllocationProgress = (allocationData: Semester[]): OverallAllocationStat[] => {
-      const stats: OverallAllocationStat[] = [];
+      // Handle cases with no data.
+      if (!allocationData || allocationData.length === 0) {
+          return [{
+              totalPrograms: 0,
+              unallocatedCourses: 0,
+              allocatedCourses: 0,
+              allocationRate: 0,
+          }];
+      }
+
+      // Select only the first two semesters to process.
+      //    .slice(0, 2) gracefully handles cases where there's only one semester.
+      const relevantSemesters = allocationData.slice(0, 2);
 
       let totalCourses = 0;
       let allocatedCourses = 0;
       let totalPrograms = 0;
 
-      allocationData?.forEach((semester) => {
-        const sem1 = allocationData && allocationData.length > 0 ? allocationData[0].id : "";
-        const sem2 = allocationData && allocationData.length > 1 ? allocationData[1].id : "";
-        if(semester.id === sem1 || semester.id === sem2) {
+      // Loop ONLY over the relevant semesters.
+      relevantSemesters.forEach((semester) => {
+          // No need for an 'if' check here.
+
+          // Add the number of programs in the current semester to the total.
+          totalPrograms += semester.programs?.length ?? 0;
+
           semester.programs?.forEach((program) => {
-            if(semester.id === sem2) {
-              totalPrograms += 1;
-            }
-            
-            program.levels.forEach((level) => {
-              level.courses.forEach((course) => {
-                totalCourses += 1;
-                if (course.isAllocated) {
-                  allocatedCourses += 1;
-                }
+              program.levels.forEach((level) => {
+                  // Add the number of courses in the level to the total.
+                  totalCourses += level.courses.length;
+                  
+                  // Count only the allocated courses.
+                  level.courses.forEach((course) => {
+                      if (course.isAllocated) {
+                          allocatedCourses += 1;
+                      }
+                  });
               });
-            });
-
-            
           });
-        }
       });
-
-      stats.push({
-        totalPrograms,
-        unallocatedCourses: totalCourses - allocatedCourses,
-        allocatedCourses,
-        allocationRate: totalCourses > 0 ? parseFloat(((allocatedCourses / totalCourses) * 100).toFixed(1)) : 0,
-      });
+      
+      // Calculate and return the final stats.
+      const stats: OverallAllocationStat[] = [{
+          totalPrograms,
+          unallocatedCourses: totalCourses - allocatedCourses,
+          allocatedCourses,
+          allocationRate: totalCourses > 0 ? parseFloat(((allocatedCourses / totalCourses) * 100).toFixed(1)) : 0,
+      }];
 
       return stats;
     };
@@ -316,9 +368,9 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       levelId: string,
       allocationData: any
     ): boolean => {
-      const semester = allocationData.find((s:any) => s.id === semesterId);
-      const program = semester?.programs.find((p:any) => p.id === programId);
-      const level = program?.levels.find((l:any) => l.id === levelId);
+      const semester = allocationData?.find((s:any) => s.id === semesterId);
+      const program = semester?.programs?.find((p:any) => p.id === programId);
+      const level = program?.levels?.find((l:any) => l.id === levelId);
       if (!level) return false;
 
       return level.courses.every((course:any) => course.isAllocated);

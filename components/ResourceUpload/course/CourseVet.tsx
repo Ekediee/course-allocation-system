@@ -126,7 +126,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
 
                             // Drill down to set the default specialization
                             const firstLevel = program?.levels?.[0];
-                            if (firstLevel?.specializations.length > 0) {
+                            if (firstLevel?.specializations?.length > 0) {
                                 defaultSpecializationMap[firstLevel.id] = firstLevel?.specializations?.[0]?.id;
                             }
                         }

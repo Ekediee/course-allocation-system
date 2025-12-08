@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, CheckCircle, Loader2, SquarePen } from "lucide-react";
 import Link from 'next/link';
 import { useToast } from "@/hooks/use-toast";
-
+import { Bulletin } from "@/components/ResourceUpload/course/CourseVet";
 import { Semester, Program, Course, Level } from "@/data/constants";
 // import { allocation_data } from "@/data/course_data";
 import { useAppContext } from '@/contexts/ContextProvider'
@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import AllocateLecturerModal from "@/components/Allocations/SubmitAllocationModal";
 import PrintLink from "../PrintLink";
 import { useRouter } from "next/navigation"
+import { ComboboxMain, Items } from "@/components/ComboboxMain";
+import type { Semester as SemesterT } from '@/data/constants';
 
 type AllocationStatus = {
     is_submitted: boolean;
@@ -31,37 +33,100 @@ const AllocationVet = ({allocationPage, url}: any) => {
         allocateCourse, 
         isLevelFullyAllocated,
         vetDepIDs,
+        fetchBulletinName,
         fetchDepAllocations,
     } = useAppContext()
     const [activeSemester, setActiveSemester] = useState<string>('');
     const [activeProgramMap, setActiveProgramMap] = useState<Record<string, string>>({});
+    const [activeLevelMap, setActiveLevelMap] = useState<Record<string, string>>({});
+    const [selectedBulletin, setSelectedBulletin] = useState('');
+    const [activeSpecializationMap, setActiveSpecializationMap] = useState<Record<string, string>>({});
 
     const router = useRouter();
+
+    const { data: bulletins = [], isLoading: loadingBulletins } = useQuery<Items[]>({
+        queryKey: ["bulletins"],
+        queryFn: fetchBulletinName,
+    });
     
     // Use a single query result based on allocationPage
-    const { data: semesters, isLoading, error } = useQuery<Semester[]>({
+    const { data: semesters, isLoading, error } = useQuery<Bulletin[]>({
         queryKey: ['depcourses'], 
         queryFn: () => fetchDepAllocations(vetDepIDs?.department_id, vetDepIDs?.semester_id),
     });
     
     // Set default active program for each semester when data is loaded
     useEffect(() => {
-        if (semesters && semesters.length > 0) {
+        if (semesters && semesters?.length > 0) {
             const defaultSemesterId = semesters?.[0]?.id;
             setActiveSemester(defaultSemesterId); // Initialize active semester
 
             const defaultProgramMap: Record<string, string> = {};
-            semesters.forEach((semester: Semester) => {
-                if (semester.programs.length > 0) {
-                    defaultProgramMap[semester.id] = semester?.programs?.[0]?.id;
+            semesters.forEach((b: Bulletin) => {
+                const firstSem = b.semester?.[0];
+
+                if (firstSem) {
+                    if (firstSem.programs?.length > 0) {
+                        defaultProgramMap[firstSem.id] = firstSem?.programs?.[0]?.id;
+                    }
                 }
+                
             });
             setActiveProgramMap(defaultProgramMap);
         }
 
         setPageHeader(allocationPage)
+        setSelectedBulletin(bulletins?.[1]?.id ?? "");
         // setPageHeaderPeriod("First 24/25.3");
     }, [semesters, allocationPage, setPageHeader]);
+
+    // This runs when selectedBulletin or semesters changes
+    useEffect(() => {
+        // Don't run if we don't have the necessary data yet
+        if (!selectedBulletin || !Array.isArray(semesters)) {
+            return;
+        }
+
+        // Find the data for the currently selected bulletin
+        const currentBulletinData = semesters?.find(item => item.id === selectedBulletin);
+        if (!currentBulletinData) return;
+
+        // Find the first semester in that bulletin's data
+        const firstSemester = currentBulletinData?.semester?.[0];
+        if (!firstSemester) return;
+
+        // Set the active semester to this first semester
+        setActiveSemester(firstSemester?.id);
+
+        // Find the first program in that semester
+        const firstProgram = firstSemester?.programs?.[0];
+        if (firstProgram) {
+            // Update the active program map for this semester
+            setActiveProgramMap(prev => ({
+                ...prev,
+                [firstSemester.id]: firstProgram.id
+            }));
+
+            // Find the first level in that program
+            const firstLevel = firstProgram?.levels?.[0];
+            if (firstLevel) {
+                // Update the active level map for this program
+                setActiveLevelMap(prev => ({
+                    ...prev,
+                    [firstProgram.id]: firstLevel.id
+                }));
+
+                // Drill down to set the default specialization
+                const firstSpecialization = firstLevel?.specializations?.[0];
+                if (firstSpecialization) {
+                    setActiveSpecializationMap(prev => ({ // <-- ADD THIS BLOCK
+                        ...prev,
+                        [firstLevel.id]: firstSpecialization.id
+                    }));
+                }
+            }
+        }
+    }, [selectedBulletin, semesters]);
     
     const handleSemesterChange = (semesterId: string) => {
         setActiveSemester(semesterId);
@@ -73,6 +138,21 @@ const AllocationVet = ({allocationPage, url}: any) => {
             [semesterId]: programId
         }));
     };
+
+    // const courses = useMemo<Semester[]>(() => {
+    //     if (!Array.isArray(semesters)) return [];
+    //     const found = semesters.find(item => item.id === selectedBulletin);
+    //     return found?.semester ?? [];
+    // }, [selectedBulletin, semesters]);
+
+    const courses = useMemo<SemesterT[]>(() => {
+        if (!Array.isArray(semesters)) return [];
+        // narrow semesters elements so TS knows each bulletin contains a Semester[] matching the shared type
+        const found = (semesters as Array<{ id: string; semester?: SemesterT[] }>).find(
+            item => item.id === selectedBulletin
+        );
+        return found?.semester ?? [];
+    }, [selectedBulletin, semesters]);
 
     const { toast } = useToast();
     const queryClient = useQueryClient();
@@ -235,18 +315,30 @@ const AllocationVet = ({allocationPage, url}: any) => {
   return (
     <>
         {/* First layer: Semester Tabs */}
-        <Tabs defaultValue={semesters && semesters.length > 0 ? semesters[0].id : ""} onValueChange={handleSemesterChange} className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b h-8 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[68px] z-20">
-                {semesters?.map((semester: Semester) => (
-                <TabsTrigger key={semester.id} value={semester.id} className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20">
+        <Tabs value={activeSemester} onValueChange={handleSemesterChange} className="w-full">
+            <TabsList className="w-full justify-between pr-[65px] rounded-none border-b h-10 p-0 bg-white shadow-sm border-b border-gray-200 sticky top-[57px] z-20">
+                {courses?.map((semester: Semester) => (
+                <TabsTrigger key={semester.id} value={semester.id} className="rounded-none h-10 border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-6 z-20">
                     {semester.name}
                 </TabsTrigger>
                 ))}
+
+                <div className='w-[250px] '>
+                    <div className="flex items-center gap-4">
+                        <span className="font-bold">Bulletin:</span>
+                        <ComboboxMain data={bulletins} onSelect={setSelectedBulletin} initialValue={selectedBulletin} />
+                    </div>
+                </div>
             </TabsList>
 
             {/* Semester Content */}
+            {courses.length === 0 ? (
+                <div className="flex justify-center items-center p-4 text-center text-muted-foreground ">
+                    No data available for this bulletin
+                </div>
+            ) : (
             <div className="p-4">
-            {semesters?.map((semester:any, index) => (
+            {courses?.map((semester:any, index) => (
                 <TabsContent key={index} value={semester.id} className="space-y-6">
                 <Card>
                     <CardHeader>
@@ -366,7 +458,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                 {/* Level Content - Course Table */}
                                 {program.levels.map((level: Level) => (
                                     <TabsContent key={level.id} value={level.id}>
-                                    {level.courses.length === 0 ? (
+                                    {level?.courses?.length === 0 ? (
                                         <div className="p-4 text-center text-muted-foreground">
                                         No courses available for this level
                                         </div>
@@ -408,6 +500,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                 </TabsContent>
             ))}
             </div>
+            )}
         </Tabs>
     </>
   )
