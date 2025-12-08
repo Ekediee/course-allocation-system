@@ -108,6 +108,8 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
                     data={lecturers ?? []}
                     placeholder='Select a lecturer'
                     label="Lecturer's Name"
+                    name="lecturer"
+                    required={true} 
                   />
 
                   <Combobox
@@ -116,6 +118,8 @@ const GroupCard = ({ group, onDelete, onUpdate, showDelete = true }: GroupCardPr
                     data={classOption ?? []}
                     placeholder='Select a class option'
                     label="Class Option"
+                    name="class option"
+                    required={true} 
                   />
                   {/* <Select 
                     value={group.lecturer}

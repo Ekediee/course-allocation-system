@@ -24,6 +24,8 @@ interface ComboboxProps {
   data: any[];
   placeholder?: string;
   label?: string;
+  name: string; 
+  required?: boolean;
 }
 
 export const Combobox: React.FC<ComboboxProps> = ({
@@ -32,12 +34,20 @@ export const Combobox: React.FC<ComboboxProps> = ({
   data,
   placeholder,
   label,
+  name,
+  required,
 }) => {
   const [open, setOpen] = useState(false);
     
   return (
     <div className="space-y-1.5">
-      {label && <label className="text-sm font-medium block">{label}</label>}
+      {label && (
+        <label className="text-sm font-medium block">
+          {label}
+
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -54,7 +64,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
         <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
           <Command>
             <CommandInput placeholder="Search data..." className="h-9" />
-            <CommandEmpty>No lecturer found.</CommandEmpty>
+            <CommandEmpty>No {name} found.</CommandEmpty>
             <CommandList>
               <CommandGroup>
                 {data?.map((datavalue:any) => (

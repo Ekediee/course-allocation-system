@@ -293,7 +293,6 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                             <TableHead>Course Title</TableHead>
                                             <TableHead>Unit</TableHead>
                                             <TableHead >Specialization</TableHead>
-                                            <TableHead >Class Option</TableHead>
                                             <TableHead >Allocated To</TableHead>
                                             <TableHead >Action</TableHead>
                                             <TableHead >Edit</TableHead>
@@ -306,7 +305,6 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                                 <TableCell>{course.title}</TableCell>
                                                 <TableCell>{course.unit}</TableCell>
                                                 <TableCell >{course.specialization}</TableCell>
-                                                <TableCell>{course.class_option}</TableCell>
                                                 <TableCell >{course.allocatedTo || "-"}</TableCell>
                                                 <TableCell >
                                                 {course.isAllocated ? (

@@ -25,7 +25,7 @@ const SessionContent = () => {
             if (!res.ok) throw new Error('Network error');
             const data = await res.json();
             setSessionData(data?.session); // Update state with fetched data
-            return data
+            return data?.session
         } catch (error) {
             console.error('Failed to fetch sessions:', error);
         }

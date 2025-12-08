@@ -27,7 +27,7 @@ const VetterDashboard = () => {
       fetchSession
     } = useAppContext()
 
-    const { data: session, isLoading: loadingBulletins } = useQuery<Items>({
+    const { data: session, isLoading: loadingBulletins } = useQuery<Items[]>({
       queryKey: ["session"],
       queryFn: fetchSession,
     });
@@ -41,7 +41,7 @@ const VetterDashboard = () => {
           <span className="w-10 h-10 flex items-center justify-center rounded-full bg-white"><CalendarDays className="h-5 w-5 text-gray-600" /></span>
           <div>
             <p className="text-sm font-medium">Session</p>
-            <p className="text-lg font-bold">{session?.name}</p>
+            <p className="text-lg font-bold">{session?.[0]?.name}</p>
           </div>
         </Card>
         {/* {(role === 'superadmin' && email === 'ague@babcock.edu.ng') && (

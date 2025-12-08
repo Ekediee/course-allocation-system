@@ -158,137 +158,287 @@ const AllocateComponent = () => {
 
   const from = searchParams.get('from') || 'course-allocation';
 
+  // const handleConfirmAllocation = async () => {
+
+  //   const data: any[] = [];
+  //   const missingFields: any[] = [];
+    
+  //   groups.forEach((group:any) => { 
+  //     if (group.lecturer === "") missingFields.push("Lecturer");
+  //     if (group.classSize === "") missingFields.push("Class Size");
+  //     if (group.classOption === "") missingFields.push("Class Option");
+      
+  //     if (missingFields.length > 0) {
+  //       const missingText = missingFields.join(", ");
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Allocation Failed",
+  //         description: `Please provide input for all fields\nThe following fields are missing input:\n\n${missingText}`,
+  //         className: "whitespace-pre-wrap",
+  //       });
+  //       return;
+  //     }else {
+  //       data.push({
+  //         semesterId: selectedCourse?.semesterId,
+  //         programId: selectedCourse?.programId,
+  //         levelId: selectedCourse?.levelId,
+  //         courseId: selectedCourse?.courseId,
+  //         classSize: group.classSize,
+  //         isAllocated: true,
+  //         allocatedTo: group.lecturer,
+  //         groupName: group.name,
+  //         class_option: group.classOption,
+  //       });
+  //     }
+      
+  //   });
+
+  //   if (data.length < groups.length) {
+  //       return; // Stop if form is incomplete
+  //   }
+    
+  //   const allocatedCourse = JSON.stringify(data)
+
+  //   const res = await fetch(`/api/allocation?token=${token}`,{
+  //     method: 'POST',
+  //     body: allocatedCourse
+  //   });
+
+  //   const resdata = await res.json();
+
+  //   if(resdata.status == "success") {
+  //     toast({
+  //       variant: "success",
+  //       title: "Lecturer Allocated:",
+  //       description: resdata.message
+  //     })
+  //   }else if(resdata.error.status == "error") {
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Allocation Failed",
+  //       description: resdata.error.message
+  //     })
+  //   } 
+
+  //   localStorage.removeItem("allocate_page_persist_data");
+  //   setSelectedCourse(null);
+    
+  //   router.push(`/${from}`);
+  // };
+
   const handleConfirmAllocation = async () => {
+    // VALIDATE ALL GROUPS FIRST
+    const allErrors: string[] = [];
 
-    const data: any[] = [];
-    const missingFields: any[] = [];
-    
-    groups.forEach((group:any) => { 
-      if (group.lecturer === "") missingFields.push("Lecturer");
-      if (group.classSize === "") missingFields.push("Class Size");
-      if (group.classOption === "") missingFields.push("Class Option");
-      
-      if (missingFields.length > 0) {
-        const missingText = missingFields.join(", ");
+    groups.forEach((group: any) => {
+        const missingFieldsForGroup: string[] = [];
+        
+        if (!group.lecturer) missingFieldsForGroup.push("Lecturer");
+        if (!group.classSize) missingFieldsForGroup.push("Class Size");
+        if (!group.classOption) missingFieldsForGroup.push("Class Option");
+
+        if (missingFieldsForGroup.length > 0) {
+            allErrors.push(
+                `These fields are missing in ${group.name}:\n ${missingFieldsForGroup.join(', ')}`
+            );
+        }
+    });
+
+    // CHECK IF ANY ERRORS WERE FOUND
+    if (allErrors.length > 0) {
         toast({
-          variant: "destructive",
-          title: "Allocation Failed",
-          description: `Please provide input for all fields\nThe following fields are missing input:\n\n${missingText}`,
-          className: "whitespace-pre-wrap",
+            variant: "destructive",
+            title: "Incomplete Allocation",
+            description: `Please fix the following errors before submitting:\n\n${allErrors.join('\n')}`,
+            className: "whitespace-pre-wrap", // Ensures newlines are respected
         });
-        return;
-      }else {
-        data.push({
-          semesterId: selectedCourse?.semesterId,
-          programId: selectedCourse?.programId,
-          levelId: selectedCourse?.levelId,
-          courseId: selectedCourse?.courseId,
-          classSize: group.classSize,
-          isAllocated: true,
-          allocatedTo: group.lecturer,
-          groupName: group.name,
-          class_option: group.classOption,
-        });
-      }
-      
-    });
-
-    if (data.length < groups.length) {
-        return; // Stop if form is incomplete
+        return; // Stop the entire function
     }
+
+    // IF VALIDATION PASSES, PREPARE DATA AND SUBMIT
+    // At this point, you know all groups are valid.
+    const data = groups.map((group: any) => ({
+        semesterId: selectedCourse?.semesterId,
+        programId: selectedCourse?.programId,
+        levelId: selectedCourse?.levelId,
+        courseId: selectedCourse?.courseId,
+        classSize: group.classSize,
+        isAllocated: true,
+        allocatedTo: group.lecturer,
+        groupName: group.name,
+        class_option: group.classOption,
+    }));
     
-    const allocatedCourse = JSON.stringify(data)
+    const allocatedCourse = JSON.stringify(data);
 
-    const res = await fetch(`/api/allocation?token=${token}`,{
-      method: 'POST',
-      body: allocatedCourse
-    });
+    try {
+        const res = await fetch(`/api/allocation?token=${token}`, {
+            method: 'POST',
+            body: allocatedCourse
+        });
 
-    const resdata = await res.json();
+        const resdata = await res.json();
 
-    if(resdata.status == "success") {
-      toast({
-        variant: "success",
-        title: "Lecturer Allocated:",
-        description: resdata.message
-      })
-    }else if(resdata.error.status == "error") {
-      toast({
-        variant: "destructive",
-        title: "Allocation Failed",
-        description: resdata.error.message
-      })
-    } 
-
-    localStorage.removeItem("allocate_page_persist_data");
-    setSelectedCourse(null);
-    
-    router.push(`/${from}`);
+        // Check for a successful response (status code 2xx)
+        if (res.ok) {
+            toast({
+                variant: "success",
+                title: "Lecturer Allocated:",
+                description: resdata.message
+            });
+            localStorage.removeItem("allocate_page_persist_data");
+            setSelectedCourse(null);
+            router.push(`/${from}`);
+        } else {
+            // If the response is not ok, throw an error to be caught by the catch block
+            throw new Error(resdata.message || "An unknown error occurred during allocation.");
+        }
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Allocation Failed",
+            description: (error as Error).message,
+        });
+    }
   };
 
-  const handleUpdateAllocation = async () => {
-    const data: any[] = [];
-    const missingFields: any[] = [];
+  // const handleUpdateAllocation = async () => {
+  //   const data: any[] = [];
+  //   const missingFields: any[] = [];
 
-    groups.forEach((group:any) => {  
-      if (group.lecturer === "") missingFields.push("Lecturer");
-      if (group.classSize === "") missingFields.push("Class Size");
-      if (group.classOption === "") missingFields.push("Class Option");
+  //   groups.forEach((group:any) => {  
+  //     if (group.lecturer === "") missingFields.push("Lecturer");
+  //     if (group.classSize === "") missingFields.push("Class Size");
+  //     if (group.classOption === "") missingFields.push("Class Option");
 
-      if (missingFields.length > 0) {
-        const missingText = missingFields.join(", ");
-        toast({
-          variant: "destructive",
-          title: "Allocation Failed",
-          description: `Please provide input for all fields\nThe following fields are missing input:\n\n${missingText}`,
-          className: "whitespace-pre-wrap",
-        });
-        return;
-      } else {
-        data.push({
-          semesterId: selectedCourse?.semesterId,
-          programId: selectedCourse?.programId,
-          levelId: selectedCourse?.levelId,
-          courseId: selectedCourse?.courseId,
-          classSize: group.classSize,
-          isAllocated: true,
-          allocatedTo: group.lecturer,
-          groupName: group.name,
-          class_option: group.classOption,
-        });
-      }
-    });
+  //     if (missingFields.length > 0) {
+  //       const missingText = missingFields.join(", ");
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Allocation Failed",
+  //         description: `Please provide input for all fields\nThe following fields are missing input:\n\n${missingText}`,
+  //         className: "whitespace-pre-wrap",
+  //       });
+  //       return;
+  //     } else {
+  //       data.push({
+  //         semesterId: selectedCourse?.semesterId,
+  //         programId: selectedCourse?.programId,
+  //         levelId: selectedCourse?.levelId,
+  //         courseId: selectedCourse?.courseId,
+  //         classSize: group.classSize,
+  //         isAllocated: true,
+  //         allocatedTo: group.lecturer,
+  //         groupName: group.name,
+  //         class_option: group.classOption,
+  //       });
+  //     }
+  //   });
 
-    if (data.length < groups.length) {
-        return; // Stop if form is incomplete
-    }
+  //   if (data.length < groups.length) {
+  //       return; // Stop if form is incomplete
+  //   }
     
-    const updatedAllocation = JSON.stringify(data)
+  //   const updatedAllocation = JSON.stringify(data)
 
-    const res = await fetch(`/api/allocation?token=${token}`,{
-      method: 'PUT',
-      body: updatedAllocation
+  //   const res = await fetch(`/api/allocation?token=${token}`,{
+  //     method: 'PUT',
+  //     body: updatedAllocation
+  //   });
+
+  //   const resdata = await res.json();
+
+  //   if(resdata.status == "success") {
+  //     toast({
+  //       variant: "success",
+  //       title: "Allocation Updated:",
+  //       description: resdata.message
+  //     })
+  //   } else if(resdata.status == "error") {
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Update Failed",
+  //       description: resdata.message
+  //     })
+  //   } 
+
+  //   localStorage.removeItem("allocate_page_persist_data");
+  //   setSelectedCourse(null);
+  //   router.push(`/${from}`);
+  // };
+
+  const handleUpdateAllocation = async () => {
+    // VALIDATE ALL GROUPS FIRST
+    const allErrors: string[] = [];
+
+    groups.forEach((group: any) => {
+        const missingFieldsForGroup: string[] = [];
+        
+        if (!group.lecturer) missingFieldsForGroup.push("Lecturer");
+        if (!group.classSize) missingFieldsForGroup.push("Class Size");
+        if (!group.classOption) missingFieldsForGroup.push("Class Option");
+
+        if (missingFieldsForGroup.length > 0) {
+            allErrors.push(
+                `These fields are missing in ${group.name}: \n${missingFieldsForGroup.join(', ')}`
+            );
+        }
     });
 
-    const resdata = await res.json();
+    // CHECK IF ANY ERRORS WERE FOUND
+    if (allErrors.length > 0) {
+        toast({
+            variant: "destructive",
+            title: "Incomplete Allocation",
+            description: `Please fix the following errors before submitting:\n\n${allErrors.join('\n')}`,
+            className: "whitespace-pre-wrap", // Ensures newlines are respected
+        });
+        return; // Stop the entire function
+    }
 
-    if(resdata.status == "success") {
-      toast({
-        variant: "success",
-        title: "Allocation Updated:",
-        description: resdata.message
-      })
-    } else if(resdata.status == "error") {
-      toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description: resdata.message
-      })
-    } 
+    // IF VALIDATION PASSES, PREPARE DATA AND SUBMIT
+    // At this point, you know all groups are valid.
+    const data = groups.map((group: any) => ({
+        semesterId: selectedCourse?.semesterId,
+        programId: selectedCourse?.programId,
+        levelId: selectedCourse?.levelId,
+        courseId: selectedCourse?.courseId,
+        classSize: group.classSize,
+        isAllocated: true,
+        allocatedTo: group.lecturer,
+        groupName: group.name,
+        class_option: group.classOption,
+    }));
+    
+    const updatedAllocation = JSON.stringify(data);
 
-    localStorage.removeItem("allocate_page_persist_data");
-    setSelectedCourse(null);
-    router.push(`/${from}`);
+    try {
+        const res = await fetch(`/api/allocation?token=${token}`, {
+            method: 'PUT',
+            body: updatedAllocation
+        });
+
+        const resdata = await res.json();
+
+        if (res.ok) { // Check for successful status codes (2xx)
+            toast({
+                variant: "success",
+                title: "Allocation Updated:",
+                description: resdata.message
+            });
+            localStorage.removeItem("allocate_page_persist_data");
+            setSelectedCourse(null);
+            router.push(`/${from}`);
+        } else {
+            throw new Error(resdata.message || "An unknown error occurred");
+        }
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Update Failed",
+            description: (error as Error).message,
+        });
+    }
   };
 
   return (
