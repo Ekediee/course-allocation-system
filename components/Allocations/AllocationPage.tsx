@@ -280,7 +280,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                 {/* Level Content - Course Table */}
                                 {program.levels.map((level: Level) => (
                                     <TabsContent key={level.id} value={level.id}>
-                                    {level.courses.length === 0 ? (
+                                    {level?.courses?.length === 0 ? (
                                         <div className="p-4 text-center text-muted-foreground">
                                         No courses available for this level
                                         </div>
@@ -299,7 +299,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {level.courses.map((course: Course) => (
+                                            {level?.courses?.map((course: Course) => (
                                             <TableRow key={course.id}>
                                                 <TableCell >{course.code}</TableCell>
                                                 <TableCell>{course.title}</TableCell>

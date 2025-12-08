@@ -13,7 +13,7 @@ export interface Course {
 export interface Level {
   id: string;
   name: string;
-  courses: Course[];
+  courses?: Course[];
 }
 
 export interface Program {

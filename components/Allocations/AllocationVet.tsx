@@ -145,13 +145,24 @@ const AllocationVet = ({allocationPage, url}: any) => {
     //     return found?.semester ?? [];
     // }, [selectedBulletin, semesters]);
 
+    // const courses = useMemo<SemesterT[]>(() => {
+    //     if (!Array.isArray(semesters)) return [];
+    //     // narrow semesters elements so TS knows each bulletin contains a Semester[] matching the shared type
+    //     const found = (semesters as Array<{ id: string; semester?: SemesterT[] }>).find(
+    //         item => item.id === selectedBulletin
+    //     );
+    //     return found?.semester ?? [];
+    // }, [selectedBulletin, semesters]);
+
     const courses = useMemo<SemesterT[]>(() => {
-        if (!Array.isArray(semesters)) return [];
-        // narrow semesters elements so TS knows each bulletin contains a Semester[] matching the shared type
-        const found = (semesters as Array<{ id: string; semester?: SemesterT[] }>).find(
-            item => item.id === selectedBulletin
-        );
-        return found?.semester ?? [];
+        if (!Array.isArray(semesters)) {
+            return [];
+        }
+        // Find the bulletin in the `semesters` (which is actually a list of bulletins)
+        const foundBulletin = semesters.find(bulletin => bulletin.id === selectedBulletin);
+        
+        // Return the semester array from the found bulletin, or an empty array.
+        return foundBulletin?.semester ?? [];
     }, [selectedBulletin, semesters]);
 
     const { toast } = useToast();
@@ -474,7 +485,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {level.courses.map((course: Course, index) => (
+                                            {level?.courses?.map((course: Course, index) => (
                                             <TableRow key={index}>
                                                 <TableCell >{course.code}</TableCell>
                                                 <TableCell>{course.title}</TableCell>
