@@ -762,12 +762,12 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
-    const fetchSessionName = async () => {
+    const fetchSession = async () => {
       try {
-          const data = await apiFetch('/api/manage-uploads/session/names');
+          const data = await apiFetch('/api/manage-uploads/session');
           
           // setProgramData(data.programs); 
-          return data.programs
+          return data.session
       } catch (error) {
           console.error('Failed to fetch programs:', error);
       }
@@ -926,7 +926,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
                 fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen,
                 isInMaintenace, setIsInMaintenace, toggleMaintenanceMode, fetchClassOptions, utoken, uid, setUToken, setUId,
-                isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus, fetchAllocatationMetrics
+                isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus, fetchAllocatationMetrics, fetchSession
             }}
         >
             { children }

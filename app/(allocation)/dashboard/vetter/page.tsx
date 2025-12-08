@@ -10,14 +10,27 @@ import ComplianceScore from '@/components/Vetter/ComplianceScore'
 import AllocationPercentage from '@/components/Vetter/AllocationPercentage'
 import DepartmentStatus from '@/components/Vetter/DepartmentStatus'
 import { useAppContext } from '@/contexts/ContextProvider'
+import { useQuery } from '@tanstack/react-query'
+// import { Items } from '@/components/ComboboxMain'
+
+export type Items = {
+  id: string;
+  is_active: boolean,
+  name: string;
+}
 
 const VetterDashboard = () => {
   const {
       toggleMaintenanceMode,
       isInMaintenace,
       role, 
-      email
+      fetchSession
     } = useAppContext()
+
+    const { data: session, isLoading: loadingBulletins } = useQuery<Items>({
+      queryKey: ["session"],
+      queryFn: fetchSession,
+    });
     
   return (
     <div className="p-4 md:p-6 overflow-y-auto">
@@ -28,7 +41,7 @@ const VetterDashboard = () => {
           <span className="w-10 h-10 flex items-center justify-center rounded-full bg-white"><CalendarDays className="h-5 w-5 text-gray-600" /></span>
           <div>
             <p className="text-sm font-medium">Session</p>
-            <p className="text-lg font-bold">2024/2025</p>
+            <p className="text-lg font-bold">{session?.name}</p>
           </div>
         </Card>
         {/* {(role === 'superadmin' && email === 'ague@babcock.edu.ng') && (

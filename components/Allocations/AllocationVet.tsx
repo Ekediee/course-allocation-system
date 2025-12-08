@@ -494,6 +494,13 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                                 
                                             </TableRow>
                                             ))}
+                                            <TableRow className="bg-gray-400">
+                                                <TableCell className=" font-bold"></TableCell>
+                                                <TableCell colSpan={1} className=" font-bold">Total</TableCell>
+                                                <TableCell colSpan={2} className="font-bold">
+                                                    {(level?.courses ?? []).reduce((total, course) => total + (course.unit ?? 0), 0)}
+                                                </TableCell>
+                                            </TableRow>
                                         </TableBody>
                                         </Table>
                                         </div>
