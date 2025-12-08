@@ -272,6 +272,25 @@ const AllocationVet = ({allocationPage, url}: any) => {
         router.push(url);
     };
 
+    const calculateUniqueTotalUnits = (courses: Course[]): number => {
+        if (!Array.isArray(courses)) {
+            return 0;
+        }
+
+        // Use a Map to store unique courses based on their ID.
+        // This is more efficient than using .filter() + .findIndex() on large arrays.
+        const uniqueCourses = new Map<string, Course>();
+        courses.forEach(course => {
+            // Use course.id as the key. If you don't have a unique ID, course.code is a good fallback.
+            uniqueCourses.set(course.code, course);
+        });
+
+        // Convert the Map values back to an array and then calculate the sum.
+        const uniqueCoursesArray = Array.from(uniqueCourses.values());
+        
+        return uniqueCoursesArray.reduce((total, course) => total + (course.unit ?? 0), 0);
+    };
+
     if (isLoading) {
         return (
             <div className="p-8">
@@ -498,7 +517,8 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                                 <TableCell className=" font-bold"></TableCell>
                                                 <TableCell colSpan={1} className=" font-bold">Total</TableCell>
                                                 <TableCell colSpan={2} className="font-bold">
-                                                    {(level?.courses ?? []).reduce((total, course) => total + (course.unit ?? 0), 0)}
+                                                    {/* {(level?.courses ?? []).reduce((total, course) => total + (course.unit ?? 0), 0)} */}
+                                                    {calculateUniqueTotalUnits(level?.courses ?? [])}
                                                 </TableCell>
                                             </TableRow>
                                         </TableBody>
