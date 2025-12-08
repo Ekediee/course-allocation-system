@@ -500,6 +500,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                             <TableHead>Course Code</TableHead>
                                             <TableHead>Course Title</TableHead>
                                             <TableHead>Unit</TableHead>
+                                            <TableHead>Class Option</TableHead>
                                             <TableHead className="text-center">Lecturer</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -509,6 +510,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                                 <TableCell >{course.code}</TableCell>
                                                 <TableCell>{course.title}</TableCell>
                                                 <TableCell>{course.unit}</TableCell>
+                                                <TableCell>{course.class_option}</TableCell>
                                                 <TableCell className="text-center">{course.allocatedTo || "-"}</TableCell>
                                                 
                                             </TableRow>

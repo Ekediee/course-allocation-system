@@ -4,6 +4,7 @@ export interface Course {
   code: string;
   title: string;
   unit: number;
+  class_option: string;
   specialization: string;
   isAllocated: boolean;
   allocatedTo?: string;
