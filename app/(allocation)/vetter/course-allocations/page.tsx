@@ -242,6 +242,9 @@ const CourseAllocationsPage = () => {
                           </TableHead>
                         </>
                       )}
+                      <TableHead className="">
+                        Vetted By
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody className="w-full h-full">
@@ -289,6 +292,9 @@ const CourseAllocationsPage = () => {
                             </TableCell>
                           </>
                         )}
+                        <TableCell className="">
+                          {dept.vetted_by}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
