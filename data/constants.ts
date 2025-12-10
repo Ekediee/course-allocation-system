@@ -9,6 +9,8 @@ export interface Course {
   isAllocated: boolean;
   allocatedTo?: string;
   programCourseId?: string;
+  is_pushed_to_umis: boolean;
+  pushed_to_umis_by?: string;
 }
   
 export interface Level {

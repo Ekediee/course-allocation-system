@@ -272,6 +272,53 @@ const AllocationVet = ({allocationPage, url}: any) => {
         router.push(url);
     };
 
+    const handlePushToUmis = async (program_course_id: string) => {
+        
+        const push_to_umis_data = {
+            program_course_id: program_course_id
+        };
+
+        try {
+            const res = await fetch('/api/allocation/push_to_umis', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(push_to_umis_data),
+            });
+
+            if (res.status.toString().startsWith("40")) {
+                const data = await res.json();
+                toast({
+                    variant: "destructive",
+                    title: data.title,
+                    description: data.error
+                });
+                return;
+            }
+
+            if (res.ok) {
+                const data = await res.json();
+                
+                toast({
+                    variant: "success",
+                    title: "Allocation Successfully pushed to UMIS",
+                    description: data.message,
+                });
+                
+                // Invalidate the query that fetches all the page data.
+                await queryClient.invalidateQueries({ queryKey: ['depcourses'] });
+            }
+        } catch (err) {
+        toast({
+            variant: "destructive",
+            title: "Allocation Submission to UMIS Failed",
+            description: (err as Error).message,
+            });
+        }
+
+    };
+
     const calculateUniqueTotalUnits = (courses: Course[]): number => {
         if (!Array.isArray(courses)) {
             return 0;
@@ -502,6 +549,12 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                             <TableHead>Unit</TableHead>
                                             <TableHead>Class Option</TableHead>
                                             <TableHead className="text-center">Lecturer</TableHead>
+                                            {semester.vetted && (
+                                                <>
+                                                    <TableHead className="text-center">Action</TableHead>
+                                                    <TableHead className="text-center">Pushed to UMIS by</TableHead>
+                                                </>
+                                            )}
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -512,13 +565,27 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                                 <TableCell>{course.unit}</TableCell>
                                                 <TableCell>{course.class_option}</TableCell>
                                                 <TableCell className="text-center">{course.allocatedTo || "-"}</TableCell>
-                                                
+                                                {semester.vetted && (
+                                                    <>
+                                                        <TableCell className="text-center">
+                                                            <Button 
+                                                                size="sm" 
+                                                                className="bg-blue-700 hover:bg-blue-800"
+                                                                onClick={() => handlePushToUmis(course.id)}
+                                                                disabled={course.is_pushed_to_umis}
+                                                            >
+                                                                {course.is_pushed_to_umis ? "On UMIS": "Push to UMIS"}
+                                                            </Button>
+                                                        </TableCell>
+                                                        <TableCell className="text-center">{course.pushed_to_umis_by}</TableCell>
+                                                    </>
+                                                )}
                                             </TableRow>
                                             ))}
                                             <TableRow className="bg-gray-400">
                                                 <TableCell className=" font-bold"></TableCell>
                                                 <TableCell colSpan={1} className=" font-bold">Total</TableCell>
-                                                <TableCell colSpan={2} className="font-bold">
+                                                <TableCell colSpan={5} className="font-bold">
                                                     {/* {(level?.courses ?? []).reduce((total, course) => total + (course.unit ?? 0), 0)} */}
                                                     {calculateUniqueTotalUnits(level?.courses ?? [])}
                                                 </TableCell>
