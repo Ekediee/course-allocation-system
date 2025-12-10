@@ -287,11 +287,11 @@ const AllocationVet = ({allocationPage, url}: any) => {
                 body: JSON.stringify(push_to_umis_data),
             });
 
-            if (res.status.toString().startsWith("40")) {
+            if (res.status.toString().startsWith("40") || res.status === 207) {
                 const data = await res.json();
                 toast({
                     variant: "destructive",
-                    title: data.title,
+                    title: data.title || "Pushing Allocation to UMIS Failed",
                     description: data.error
                 });
                 return;
