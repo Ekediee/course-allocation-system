@@ -29,8 +29,9 @@ export const POST = async (req: NextRequest) => {
     if (!res.ok) {
       try {
         errorData = await res.json();
-      } catch {
-        errorData = {};
+      } catch (jsonError) {
+        const errorText = await res.text(); // Read the raw text from the response body
+        errorData = { error: errorText || 'Server returned an unreadable error message.' };
       }
 
       // Check if token expired
