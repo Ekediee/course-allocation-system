@@ -14,7 +14,7 @@ import { Semester, Program, Course, Level } from "@/data/constants";
 import { useAppContext } from '@/contexts/ContextProvider'
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import AllocateLecturerModal from "@/components/Allocations/SubmitAllocationModal";
+import PushUMISModal from "@/components/Allocations/PushUmisModal";
 import PrintLink from "../PrintLink";
 import { useRouter } from "next/navigation"
 import { ComboboxMain, Items } from "@/components/ComboboxMain";
@@ -62,12 +62,12 @@ const AllocationVet = ({allocationPage, url}: any) => {
             setActiveSemester(defaultSemesterId); // Initialize active semester
 
             const defaultProgramMap: Record<string, string> = {};
-            semesters.forEach((b: Bulletin) => {
-                const firstSem = b.semester?.[0];
+            semesters?.forEach((b: Bulletin) => {
+                const firstSem = b?.semester?.[0];
 
                 if (firstSem) {
-                    if (firstSem.programs?.length > 0) {
-                        defaultProgramMap[firstSem.id] = firstSem?.programs?.[0]?.id;
+                    if (firstSem?.programs?.length > 0) {
+                        defaultProgramMap[firstSem?.id] = firstSem?.programs?.[0]?.id;
                     }
                 }
                 
@@ -104,7 +104,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
             // Update the active program map for this semester
             setActiveProgramMap(prev => ({
                 ...prev,
-                [firstSemester.id]: firstProgram.id
+                [firstSemester?.id]: firstProgram?.id
             }));
 
             // Find the first level in that program
@@ -113,7 +113,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                 // Update the active level map for this program
                 setActiveLevelMap(prev => ({
                     ...prev,
-                    [firstProgram.id]: firstLevel.id
+                    [firstProgram?.id]: firstLevel?.id
                 }));
 
                 // Drill down to set the default specialization
@@ -121,7 +121,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                 if (firstSpecialization) {
                     setActiveSpecializationMap(prev => ({ // <-- ADD THIS BLOCK
                         ...prev,
-                        [firstLevel.id]: firstSpecialization.id
+                        [firstLevel?.id]: firstSpecialization?.id
                     }));
                 }
             }
@@ -159,12 +159,12 @@ const AllocationVet = ({allocationPage, url}: any) => {
             return [];
         }
         // Find the bulletin in the `semesters` (which is actually a list of bulletins)
-        const foundBulletin = semesters.find(bulletin => bulletin.id === selectedBulletin);
+        const foundBulletin = semesters?.find(bulletin => bulletin.id === selectedBulletin);
         
         // Return the semester array from the found bulletin, or an empty array.
         return foundBulletin?.semester ?? [];
     }, [selectedBulletin, semesters]);
-
+    
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
@@ -319,6 +319,52 @@ const AllocationVet = ({allocationPage, url}: any) => {
 
     };
 
+    const handlePushAllUmis = async () => {
+
+        const push_umis_data = {
+            department_id: vetDepIDs?.department_id, 
+            semester_id: vetDepIDs?.semester_id,
+        };
+
+        try {
+            const res = await fetch('/api/allocation/push_to_umis/bulk', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(push_umis_data),
+            });
+
+            if (res.status.toString().startsWith("40") || res.status === 207) {
+                const data = await res.json();
+                toast({
+                    variant: "destructive",
+                    title: data.title || "Pushing Allocation to UMIS Failed",
+                    description: data.error
+                });
+                return;
+            }
+
+            if (res.ok) {
+                const data = await res.json();
+                
+                toast({
+                    variant: "success",
+                    title: "Allocations Successfully pushed to UMIS",
+                    description: data.message,
+                });
+                await queryClient.invalidateQueries({ queryKey: ['depcourses'] });
+            }
+        } catch (err) {
+        toast({
+            variant: "destructive",
+            title: "Allocation Submission to UMIS Failed",
+            description: (err as Error).message,
+            });
+        }
+
+    }
+
     const calculateUniqueTotalUnits = (courses: Course[]): number => {
         if (!Array.isArray(courses)) {
             return 0;
@@ -409,7 +455,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
             </TabsList>
 
             {/* Semester Content */}
-            {courses.length === 0 ? (
+            {courses?.length === 0 ? (
                 <div className="flex justify-center items-center p-4 text-center text-muted-foreground ">
                     No data available for this bulletin
                 </div>
@@ -437,7 +483,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                     Go back to list
                                     </Button>
                                 </Link>
-                                {(semester.submitted && role === 'superadmin') && (
+                                {(semester?.submitted && role === 'superadmin') && (
                                     <Button 
                                         size="sm" 
                                         className="bg-blue-700 hover:bg-blue-800"
@@ -524,12 +570,10 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                     })}
                                 </TabsList>
                                 {allocateCourse === null ? "" : (<p>{allocateCourse?.code} - {allocateCourse?.title} {allocateCourse?.unit} - {allocateCourse?.allocatedTo}</p>)}
-                                {/* <div className="flex justify-between space-x-2 mb-4">
-                                    {semesterdata && (
-                                        <PrintLink semester={semester} />
-                                    )}
-                                    {(semesterdata && !allocationStatus?.is_submitted) && <AllocateLecturerModal semester={semester} onSubmit={handleSubmit} />}
-                                </div> */}
+                                <div className="flex justify-between space-x-2 mb-4">
+                                    
+                                    {semester.vetted && <PushUMISModal is_all_pushed={semesters?.[0]?.is_all_pushed} onSubmit={handlePushAllUmis} />}
+                                </div>
                                 </div>
     
                                 {/* Level Content - Course Table */}

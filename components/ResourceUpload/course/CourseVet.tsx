@@ -23,6 +23,7 @@ type AllocationStatus = {
 export interface Bulletin {
   id: string;
   name: string;
+  is_all_pushed: boolean;
   semester: Semester[];
 }
 

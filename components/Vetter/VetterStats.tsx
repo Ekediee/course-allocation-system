@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 export type MetricType = {
     id: number,
     name: string,
-    total_courses_to_allocate: number,
+    total_allocated_course_groups: number,
     allocated_courses: number,
     allocation_in_progress: number,
     allocation_submitted: number,

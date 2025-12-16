@@ -130,14 +130,14 @@ const CourseAllocationsPage = () => {
                 <p className="text-4xl font-bold">{metrics?.allocated_courses}</p>
               </CardContent>
               </div>
-              {/* <div className='absolute bottom-1 right-6 text-right'>
+              <div className=''>
               <CardHeader>
-                <CardTitle># Courses to allocate</CardTitle>
+                <CardTitle># Course groups allocated</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-4xl font-bold">{metrics?.total_courses_to_allocate}</p>
+                <p className="text-4xl font-bold">{metrics?.total_allocated_course_groups}</p>
               </CardContent>
-              </div> */}
+              </div>
             </div>
           </Card>
           <Card className="bg-weak-100">

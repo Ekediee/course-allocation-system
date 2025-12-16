@@ -71,6 +71,9 @@ const DepartmentStatus = () => {
 
   // get currently selected semester
   const currentSemester = allocationStatus?.find(s => s.id === activeTab);
+  // const currentSemester = Array.isArray(allocationStatus)
+  //   ? allocationStatus.find(s => s.id === activeTab)
+  //   : undefined;
 
   const { paginated, totalPages } = useTable({
     data: currentSemester?.departments ?? [],
