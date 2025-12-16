@@ -12,18 +12,22 @@ import {
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Loader2 } from "lucide-react";
 
 
 type Props = {
   is_all_pushed?: boolean;
   onSubmit: () => void;
+  isPushing: boolean;
+  isOpen: boolean; // Add the new props
+  setIsOpen: (open: boolean) => void;
 };
 
-const PushUMISModal = ({ is_all_pushed, onSubmit }: Props) => {
+const PushUMISModal = ({ is_all_pushed, onSubmit, isPushing, isOpen, setIsOpen }: Props) => {
   
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="secondary" 
           className="bg-blue-700 hover:bg-blue-400 text-white"
@@ -68,13 +72,31 @@ const PushUMISModal = ({ is_all_pushed, onSubmit }: Props) => {
             <DialogClose  
               className="w-full"
             asChild>
-              <Button variant="outline" className="w-full">Go Back</Button>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => setIsOpen(false)} 
+                disabled={isPushing}
+              >
+                Go Back
+              </Button>
             </DialogClose>
-            <DialogClose  
-              className="w-full"
-            asChild>
-             <Button variant="secondary" className="w-full bg-blue-700 text-white hover:bg-blue-400" onClick={onSubmit}>Continue</Button>
-            </DialogClose>
+             <Button 
+                variant="secondary" 
+                className="w-full bg-blue-700 text-white hover:bg-blue-400" 
+                onClick={onSubmit}
+                disabled={isPushing}
+              >
+                {isPushing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Pushing...
+                  </>
+                ) : (
+                  "Continue"
+                )}
+              </Button>
+            
           </div>
         </div>
       </DialogContent>

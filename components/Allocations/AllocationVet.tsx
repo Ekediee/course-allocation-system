@@ -42,6 +42,9 @@ const AllocationVet = ({allocationPage, url}: any) => {
     const [selectedBulletin, setSelectedBulletin] = useState('');
     const [activeSpecializationMap, setActiveSpecializationMap] = useState<Record<string, string>>({});
 
+    const [isPushing, setIsPushing] = useState(false);
+    const [isPushModalOpen, setIsPushModalOpen] = useState(false);
+
     const router = useRouter();
 
     const { data: bulletins = [], isLoading: loadingBulletins } = useQuery<Items[]>({
@@ -321,6 +324,8 @@ const AllocationVet = ({allocationPage, url}: any) => {
 
     const handlePushAllUmis = async () => {
 
+        setIsPushing(true);
+
         const push_umis_data = {
             department_id: vetDepIDs?.department_id, 
             semester_id: vetDepIDs?.semester_id,
@@ -335,32 +340,40 @@ const AllocationVet = ({allocationPage, url}: any) => {
                 body: JSON.stringify(push_umis_data),
             });
 
-            if (res.status.toString().startsWith("40") || res.status === 207) {
-                const data = await res.json();
-                toast({
-                    variant: "destructive",
-                    title: data.title || "Pushing Allocation to UMIS Failed",
-                    description: data.error
-                });
-                return;
-            }
+            const data = await res.json(); // Parse JSON regardless of status
 
-            if (res.ok) {
-                const data = await res.json();
-                
-                toast({
-                    variant: "success",
-                    title: "Allocations Successfully pushed to UMIS",
-                    description: data.message,
-                });
-                await queryClient.invalidateQueries({ queryKey: ['depcourses'] });
+            // if (res.status.toString().startsWith("40") || res.status === 207) {
+            //     const data = await res.json();
+            //     toast({
+            //         variant: "destructive",
+            //         title: data.title || "Pushing Allocation to UMIS Failed",
+            //         description: data.error
+            //     });
+            //     return;
+            // }
+
+            if (!res.ok) {
+                // Throw an error to be caught by the catch block
+                throw new Error(data.error || "Pushing Allocations to UMIS Failed");
             }
-        } catch (err) {
-        toast({
-            variant: "destructive",
-            title: "Allocation Submission to UMIS Failed",
-            description: (err as Error).message,
+                
+            toast({
+                variant: "success",
+                title: "Allocations Successfully pushed to UMIS",
+                description: data.message,
             });
+            await queryClient.invalidateQueries({ queryKey: ['depcourses'] });
+
+        } catch (err) {
+            toast({
+                variant: "destructive",
+                title: "Allocation Submission to UMIS Failed",
+                description: (err as Error).message,
+            });
+        } finally {
+            // This block runs after the try or catch is finished.
+            setIsPushing(false);
+            setIsPushModalOpen(false)
         }
 
     }
@@ -572,7 +585,15 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                 {allocateCourse === null ? "" : (<p>{allocateCourse?.code} - {allocateCourse?.title} {allocateCourse?.unit} - {allocateCourse?.allocatedTo}</p>)}
                                 <div className="flex justify-between space-x-2 mb-4">
                                     
-                                    {semester.vetted && <PushUMISModal is_all_pushed={semesters?.[0]?.is_all_pushed} onSubmit={handlePushAllUmis} />}
+                                    {semester.vetted && (
+                                        <PushUMISModal 
+                                            is_all_pushed={semesters?.[0]?.is_all_pushed} 
+                                            onSubmit={handlePushAllUmis}
+                                            isPushing={isPushing}
+                                            isOpen={isPushModalOpen}
+                                            setIsOpen={setIsPushModalOpen}
+                                        />
+                                    )}
                                 </div>
                                 </div>
     
