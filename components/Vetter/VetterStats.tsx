@@ -8,6 +8,7 @@ export type MetricType = {
     id: number,
     name: string,
     total_allocated_course_groups: number,
+    number_of_pushed_allocation: number,
     allocated_courses: number,
     allocation_in_progress: number,
     allocation_submitted: number,

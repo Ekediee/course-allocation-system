@@ -104,7 +104,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
     
     // Set default active program for each semester when data is loaded
     useEffect(() => {
-        if (semesters && semesters.length > 0) {
+        if (semesters && semesters?.length > 0) {
             const defaultSemesterId = semesters[0]?.semester?.[0]?.id;
             setActiveSemester(defaultSemesterId); // Initialize active semester
 
@@ -117,12 +117,12 @@ const CoursesVet = ({allocationPage, url}: any) => {
 
                 if (firstSem) {
                     // Set default program for the semester
-                    if (firstSem.programs.length > 0) {
+                    if (firstSem?.programs?.length > 0) {
                         defaultProgramMap[firstSem.id] = firstSem?.programs?.[0].id;
                     }
                     // Loop through EACH program to set its default level
                     firstSem.programs.forEach((program: Program) => {
-                        if (program.levels.length > 0) {
+                        if (program?.levels?.length > 0) {
                             defaultLevelMap[program.id] = program?.levels?.[0]?.id;
 
                             // Drill down to set the default specialization
@@ -310,7 +310,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
             </TabsList>
 
             {/* Semester Content */}
-            {courses.length === 0 ? (
+            {courses?.length === 0 ? (
                 <div className="flex justify-center items-center p-4 text-center text-muted-foreground ">
                     No data available for this bulletin
                 </div>
@@ -344,14 +344,14 @@ const CoursesVet = ({allocationPage, url}: any) => {
                     </CardHeader>
                     <CardContent>
                     {/* No programs message */}
-                    {semester.programs?.length === 0 ? (
+                    {semester?.programs?.length === 0 ? (
                         <div className="p-4 text-center text-muted-foreground">
                             No program data available for this semester
                         </div>
                     ) : (
                         /* Second layer: Program Tabs */
                         <Tabs 
-                            value={activeProgramMap[semester.id] || semester.programs[0]?.id} 
+                            value={activeProgramMap[semester.id] || semester?.programs[0]?.id} 
                             onValueChange={(value) => handleProgramChange(semester.id, value)}
                             className="w-full"
                         >
@@ -372,14 +372,14 @@ const CoursesVet = ({allocationPage, url}: any) => {
                         {semester.programs.map((program: Program) => (
                             <TabsContent key={program.id} value={program.id} className="space-y-4">
                             {/* No levels message */}
-                            {program.levels.length === 0 ? (
+                            {program?.levels?.length === 0 ? (
                                 <div className="p-4 text-center text-muted-foreground">
                                 No levels available for this program
                                 </div>
                             ) : (
                                 /* Third layer: Level Tabs */
                                 <Tabs 
-                                    value={activeLevelMap[program.id] || program.levels[0]?.id} 
+                                    value={activeLevelMap[program.id] || program?.levels[0]?.id} 
                                     className="w-full"
                                     onValueChange={(value) => handleLevelChange(program.id, value)}
                                 >
@@ -404,7 +404,7 @@ const CoursesVet = ({allocationPage, url}: any) => {
                                 {/* Level Content - Course Table */}
                                 {program.levels.map((level: Level) => (
                                     <TabsContent key={level.id} value={level.id}>
-                                        {level.specializations.length === 0 ? (
+                                        {level?.specializations?.length === 0 ? (
                                             <div className="p-4 text-center text-muted-foreground">
                                                 No courses available for this level
                                             </div>
