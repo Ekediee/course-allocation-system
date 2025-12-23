@@ -19,6 +19,7 @@ import PrintLink from "../PrintLink";
 import { useRouter } from "next/navigation"
 import { ComboboxMain, Items } from "@/components/ComboboxMain";
 import type { Semester as SemesterT } from '@/data/constants';
+import DeleteConfirmationModal from "../ResourceUpload/department/DeleteConfirmationModal";
 
 type AllocationStatus = {
     is_submitted: boolean;
@@ -44,6 +45,9 @@ const AllocationVet = ({allocationPage, url}: any) => {
 
     const [isPushing, setIsPushing] = useState(false);
     const [isPushModalOpen, setIsPushModalOpen] = useState(false);
+
+    const [selectedAllocation, setSelectedAllocation] = React.useState<any>(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
 
     const router = useRouter();
 
@@ -141,21 +145,6 @@ const AllocationVet = ({allocationPage, url}: any) => {
             [semesterId]: programId
         }));
     };
-
-    // const courses = useMemo<Semester[]>(() => {
-    //     if (!Array.isArray(semesters)) return [];
-    //     const found = semesters.find(item => item.id === selectedBulletin);
-    //     return found?.semester ?? [];
-    // }, [selectedBulletin, semesters]);
-
-    // const courses = useMemo<SemesterT[]>(() => {
-    //     if (!Array.isArray(semesters)) return [];
-    //     // narrow semesters elements so TS knows each bulletin contains a Semester[] matching the shared type
-    //     const found = (semesters as Array<{ id: string; semester?: SemesterT[] }>).find(
-    //         item => item.id === selectedBulletin
-    //     );
-    //     return found?.semester ?? [];
-    // }, [selectedBulletin, semesters]);
 
     const courses = useMemo<SemesterT[]>(() => {
         if (!Array.isArray(semesters)) {
@@ -397,6 +386,44 @@ const AllocationVet = ({allocationPage, url}: any) => {
         return uniqueCoursesArray.reduce((total, course) => total + (course.unit ?? 0), 0);
     };
 
+    const handleDelete = (course: any) => {
+        setSelectedAllocation(course);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (selectedAllocation) {
+            try {
+                const res = await fetch(`/api/allocation?id=${selectedAllocation.id}`, {
+                    method: 'DELETE',
+                });
+
+                if (res.ok) {
+                    toast({
+                        variant: "success",
+                        title: "Course Allocation Deleted",
+                        description: `Course ("${selectedAllocation.code} - ${selectedAllocation.title}") has been deleted from allocation.`
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['depcourses'] });
+                } else {
+                    const data = await res.json();
+                    toast({
+                        variant: "destructive",
+                        title: "Delete Failed",
+                        description: data.error || "An unknown error occurred."
+                    });
+                }
+            } catch (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Something went wrong",
+                    description: (error as Error).message
+                });
+            }
+            setIsDeleteModalOpen(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="p-8">
@@ -614,6 +641,7 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                             <TableHead>Unit</TableHead>
                                             <TableHead>Class Option</TableHead>
                                             <TableHead className="text-center">Lecturer</TableHead>
+                                            <TableHead className="text-center">Delete</TableHead>
                                             {semester.vetted && (
                                                 <>
                                                     <TableHead className="text-center">Action</TableHead>
@@ -630,6 +658,9 @@ const AllocationVet = ({allocationPage, url}: any) => {
                                                 <TableCell>{course.unit}</TableCell>
                                                 <TableCell>{course.class_option}</TableCell>
                                                 <TableCell className="text-center">{course.allocatedTo || "-"}</TableCell>
+                                                <TableCell className="text-center">
+                                                    <Button disabled={role != "superadmin"} variant="destructive" size="sm" className="ml-2" onClick={() => handleDelete(course)}>Delete Allocation</Button>
+                                                </TableCell>
                                                 {semester.vetted && (
                                                     <>
                                                         <TableCell className="text-center">
@@ -674,6 +705,15 @@ const AllocationVet = ({allocationPage, url}: any) => {
             </div>
             )}
         </Tabs>
+
+        {isDeleteModalOpen && (
+            <DeleteConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+                message={`Are you sure you want to delete this course ("${selectedAllocation?.code} - ${selectedAllocation?.title}") from allocation?`}
+            />
+        )}
     </>
   )
 }

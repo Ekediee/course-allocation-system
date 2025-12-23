@@ -1,11 +1,13 @@
 "use client"
 import CourseMainModal from '@/components/ResourceUpload/course/CourseMainModal';
+import DeleteConfirmationModal from '@/components/ResourceUpload/department/DeleteConfirmationModal';
 import SearchTable from '@/components/SearchTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAppContext } from '@/contexts/ContextProvider';
+import { useToast } from '@/hooks/use-toast';
 import { useTable } from '@/lib/useTable';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowDownWideNarrow, SquarePen } from 'lucide-react';
@@ -28,6 +30,7 @@ const ManageCourses = () => {
     } = useAppContext()
 
     const queryClient = useQueryClient();
+    const { toast } = useToast();
 
     const { data: courseResult, isLoading, error } = useQuery<{ courses: any[] }>({
         queryKey: ['courses'],
@@ -52,6 +55,44 @@ const ManageCourses = () => {
         
         setSelectedCourse(course);
         setIsEditModalOpen(true);
+    };
+
+    const handleDelete = (course: any) => {
+        setSelectedCourse(course);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (selectedCourse) {
+            try {
+                const res = await fetch(`/api/manage-uploads/course/main?id=${selectedCourse.id}`, {
+                    method: 'DELETE',
+                });
+
+                if (res.ok) {
+                    toast({
+                        variant: "success",
+                        title: "Course Deleted",
+                        description: `Course ("${selectedCourse.code} - ${selectedCourse.title}") has been deleted successfully.`
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['courses'] });
+                } else {
+                    const data = await res.json();
+                    toast({
+                        variant: "destructive",
+                        title: "Delete Failed",
+                        description: data.error || "An unknown error occurred."
+                    });
+                }
+            } catch (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Delete Failed",
+                    description: (error as Error).message
+                });
+            }
+            setIsDeleteModalOpen(false);
+        }
     };
 
     if (isLoading) {
@@ -138,6 +179,7 @@ const ManageCourses = () => {
                                             <SquarePen className="cursor-pointer text-blue-500 hover:text-blue-700" />
                                             Edit
                                         </Button>
+                                        <Button disabled={!canEdit} variant="destructive" size="sm" className="ml-2" onClick={() => handleDelete(course)}>Delete</Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -158,6 +200,15 @@ const ManageCourses = () => {
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onAddCourse={() => queryClient.invalidateQueries({ queryKey: ['courses'] })}
+            />
+        )}
+
+        {isDeleteModalOpen && (
+            <DeleteConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+                message={`Are you sure you want to delete the course "(${selectedCourse?.code} - ${selectedCourse?.title})"?`}
             />
         )}
     </>

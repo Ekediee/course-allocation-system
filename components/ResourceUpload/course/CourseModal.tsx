@@ -262,51 +262,63 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
         }
     };
 
-    const { data: bulletins = [], isLoading: loadingBulletins } = useQuery<Items[]>({
+    const { data: bulletins = [],  refetch: refetchBulletins, isLoading: loadingBulletins } = useQuery<Items[]>({
         queryKey: ["bulletins"],
         queryFn: fetchBulletinName,
     });
 
-    const { data: schools = [], isLoading: loadingSchools } = useQuery<Items[]>({
+    const { data: schools = [],  refetch: refetchSchools, isLoading: loadingSchools } = useQuery<Items[]>({
         queryKey: ["schools"],
         queryFn: fetchSchoolName,
     });
 
-    const { data: departments = [], isLoading: loadingDepartments } = useQuery<Items[]>({
+    const { data: departments = [],  refetch: refetchDepartment, isLoading: loadingDepartments } = useQuery<Items[]>({
         queryKey: ["departments", selectedSchool],
         queryFn: () => fetchDepartmentNameBySchool(selectedSchool!),
         enabled: !!selectedSchool,
     });
-    
-    const { data: programs = [], isLoading: loadingProgram } = useQuery<Items[]>({
+
+    const { data: programs = [],  refetch: refetchPrograms, isLoading: loadingProgram } = useQuery<Items[]>({
         queryKey: ["programs", selectedDepartment],
         queryFn: () => fetchProgramNameByDepartment(selectedDepartment!),
         enabled: !!selectedDepartment,
     });
 
-    const { data: specializations = [], isLoading: loadingSpecializations } = useQuery<Items[]>({
+    const { data: specializations = [],  refetch: refetchSpecializations, isLoading: loadingSpecializations } = useQuery<Items[]>({
         queryKey: ["specializations", selectedProgram],
         queryFn: () => fetchSpecializationNameByProgram(selectedProgram!),
         enabled: !!selectedProgram,
     });
 
-    const { data: semesterResult, isLoading: loadingSemester } = useQuery<Items[]>({
+    const { data: semesterResult,  refetch: refetchSemesters, isLoading: loadingSemester } = useQuery<Items[]>({
         queryKey: ["semesters"],
         queryFn: fetchSemesters,
     });
     const semesters = semesterResult ?? [];
 
-    const { data: levelResult, isLoading: loadingLevel } = useQuery<Items[]>({
+    const { data: levelResult,  refetch: refetchLevels, isLoading: loadingLevel } = useQuery<Items[]>({
         queryKey: ["levels"],
         queryFn: fetchLevels,
     });
     const levels = levelResult ?? [];
 
-    const { data: courseTypesResult, isLoading: loadingCourseTypes } = useQuery<Items[]>({
+    const { data: courseTypesResult,  refetch: refetchCourseTypes, isLoading: loadingCourseTypes } = useQuery<Items[]>({
         queryKey: ["courseTypes"],
         queryFn: fetchCourseTypes,
     });
     const courseTypes = courseTypesResult ?? [];
+
+    useEffect(() => {
+        if (isOpen) {
+            
+            // Manually refetch the non-dependent queries
+            refetchBulletins();
+            refetchSchools();
+            refetchSemesters();
+            refetchLevels();
+            refetchCourseTypes();
+        }
+    }, [isOpen]);
     
   return (
     <>
@@ -340,9 +352,9 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
                             <Label htmlFor="school">Select School</Label>
                             {!loadingSchools && <ComboboxMain data={schools} onSelect={(value) => {
                                 setSelectedSchool(value);
-                                // setSelectedDepartment('');
-                                // setSelectedProgram('');
-                                // setSelectedSpecialization('');
+                                setSelectedDepartment('');
+                                setSelectedProgram('');
+                                setSelectedSpecialization('');
                             }} initialValue={selectedSchool} />}
                         </div>
                     </div>
@@ -351,15 +363,15 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
                             {showDeptCombo && <><Label htmlFor="department">Select Department</Label>
                             <ComboboxMain data={departments} onSelect={(value) => {
                                 setSelectedDepartment(value);
-                                // setSelectedProgram('');
-                                // setSelectedSpecialization('');
+                                setSelectedProgram('');
+                                setSelectedSpecialization('');
                             }} initialValue={selectedDepartment} /></>}
                         </div>
                         <div className="w-full">
                             {showProgCombo && <><Label htmlFor="program">Select Program</Label>
                             <ComboboxMain data={programs} onSelect={(value) => {
                                 setSelectedProgram(value);
-                                // setSelectedSpecialization('');
+                                setSelectedSpecialization('');
                             }} initialValue={selectedProgram} /></>}
                         </div>
                     </div>

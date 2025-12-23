@@ -125,3 +125,41 @@ export const PUT = async (req: NextRequest) => {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 };
+
+// DELETE handler for deleting a course
+export const DELETE = async (req: Request) => {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    logger.info({url: req.url, method: req.method, message: `Allocation delete attempt for program_course_id: ${id}` });
+
+    try {
+      const res = await fetch(getBackendApiUrl(`/api/v1/allocation/${id}`), {
+          method: 'DELETE',
+          headers: {
+              Cookie: req.headers.get('cookie') || '',
+          },
+      });
+
+      let errorData = null;
+      if (!res.ok) {
+          try {
+              errorData = await res.json();
+          } catch {
+              errorData = {};
+          }
+
+          const authError = handleAuthError(res, errorData);
+          if (authError) return authError;
+          console.log('Error data:', errorData);
+          logger.error({ message: `Allocation delete failed for program_course_id: ${id}`, error: errorData });
+          return NextResponse.json({ error: errorData.error || 'Failed to delete course' }, { status: res.status });
+      }
+
+      logger.info({ message: `Allocation delete successful for program_course_id: ${id}` });
+      return new Response(null, { status: 204 });
+
+    } catch (err) {
+        logger.error({ err }, `Allocation delete error for program_course_id: ${id}`);
+        return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    }
+}

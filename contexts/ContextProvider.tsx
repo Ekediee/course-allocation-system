@@ -793,6 +793,16 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const fetchCoursesMainList = async () => {
+      try {
+          const data = await apiFetch('/api/manage-uploads/course/main/list');
+          
+          return data?.courses
+      } catch (error) {
+          console.error('Failed to fetch courses:', error);
+      }
+    };
+
     const fetchUsers = async () => {
       try {
           const data = await apiFetch('/api/manage-uploads/user');
@@ -926,7 +936,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 setVetDepIDs, vetDepIDs, fetchDepAllocations, fetchDepartmentsForCourses, viewDepIDs, setViewDepIDs,
                 fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen,
                 isInMaintenace, setIsInMaintenace, toggleMaintenanceMode, fetchClassOptions, utoken, uid, setUToken, setUId,
-                isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus, fetchAllocatationMetrics, fetchSession
+                isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus, fetchAllocatationMetrics, fetchSession,
+                fetchCoursesMainList
             }}
         >
             { children }

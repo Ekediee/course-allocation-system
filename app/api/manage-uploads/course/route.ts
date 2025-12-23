@@ -138,12 +138,15 @@ export const DELETE = async (req: Request) => {
             },
         });
 
-        let errorData = null;
         if (!res.ok) {
+            const errorText = await res.text();
+            let errorData: any;
+
             try {
-                errorData = await res.json();
-            } catch {
-                errorData = {};
+                errorData = JSON.parse(errorText);
+            } catch (e) {
+                // If parsing fails, use the raw text as the error message.
+                errorData = { error: errorText || 'Server returned an empty error response.' };
             }
 
             const authError = handleAuthError(res, errorData);

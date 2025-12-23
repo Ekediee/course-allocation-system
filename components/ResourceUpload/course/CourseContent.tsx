@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import DeleteConfirmationModal from '../department/DeleteConfirmationModal';
 import { useTable } from '@/lib/useTable';
 import { useRouter } from 'next/navigation';
+import CourseProgramModal from './CourseProgramModal';
 
 const CourseContent = () => {
     const router = useRouter();
@@ -153,6 +154,7 @@ const CourseContent = () => {
                         <SearchTable setSearchTerm={setSearchTerm} />
                         <div className="flex items-center gap-2">
                             <Button variant="outline" className="text-webblue-100 hover:text-blue-700" onClick={() => handleViewDepartment()}>View by Department</Button>
+                            <CourseProgramModal btnName="Link Course to Program" onAddCourse={() => queryClient.invalidateQueries({ queryKey: ['courses'] })}/>
                             <CourseModal btnName="Add Course" onAddCourse={() => queryClient.invalidateQueries({ queryKey: ['courses'] })}/>
                         </div>
                     </div>
