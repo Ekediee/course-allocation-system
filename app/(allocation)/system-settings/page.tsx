@@ -18,10 +18,14 @@ const SystemConfigsPage = () => {
         role, 
         email,
         isAllocationClosed,
-        toggleCloseAllocationStatus
+        toggleCloseAllocationStatus,
+        isFirstSemesterActive,
+        toggleFirstSemesterStatus,
+        isSecondSemesterActive,
+        toggleSecondSemesterStatus
     } = useAppContext()
 
-
+  console.log("first semester status:", isFirstSemesterActive);
   return (
     <div className="p-4 md:p-6 space-y-6">
       <header>
@@ -54,6 +58,37 @@ const SystemConfigsPage = () => {
                             id="allocation-period" 
                             checked={isAllocationClosed}
                             onCheckedChange={toggleCloseAllocationStatus}
+                            className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500" 
+                        />
+                </div>
+            </div>
+            
+          
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Semester Settings</CardTitle>
+          <CardDescription>Manage semester activation for allocation periods.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+            
+            <div className="flex items-center gap-16 rounded-lg border p-4">
+                <div className="flex items-center gap-2">
+                        <Label htmlFor="allocation-period" className="font-semibold">First Semester</Label>
+                        <Switch 
+                            id="allocation-period" 
+                            checked={isFirstSemesterActive}
+                            onCheckedChange={toggleFirstSemesterStatus}
+                            className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500" 
+                        />
+                </div>
+                <div className="flex items-center gap-2">
+                        <Label htmlFor="allocation-period" className="font-semibold">Second Semester</Label>
+                        <Switch 
+                            id="allocation-period" 
+                            checked={isSecondSemesterActive}
+                            onCheckedChange={toggleSecondSemesterStatus}
                             className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500" 
                         />
                 </div>

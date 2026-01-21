@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ComboboxMain, Items } from "@/components/ComboboxMain";
 import { useQuery } from "@tanstack/react-query";
+import { cleanAndValidateCourseCode } from "@/lib/client/course-utils";
 
 type CourseModalProps = {
   btnName: string;
@@ -105,6 +106,24 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
             setSelectedCourseType('');
         }
     }, [isOpen, course]);
+
+    // Function to handle course code validation on blur
+    const handleCourseCodeBlur = () => {
+        if (courseCode) {
+        const { cleanedCode, error } = cleanAndValidateCourseCode(courseCode);
+        if (cleanedCode) {
+            // If cleaning was successful, update the input field with the formatted code
+            setCourseCode(cleanedCode);
+        } else if (error) {
+            // If it's an invalid format, show a toast warning
+            toast({
+            variant: "destructive",
+            title: "Invalid Course Code",
+            description: error,
+            });
+        }
+        }
+    };
     
     const handleSaveCourse = async () => {
         if(!courseCode || !courseTitle || !courseUnit || !selectedProgram || !selectedLevel || !selectedSemester || !selectedBulletin) {
@@ -116,8 +135,22 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
             return;
         }
 
+        // Validate and clean the course code
+        const validationResult = cleanAndValidateCourseCode(courseCode);
+        if (validationResult.error) {
+            toast({
+                variant: "destructive",
+                title: "Course Creation Failed",
+                description: validationResult.error,
+            });
+            return; // Stop the save process
+        }
+        
+        // Use the validated and cleaned code for the API call
+        const finalCourseCode = validationResult.cleanedCode!;
+
         const course_data = {
-            code: courseCode,
+            code: finalCourseCode,
             title: courseTitle,
             unit: parseInt(courseUnit),
             program_id: selectedProgram,
@@ -403,6 +436,7 @@ const CourseModal: React.FC<CourseModalProps> = ({btnName, onAddCourse, course, 
                                 className="border p-2 rounded"
                                 value={courseCode}
                                 onChange={(e) => setCourseCode(e.target.value)}
+                                onBlur={handleCourseCodeBlur}
                                 required
                             />
                         </div>

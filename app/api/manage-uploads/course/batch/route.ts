@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/server-only/logger';
 import { handleAuthError } from '@/lib/server-only/auth-utils';
 import * as XLSX from 'xlsx';
+import { cleanAndValidateCourseCode } from '@/lib/client/course-utils';
 
 export async function POST(req: NextRequest) {
   logger.info({url: req.url, method: req.method, message: 'Batch course upload attempt' });
@@ -51,23 +52,73 @@ export async function POST(req: NextRequest) {
     // Parse Excel workbook
     const workbook = XLSX.read(buffer, { type: 'array' });
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+    const jsonData = XLSX.utils.sheet_to_json<Record<string, any>>(worksheet, { defval: '' });
 
-    const records = jsonData.map((row: any) => ({
-      code: row.code || row["Code"] || null, // support header variations
-      title: row.title || row["Title"] || null,
-      unit: row.unit || row["Unit"] || null,
-      bulletin_id,
-      program_id,
-      specialization_id,
-      semester_id,
-      level_id,
-      course_type_id
-    })).filter((r) => r.code || r.title || r.unit); // filter out empty rows
+    // const records = jsonData.map((row: any) => ({
+    //   code: row.code || row["Code"] || null, // support header variations
+    //   title: row.title || row["Title"] || null,
+    //   unit: row.unit || row["Unit"] || null,
+    //   bulletin_id,
+    //   program_id,
+    //   specialization_id,
+    //   semester_id,
+    //   level_id,
+    //   course_type_id
+    // })).filter((r) => r.code || r.title || r.unit); // filter out empty rows
 
-    if (records.length === 0) {
-        logger.error({ message: 'Batch course upload failed', error: 'CSV file is empty or contains no valid data.' });
-        return NextResponse.json({ error: 'CSV file is empty or contains no valid data.' }, { status: 400 });
+    // if (records.length === 0) {
+    //     logger.error({ message: 'Batch course upload failed', error: 'CSV file is empty or contains no valid data.' });
+    //     return NextResponse.json({ error: 'CSV file is empty or contains no valid data.' }, { status: 400 });
+    // }
+
+    const validatedRecords = [];
+    const validationErrors = [];
+
+    for (const [index, row] of jsonData.entries()) {
+      const rowNum = index + 2; // Excel rows are 1-based, plus header
+      const rawCode = row.code || row["Code"] || null;
+      
+      // Filter out empty rows early
+      const title = row.title || row["Title"] || null;
+      const unit = row.unit || row["Unit"] || null;
+      if (!rawCode && !title && !unit) {
+        continue;
+      }
+
+      const { cleanedCode, error } = cleanAndValidateCourseCode(rawCode);
+
+      if (error) {
+        validationErrors.push(`Row ${rowNum}: ${error}`);
+        continue; // Skip this record, move to the next
+      }
+      
+      // If validation passes, add the cleaned record to the list to be sent to the backend
+      validatedRecords.push({
+        code: cleanedCode, // Use the cleaned code
+        title: title,
+        unit: unit,
+        bulletin_id,
+        program_id,
+        specialization_id,
+        semester_id,
+        level_id,
+        course_type_id
+      });
+    }
+
+    // If there were any validation errors, stop here and return them to the user.
+    if (validationErrors.length > 0) {
+      const errorMessage = validationErrors.join('\n');
+      logger.error({ message: 'Batch course upload failed due to validation errors', errors: errorMessage });
+      return NextResponse.json({
+        message: 'Validation failed for some records.',
+        error: errorMessage
+      }, { status: 400 });
+    }
+
+    if (validatedRecords.length === 0) {
+      logger.error({ message: 'Batch course upload failed', error: 'File is empty or contains no valid data.' });
+      return NextResponse.json({ error: 'File is empty or contains no valid data.' }, { status: 400 });
     }
 
     const flaskRes = await fetch(getBackendApiUrl('/api/v1/courses/batch'), {
@@ -76,7 +127,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
         Cookie: req.headers.get('cookie') || ''
       },
-      body: JSON.stringify({ courses: records }),
+      body: JSON.stringify({ courses: validatedRecords }),
     });
 
     const flaskData = await flaskRes.json();
@@ -91,10 +142,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({message: flaskData.message, error: flaskData.errors || 'Something went wrong' }, { status: flaskRes.status });
     }
 
-    logger.info({ message: 'Batch course upload successful', count: records.length });
+    logger.info({ message: 'Batch course upload successful', count: validatedRecords.length });
     return NextResponse.json({
       message: 'CSV uploaded and sent to backend successfully',
-      count: records.length,
+      count: validatedRecords.length,
       response: flaskData,
     });
   } catch (err) {

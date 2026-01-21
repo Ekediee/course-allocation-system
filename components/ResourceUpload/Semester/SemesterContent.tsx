@@ -78,7 +78,7 @@ const SemesterContent = () => {
             </div>
         );
     }
-
+    
   return (
     <>
         <TabsContent value="semester">
@@ -89,10 +89,10 @@ const SemesterContent = () => {
                             Semesters
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
+                            {/* <div className="flex items-center p-2 rounded-lg bg-white shadow-md">
                                 <ArrowDownWideNarrow className="h-4 w-4 mr-2" /> Sort by <ChevronDown className="ml-1 h-4 w-4" />
-                            </div>
-                            <SemesterModal btnName="Add Semester" onAddSemester={fetchSemesters}/>
+                            </div> */}
+                            {semesterData?.length < 2 && <SemesterModal btnName="Add Semester" onAddSemester={fetchSemesters}/>}
                         </div>
                     </div>
                     {semesterData?.length > 0 ? (
@@ -102,7 +102,6 @@ const SemesterContent = () => {
                                 <TableRow>
                                 <TableHead>Semester Name</TableHead>
                                 <TableHead className="text-center">Status</TableHead>
-                                <TableHead className="text-center">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -110,11 +109,10 @@ const SemesterContent = () => {
                                 <TableRow key={semester.id}>
                                     <TableCell >{semester.name}</TableCell>
                                     <TableCell className="text-center">
-                                        {semester.id && <Badge variant="outline" className="text-green-500 bg-green-100">
+                                        {semester.is_active && <Badge variant="outline" className="text-green-500 bg-green-100">
                                             Active
                                         </Badge>}
                                     </TableCell>
-                                    <TableCell className="text-center"></TableCell>
                                 </TableRow>
                             ))}
                             </TableBody>

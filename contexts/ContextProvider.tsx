@@ -169,7 +169,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
     const [isInMaintenace, setIsInMaintenace] = React.useState(false);
     const [isAllocationClosed, setIsAllocationClosed] = React.useState(false);
-    
+    const [isFirstSemesterActive, setIsFirstSemesterActive] = React.useState(false);
+    const [isSecondSemesterActive, setIsSecondSemesterActive] = React.useState(false);
 
     useEffect(() => {
       const roleFromCookie = Cookies.get('role')?.toLowerCase();
@@ -226,6 +227,48 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
       checkAllocationCloseStatus(); // Check immediately on app load
       const intervalId = setInterval(checkAllocationCloseStatus, 30000); // Check again every 30 seconds
+
+      return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+      // This function fetches the latest status from the backend
+      const checkFirstSemesterStatus = async () => {
+        try {
+          const response = await fetch('/api/semester-status/first-semester');
+          if (response.ok) {
+            const data = await response.json();
+            
+            setIsFirstSemesterActive(data.isFirstSemesterActive);
+          }
+        } catch (error) {
+          console.error("Failed to fetch first semester status:", error);
+        }
+      };
+
+      checkFirstSemesterStatus(); // Check immediately on app load
+      const intervalId = setInterval(checkFirstSemesterStatus, 30000); // Check again every 30 seconds
+
+      return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+      // This function fetches the latest status from the backend
+      const checkSecondSemesterStatus = async () => {
+        try {
+          const response = await fetch('/api/semester-status/second-semester');
+          if (response.ok) {
+            const data = await response.json();
+            
+            setIsSecondSemesterActive(data.isSecondSemesterActive);
+          }
+        } catch (error) {
+          console.error("Failed to fetch second semester status:", error);
+        }
+      };
+
+      checkSecondSemesterStatus(); // Check immediately on app load
+      const intervalId = setInterval(checkSecondSemesterStatus, 30000); // Check again every 30 seconds
 
       return () => clearInterval(intervalId);
     }, []);
@@ -907,6 +950,54 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const toggleFirstSemesterStatus = async () => {
+      const newStatus = !isFirstSemesterActive; // The state we want to set
+      
+      try {
+        // Call the API endpoint that changes the setting
+        const response = await fetch('/api/semester-status/first-semester', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enable: newStatus }),
+        });
+
+        if (!response.ok) {
+          console.error("Failed to update first semester status");
+          return;
+        }
+        
+        // If the API call is successful, update our local state immediately.
+        setIsFirstSemesterActive(newStatus);
+        
+      } catch (error) {
+        console.error("Error toggling first semester status:", error);
+      }
+    };
+
+    const toggleSecondSemesterStatus = async () => {
+      const newStatus = !isSecondSemesterActive; // The state we want to set
+      
+      try {
+        // Call the API endpoint that changes the setting
+        const response = await fetch('/api/semester-status/second-semester', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enable: newStatus }),
+        });
+
+        if (!response.ok) {
+          console.error("Failed to update second semester status");
+          return;
+        }
+        
+        // If the API call is successful, update our local state immediately.
+        setIsSecondSemesterActive(newStatus);
+        
+      } catch (error) {
+        console.error("Error toggling second semester status:", error);
+      }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -937,7 +1028,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen,
                 isInMaintenace, setIsInMaintenace, toggleMaintenanceMode, fetchClassOptions, utoken, uid, setUToken, setUId,
                 isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus, fetchAllocatationMetrics, fetchSession,
-                fetchCoursesMainList
+                fetchCoursesMainList, isFirstSemesterActive, toggleFirstSemesterStatus, isSecondSemesterActive, toggleSecondSemesterStatus,
             }}
         >
             { children }
