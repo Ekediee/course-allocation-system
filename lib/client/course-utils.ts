@@ -25,9 +25,9 @@ export const cleanAndValidateCourseCode = (rawCode: string): { cleanedCode?: str
 
   // Apply formatting rules.
 
-  // Rule for "BU-GST 314" format
-  if (lettersPart.startsWith('BUGST') && lettersPart.length === 5) {
-    const departmentCode = lettersPart.substring(2); // Extracts 'GST'
+  // Rule for "BU-XXX 314" format
+  if (lettersPart.startsWith('BU') && lettersPart.length === 5) {
+    const departmentCode = lettersPart.substring(2); // Extracts 'XXX'
     const cleanedCode = `BU-${departmentCode} ${numbersPart}`;
     return { cleanedCode };
   }

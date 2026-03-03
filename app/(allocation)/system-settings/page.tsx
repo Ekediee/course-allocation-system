@@ -25,7 +25,7 @@ const SystemConfigsPage = () => {
         toggleSecondSemesterStatus
     } = useAppContext()
 
-  console.log("first semester status:", isFirstSemesterActive);
+  
   return (
     <div className="p-4 md:p-6 space-y-6">
       <header>
