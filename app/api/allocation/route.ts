@@ -73,7 +73,7 @@ export const POST = async (req: NextRequest) => {
       if (authError) return authError; // auto-clears cookies
 
       logger.error({ message: 'Course allocation failed', allocation: reqBody, error: errorData });
-      return NextResponse.json({ error: 'Failed to allocate course' }, { status: res.status });
+      return NextResponse.json({ error: errorData.message || 'Failed to allocate course' }, { status: res.status });
     }
 
     const data = await res.json();

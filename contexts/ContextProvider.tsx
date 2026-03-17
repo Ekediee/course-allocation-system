@@ -171,6 +171,7 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
     const [isAllocationClosed, setIsAllocationClosed] = React.useState(false);
     const [isFirstSemesterActive, setIsFirstSemesterActive] = React.useState(false);
     const [isSecondSemesterActive, setIsSecondSemesterActive] = React.useState(false);
+    const [isSummerSemesterActive, setIsSummerSemesterActive] = React.useState(false);
 
     useEffect(() => {
       const roleFromCookie = Cookies.get('role')?.toLowerCase();
@@ -269,6 +270,27 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
 
       checkSecondSemesterStatus(); // Check immediately on app load
       const intervalId = setInterval(checkSecondSemesterStatus, 30000); // Check again every 30 seconds
+
+      return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+      // This function fetches the latest status from the backend
+      const checkSummerSemesterStatus = async () => {
+        try {
+          const response = await fetch('/api/semester-status/summer-semester');
+          if (response.ok) {
+            const data = await response.json();
+            
+            setIsSummerSemesterActive(data.isSummerSemesterActive);
+          }
+        } catch (error) {
+          console.error("Failed to fetch summer semester status:", error);
+        }
+      };
+
+      checkSummerSemesterStatus(); // Check immediately on app load
+      const intervalId = setInterval(checkSummerSemesterStatus, 30000); // Check again every 30 seconds
 
       return () => clearInterval(intervalId);
     }, []);
@@ -998,6 +1020,30 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
       }
     };
 
+    const toggleSummerSemesterStatus = async () => {
+      const newStatus = !isSummerSemesterActive; // The state we want to set
+      
+      try {
+        // Call the API endpoint that changes the setting
+        const response = await fetch('/api/semester-status/summer-semester', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enable: newStatus }),
+        });
+
+        if (!response.ok) {
+          console.error("Failed to update summer semester status");
+          return;
+        }
+        
+        // If the API call is successful, update our local state immediately.
+        setIsSummerSemesterActive(newStatus);
+        
+      } catch (error) {
+        console.error("Error toggling summer semester status:", error);
+      }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -1028,7 +1074,8 @@ export const AppWrapper = ({ children } : { children : ReactNode}) => {
                 fetchDepCourses, fetchAllLecturers, fetchSemesterDataPrint, fetchCoursesMain, isEditModalOpen, setIsEditModalOpen,
                 isInMaintenace, setIsInMaintenace, toggleMaintenanceMode, fetchClassOptions, utoken, uid, setUToken, setUId,
                 isAllocationClosed, setIsAllocationClosed, toggleCloseAllocationStatus, fetchAllocatationMetrics, fetchSession,
-                fetchCoursesMainList, isFirstSemesterActive, toggleFirstSemesterStatus, isSecondSemesterActive, toggleSecondSemesterStatus,
+                fetchCoursesMainList,                isFirstSemesterActive, toggleFirstSemesterStatus, isSecondSemesterActive, toggleSecondSemesterStatus,
+                isSummerSemesterActive, toggleSummerSemesterStatus,
             }}
         >
             { children }

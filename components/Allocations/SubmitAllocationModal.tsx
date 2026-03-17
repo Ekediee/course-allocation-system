@@ -26,6 +26,7 @@ type Program = {
 
 type Semester = {
   id: string;
+  name: string;
   programs: Program[];
 };
 
@@ -43,7 +44,7 @@ const AllocateLecturerModal = ({ semester, onSubmit }: Props) => {
   const allocated = allCourses?.filter(c => c.isAllocated).length;
   
   let allAllocated;
-  if (semester.id === "summer") {
+  if (semester.name === "Summer Semester") {
     allAllocated = true;
   } else {
     allAllocated = total > 0 && allocated === total;

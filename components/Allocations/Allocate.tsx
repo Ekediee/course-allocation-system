@@ -291,7 +291,7 @@ const AllocateComponent = () => {
             router.push(`/${from}`);
         } else {
             // If the response is not ok, throw an error to be caught by the catch block
-            throw new Error(resdata.message || "An unknown error occurred during allocation.");
+            throw new Error(resdata.error || "An unknown error occurred during allocation.");
         }
     } catch (error) {
         toast({

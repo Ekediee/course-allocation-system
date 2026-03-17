@@ -55,7 +55,7 @@ const AllocationPage = ({allocationPage, url}: any) => {
         });
 
     const { data: semesters, isLoading, error } = queryResult;
-    
+    console.log("semesters", semesters)
     const semesterdata: Semester | undefined = semesters?.find(
         (sem: Semester) => sem.id === semesters[0].id
     );
@@ -313,10 +313,10 @@ const AllocationPage = ({allocationPage, url}: any) => {
                                                     </Badge>
                                                 ) : (
                                                     <>
-                                                    {isAllocationClosed ? (
+                                                    {(isAllocationClosed || (semester.name === "Summer Semester" && allocationStatus?.is_submitted)) ? (
                                                         <Button variant="secondary" 
                                                             className="text-gray-500" 
-                                                            disabled={isAllocationClosed}
+                                                            disabled={isAllocationClosed || (semester.name === "Summer Semester" && allocationStatus?.is_submitted)}
                                                         >
                                                             Allocate Lecturer
                                                         </Button>

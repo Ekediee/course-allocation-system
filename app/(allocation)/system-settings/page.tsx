@@ -22,7 +22,9 @@ const SystemConfigsPage = () => {
         isFirstSemesterActive,
         toggleFirstSemesterStatus,
         isSecondSemesterActive,
-        toggleSecondSemesterStatus
+        toggleSecondSemesterStatus,
+        isSummerSemesterActive,
+        toggleSummerSemesterStatus
     } = useAppContext()
 
   
@@ -73,22 +75,31 @@ const SystemConfigsPage = () => {
         </CardHeader>
         <CardContent className="space-y-6">
             
-            <div className="flex items-center gap-16 rounded-lg border p-4">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-16 rounded-lg border p-4">
                 <div className="flex items-center gap-2">
-                        <Label htmlFor="allocation-period" className="font-semibold">First Semester</Label>
+                        <Label htmlFor="first-semester-period" className="font-semibold">First Semester</Label>
                         <Switch 
-                            id="allocation-period" 
+                            id="first-semester-period" 
                             checked={isFirstSemesterActive}
                             onCheckedChange={toggleFirstSemesterStatus}
                             className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500" 
                         />
                 </div>
                 <div className="flex items-center gap-2">
-                        <Label htmlFor="allocation-period" className="font-semibold">Second Semester</Label>
+                        <Label htmlFor="second-semester-period" className="font-semibold">Second Semester</Label>
                         <Switch 
-                            id="allocation-period" 
+                            id="second-semester-period" 
                             checked={isSecondSemesterActive}
                             onCheckedChange={toggleSecondSemesterStatus}
+                            className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500" 
+                        />
+                </div>
+                <div className="flex items-center gap-2">
+                        <Label htmlFor="summer-semester-period" className="font-semibold">Summer Semester</Label>
+                        <Switch 
+                            id="summer-semester-period" 
+                            checked={isSummerSemesterActive}
+                            onCheckedChange={toggleSummerSemesterStatus}
                             className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500" 
                         />
                 </div>
